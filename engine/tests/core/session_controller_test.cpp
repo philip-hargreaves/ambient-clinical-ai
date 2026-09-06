@@ -209,6 +209,32 @@ struct RecordingEvents : ISessionEvents {
         patient_done = true;
     }
 
+    std::string summary_session;
+    std::string summary_text;
+    std::string summary_failed;
+    std::atomic<bool> summary_done{false};
+
+    void OnSummaryReady(const std::string& session, const std::string& text) override {
+        const std::lock_guard<std::mutex> lock(mutex);
+        summary_session = session;
+        summary_text = text;
+        summary_done = true;
+    }
+
+    void OnSummaryFailed(const std::string& session, const std::string& detail) override {
+        const std::lock_guard<std::mutex> lock(mutex);
+        summary_session = session;
+        summary_failed = detail;
+        summary_done = true;
+    }
+
+    bool WaitForSummary() {
+        for (int i = 0; i < 500 && !summary_done.load(); ++i) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        }
+        return summary_done.load();
+    }
+
     std::vector<std::string> note_partials;
     std::string note_ready;
     std::string note_failed;
@@ -341,7 +367,16 @@ struct FakeSessionStore : store::ISessionStore {
         } else if (kind == store::DocumentKind::kLabel) {
             label = document.text;
             label_typed = false;
+        } else if (kind == store::DocumentKind::kSummary) {
+            calls.push_back("summary " + id);
+            summary = document.text;
         }
+    }
+
+    void DeleteDocument(const store::SessionId& id, store::DocumentKind kind) override {
+        const std::lock_guard<std::mutex> lock(mutex);
+        calls.push_back("delete-document " + id);
+        if (kind == store::DocumentKind::kSummary) summary.clear();
     }
 
     void EditDocument(const store::SessionId& id, store::DocumentKind kind,
@@ -370,13 +405,18 @@ struct FakeSessionStore : store::ISessionStore {
                 document.text = label;
                 document.edited_at = label_typed ? "typed" : "";
                 break;
+            case store::DocumentKind::kSummary:
+                document.text = summary;
+                break;
             case store::DocumentKind::kTranslation:
+            case store::DocumentKind::kReflection:
                 break;
         }
         return document;
     }
 
     std::string patient;
+    std::string summary;
     std::string note_style;
     std::string note_detail;
     std::string label;
@@ -390,6 +430,18 @@ struct FakeSessionStore : store::ISessionStore {
 
     void EraseUnretained() override {
         ++sweeps;
+    }
+
+    store::SessionId Seed(const store::SessionSeed&) override {
+        return "seeded";
+    }
+
+    std::size_t ClearDemo() override {
+        return 0;
+    }
+
+    std::size_t DeleteAll() override {
+        return 0;
     }
 
     std::vector<asr::Turn> ReadTurns(const store::SessionId& id) override {
@@ -441,6 +493,20 @@ struct FakeNoteWriter : note::INoteWriter {
     std::string WriteLabel(const std::string&) override {
         ++label_calls;
         return label_result;
+    }
+
+    std::string summary_input;
+    bool fail_summary = false;
+
+    std::string WriteSummary(const std::string& note_text) override {
+        {
+            const std::lock_guard<std::mutex> lock(mutex);
+            summary_input = note_text;
+        }
+        if (fail_summary) {
+            throw std::runtime_error("summary generation failed");
+        }
+        return "A patient in their forties presented with a swollen elbow.";
     }
 
     void Prepare() override {
@@ -825,6 +891,34 @@ TEST(SessionController, RegeneratePatientRewritesTheSheetFromTheStoredNote) {
 
     controller.Close();
     EXPECT_FALSE(controller.RegeneratePatient()) << "closed";
+}
+
+TEST(SessionController, WriteSummaryStoresTheCaseSummaryForAnyStoredSession) {
+    RecordingEvents events;
+    FakeSessionStore store;
+    store.note = "the note as stored";
+    asr::ScriptedTranscriber transcriber;
+    PassthroughVad vad;
+    FakeNoteWriter writer;
+    SessionController controller(FactoryFor(ScriptedSource::Script::kStreamUntilStopped), events,
+                                 store, transcriber, vad, kTestSettle, nullptr, 5 * kSampleRate,
+                                 &writer, nullptr, 0);
+
+    ASSERT_TRUE(controller.WriteSummary("past")) << "no review needed: any stored session";
+    ASSERT_TRUE(events.WaitForSummary());
+    EXPECT_EQ(events.summary_session, "past");
+    EXPECT_EQ(events.summary_text, "A patient in their forties presented with a swollen elbow.");
+    EXPECT_EQ(writer.summary_input, "the note as stored");
+    EXPECT_EQ(store.summary, events.summary_text);
+
+    events.summary_done = false;
+    writer.fail_summary = true;
+    ASSERT_TRUE(controller.WriteSummary("past"));
+    ASSERT_TRUE(events.WaitForSummary());
+    EXPECT_EQ(events.summary_failed, "summary generation failed");
+
+    store.note.clear();
+    EXPECT_FALSE(controller.WriteSummary("past")) << "no note, nothing to summarise";
 }
 
 TEST(SessionController, OpenIsRefusedWhileRecordingOrForAnUnknownSession) {

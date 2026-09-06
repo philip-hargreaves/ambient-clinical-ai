@@ -1,0 +1,42 @@
+[
+  {
+    "in": "A 53-year-old male presented with a non-painful, warm swelling over the left elbow.",
+    "out": "A male in their fifties presented with a non-painful, warm swelling over the left elbow."
+  },
+  {
+    "in": "The patient, aged 67, reported a week of dizziness.",
+    "out": "The patient, in their sixties, reported a week of dizziness."
+  },
+  {
+    "in": "A 7 year old with a rash on both arms.",
+    "out": "A patient under ten with a rash on both arms."
+  },
+  {
+    "in": "A 16-year-old girl described low mood since March 2026.",
+    "out": "A girl in their teens described low mood recently."
+  },
+  {
+    "in": "Seen on 12 March 2025 and again on 14/03/2025 for follow-up.",
+    "out": "Seen recently and again recently for follow-up."
+  },
+  {
+    "in": "NHS number 943 476 5919 was checked; contact 020 7946 0958; lives at SW1A 1AA.",
+    "out": "NHS number was checked; contact; lives at."
+  },
+  {
+    "in": "A 5-year history of migraine, on 10 mg nightly, reviewed after 3 days.",
+    "out": "A 5-year history of migraine, on 10 mg nightly, reviewed after 3 days."
+  },
+  {
+    "in": "A woman in her forties presented with chest pain.",
+    "out": "A woman in her forties presented with chest pain."
+  },
+  {
+    "in": "A febrile patient; the decision was a marker of sepsis in December, seen again on 3 Sept 2025.",
+    "out": "A febrile patient; the decision was a marker of sepsis in December, seen again recently."
+  },
+  {
+    "in": "Reviewed May 12, 2026 with no change in the plan.",
+    "out": "Reviewed recently with no change in the plan."
+  }
+]

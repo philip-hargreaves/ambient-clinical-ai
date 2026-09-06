@@ -212,6 +212,13 @@ std::string QwenNoteWriter::WriteLabel(const std::string& note) {
     return Generate(LoadPrompt(impl_->prompt_dir / "label.md") + note + "\n", nullptr, 16);
 }
 
+std::string QwenNoteWriter::WriteSummary(const std::string& note) {
+    if (note.empty()) {
+        throw std::runtime_error("nothing to summarise: the note is empty");
+    }
+    return Generate(LoadPrompt(impl_->prompt_dir / "case-summary.md") + note + "\n", nullptr, 160);
+}
+
 void QwenNoteWriter::Prefill(const std::vector<asr::Turn>& transcript, const NoteOptions& options) {
     if (transcript.empty()) return;
     const auto pipeline = impl_->Pipeline();

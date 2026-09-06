@@ -24,6 +24,7 @@
 #include "core/resplit.hpp"
 #include "core/resume_source.hpp"
 #include "core/role_naming.hpp"
+#include "core/summary_scrub.hpp"
 #include "core/tidy_transcript.hpp"
 #include "core/turn_reconcile.hpp"
 #include "core/voice_enrolment.hpp"
@@ -66,6 +67,10 @@ class ISessionEvents {
     virtual void OnPatientPartial(const std::string&) {}
     virtual void OnPatientReady(const std::string&) {}
     virtual void OnPatientFailed(const std::string&) {}
+
+    // The appraisal case summary, written on request for a stored session
+    virtual void OnSummaryReady(const std::string& /*session*/, const std::string& /*text*/) {}
+    virtual void OnSummaryFailed(const std::string& /*session*/, const std::string& /*detail*/) {}
 };
 
 // A replay request, carried into the source factory; absent means microphone
@@ -390,6 +395,52 @@ class SessionController {
         }
         SetNoteOptions(std::move(options));
         StartNoteLane(std::move(id), std::move(turns));
+        return true;
+    }
+
+    // Case summary from the stored note, edits included, for any stored session. False when busy or
+    // without a note
+    bool WriteSummary(store::SessionId id) {
+        if (note_writer_ == nullptr || Running() || note_busy_.load()) {
+            return false;
+        }
+        std::string note;
+        try {
+            note = store_.ReadDocument(id, store::DocumentKind::kNote).text;
+        } catch (...) {
+            return false;
+        }
+        if (note.empty()) {
+            return false;
+        }
+        JoinNoteThread();
+        std::lock_guard<std::mutex> lock(mutex_);
+        note_busy_ = true;
+        note_thread_ = std::thread([this, id = std::move(id), note = std::move(note)] {
+            struct BusyGuard {
+                std::atomic<bool>& flag;
+                ~BusyGuard() {
+                    flag = false;
+                }
+            } busy_guard{note_busy_};
+            if (note_abort_.load()) {
+                return;
+            }
+            try {
+                const std::string summary = core::ScrubSummary(note_writer_->WriteSummary(note));
+                if (summary.empty()) {
+                    throw std::runtime_error("the model wrote nothing");
+                }
+                store::Document document;
+                document.text = summary;
+                store_.SaveDocument(id, store::DocumentKind::kSummary, document);
+                events_.OnSummaryReady(id, summary);
+            } catch (const std::exception& e) {
+                events_.OnSummaryFailed(id, e.what());
+            } catch (...) {
+                events_.OnSummaryFailed(id, "case summary failed");
+            }
+        });
         return true;
     }
 
