@@ -195,6 +195,27 @@ public class SessionCommandsTest
     }
 
     [Fact]
+    public void AWarmNoteModelLoadNeitherHoldsRecordingNorSaysSo()
+    {
+        var (session, engine, _) = TestSession.Create();
+        var controls = new SessionControlsViewModel(session);
+        session.Status.SetEngineState(Ambient.App.Core.Hosting.EngineStatus.Running, null);
+        session.Status.SetEngineReady(true);
+
+        engine.RaiseNotification("note/model", System.Text.Json.JsonSerializer.SerializeToElement(
+            new { tier = "default", id = "qwen3.5-9b-int4", name = "Qwen3.5 9B", state = "loading", firstUse = false }));
+
+        Assert.True(session.ModelsReady);
+        Assert.True(controls.StartRecordingCommand.CanExecute(null));
+        Assert.Equal("Ready", session.Status.DisplayLabel);
+
+        engine.RaiseNotification("note/model", System.Text.Json.JsonSerializer.SerializeToElement(
+            new { tier = "default", id = "qwen3.5-9b-int4", name = "Qwen3.5 9B", state = "loading", firstUse = true }));
+        Assert.False(session.ModelsReady);
+        Assert.Contains("Preparing note model", session.Status.DisplayLabel);
+    }
+
+    [Fact]
     public async Task FinaliseStagesNameTheCentreSpinner()
     {
         var (session, engine, _) = TestSession.Create();

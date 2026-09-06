@@ -454,7 +454,7 @@ public sealed partial class StatusBarViewModel : ObservableObject
             || _status == EngineStatus.Restarting;
         EngineStateLabel = _status switch
         {
-            EngineStatus.Running when !_ready => "Setting up",
+            EngineStatus.Running when !_ready => "Starting up",
             EngineStatus.Running => "Ready",
             EngineStatus.Restarting => "Recovering",
             EngineStatus.Faulted => _fault?.Kind switch
