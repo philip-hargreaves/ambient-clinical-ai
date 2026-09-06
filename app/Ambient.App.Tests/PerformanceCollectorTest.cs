@@ -30,11 +30,14 @@ public class PerformanceCollectorTest : IDisposable
         var engine = new FakeEngineClient();
         var collector = NewCollector(engine);
 
+        collector.NoteModel("Qwen3.5 9B", "default", 24.1);
         collector.SessionStarted("replay", 1.0, "Elbow swelling");
         collector.StopRequested();
-        collector.NotePartial();
-        collector.NotePartial();
-        await collector.SessionFinishedAsync(null, 1290);
+        collector.NotePartial(15.3);
+        collector.NotePartial(16.1);
+        collector.NoteReady(17.4);
+        collector.PatientPartial(14.0);
+        await collector.SessionFinishedAsync(null, 1290, patientTokensPerSecond: 16.0);
 
         var line = Assert.Single(File.ReadAllLines(_path));
         using var record = JsonDocument.Parse(line);
@@ -47,6 +50,17 @@ public class PerformanceCollectorTest : IDisposable
         Assert.True(root.GetProperty("note").GetProperty("firstPartialAfterStopSeconds")
             .GetDouble() >= 0);
         Assert.True(root.GetProperty("memory").GetProperty("availableAtStartMb").GetInt64() > 0);
+        Assert.Equal(2, root.GetProperty("schema").GetInt32());
+        Assert.Equal("completed", root.GetProperty("outcome").GetString());
+        var note = root.GetProperty("note");
+        Assert.Equal("Qwen3.5 9B", note.GetProperty("model").GetString());
+        Assert.Equal("default", note.GetProperty("tier").GetString());
+        Assert.Equal(24.1, note.GetProperty("modelLoadSeconds").GetDouble());
+        Assert.Equal(17.4, note.GetProperty("tokensPerSecond").GetDouble());
+        Assert.True(note.GetProperty("readyAfterStopSeconds").GetDouble() >= 0);
+        var patient = root.GetProperty("patient");
+        Assert.True(patient.GetProperty("readyAfterNoteSeconds").GetDouble() >= 0);
+        Assert.Equal(16.0, patient.GetProperty("tokensPerSecond").GetDouble());
     }
 
     [Fact]
@@ -77,10 +91,36 @@ public class PerformanceCollectorTest : IDisposable
         var lines = File.ReadAllLines(_path);
         Assert.Equal(2, lines.Length);
         using var failed = JsonDocument.Parse(lines[0]);
+        Assert.Equal("clinical note failed", failed.RootElement.GetProperty("outcome").GetString());
+        Assert.False(failed.RootElement.TryGetProperty("patient", out _));
         Assert.Equal("the transcript is empty",
             failed.RootElement.GetProperty("note").GetProperty("failed").GetString());
         using var fine = JsonDocument.Parse(lines[1]);
         Assert.False(fine.RootElement.GetProperty("note").TryGetProperty("failed", out _));
+    }
+
+    [Fact]
+    public async Task RefusalsAndPatientNoteFailuresNameTheirOutcome()
+    {
+        var collector = NewCollector(new FakeEngineClient());
+
+        collector.SessionStarted("mic", 0, null);
+        collector.StopRequested();
+        await collector.SessionFinishedAsync("refused: not a consultation", 0);
+        collector.SessionStarted("mic", 0, null);
+        collector.StopRequested();
+        collector.NotePartial();
+        collector.NoteReady();
+        await collector.SessionFinishedAsync(null, 300, "failed");
+
+        var lines = File.ReadAllLines(_path);
+        using var refused = JsonDocument.Parse(lines[0]);
+        Assert.Equal("refused", refused.RootElement.GetProperty("outcome").GetString());
+        using var patientFailed = JsonDocument.Parse(lines[1]);
+        Assert.Equal("patient note failed", patientFailed.RootElement.GetProperty("outcome").GetString());
+        var patient = patientFailed.RootElement.GetProperty("patient");
+        Assert.Equal("failed", patient.GetProperty("failed").GetString());
+        Assert.False(patient.TryGetProperty("readyAfterNoteSeconds", out _));
     }
 
     [Fact]
