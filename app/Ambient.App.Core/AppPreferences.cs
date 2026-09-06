@@ -9,12 +9,16 @@ public sealed class AppPreferences(string path)
         bool DemoTrayEnabled, bool NpuTranscription, bool CollectPerformanceData,
         string? NoteStyle = null, string? NoteDetail = null,
         bool KeepConsultations = false, bool ShowPerformanceMetrics = false,
-        string? MicId = null, string? Theme = null, string? NoteTier = null);
+        string? MicId = null, string? Theme = null, string? NoteTier = null,
+        bool SeedDataEnabled = false);
 
     /// <summary>The note model tiers the engine's store can resolve, in ladder order.</summary>
     public static readonly IReadOnlyList<string> NoteTiers = ["constrained", "default", "accuracy"];
 
     public bool DemoTrayEnabled { get; set; }
+
+    /// <summary>Seed data in the store; off by default.</summary>
+    public bool SeedDataEnabled { get; set; }
 
     public bool NpuTranscription { get; set; }
 
@@ -52,6 +56,7 @@ public sealed class AppPreferences(string path)
         {
             var stored = JsonSerializer.Deserialize<Stored>(File.ReadAllText(path));
             preferences.DemoTrayEnabled = stored?.DemoTrayEnabled ?? false;
+            preferences.SeedDataEnabled = stored?.SeedDataEnabled ?? false;
             preferences.NpuTranscription = stored?.NpuTranscription ?? false;
             preferences.CollectPerformanceData = stored?.CollectPerformanceData ?? false;
             preferences.KeepConsultations = stored?.KeepConsultations ?? false;
@@ -82,7 +87,7 @@ public sealed class AppPreferences(string path)
             File.WriteAllText(path, JsonSerializer.Serialize(new Stored(
                 DemoTrayEnabled, NpuTranscription, CollectPerformanceData,
                 NoteStyle, NoteDetail, KeepConsultations, ShowPerformanceMetrics, MicId,
-                Theme, NoteTier)));
+                Theme, NoteTier, SeedDataEnabled)));
         }
         catch (Exception)
         {

@@ -70,6 +70,26 @@
                             OnContent="On" />
                     </Grid>
                 </Border>
+                <Border Style="{StaticResource SettingsCard}">
+                    <Grid ColumnSpacing="16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="160" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="Delete all consultation data" />
+                            <TextBlock Style="{StaticResource SettingsDescription}"
+                                       Text="Every stored consultation, with its notes and reflections. Cannot be undone." />
+                        </StackPanel>
+                        <Button
+                            Grid.Column="1"
+                            MinWidth="160"
+                            VerticalAlignment="Center"
+                            Command="{x:Bind ViewModel.DeleteAllConsultationsCommand}"
+                            Content="Delete all"
+                            Foreground="{ThemeResource SystemFillColorCriticalBrush}" />
+                    </Grid>
+                </Border>
 
                 <Border Style="{StaticResource SettingsCard}">
                     <Grid ColumnSpacing="16">
@@ -161,6 +181,26 @@
                             MinWidth="160"
                             VerticalAlignment="Center"
                             IsOn="{x:Bind ViewModel.DemoTrayEnabled, Mode=TwoWay}"
+                            OffContent="Hidden"
+                            OnContent="Shown" />
+                    </Grid>
+                </Border>
+                <Border Style="{StaticResource SettingsCard}">
+                    <Grid ColumnSpacing="16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="160" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="Seed data" />
+                            <TextBlock Style="{StaticResource SettingsDescription}"
+                                       Text="A year of consultations and reflections from PriMock57 recordings" />
+                        </StackPanel>
+                        <ToggleSwitch
+                            Grid.Column="1"
+                            MinWidth="160"
+                            VerticalAlignment="Center"
+                            IsOn="{x:Bind ViewModel.SeedDataEnabled, Mode=TwoWay}"
                             OffContent="Hidden"
                             OnContent="Shown" />
                     </Grid>

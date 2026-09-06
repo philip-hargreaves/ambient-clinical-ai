@@ -64,6 +64,84 @@ public class SettingsViewModelTest
     }
 
     [Fact]
+    public void SeedDataFollowsTheSwitchAndPersists()
+    {
+        var preferences = TempPreferences();
+        var engine = new FakeEngineClient();
+        var status = new StatusBarViewModel();
+        var settings = new SettingsViewModel(preferences, status: status, client: engine);
+        Assert.False(settings.SeedDataEnabled);
+        Assert.DoesNotContain(engine.Requests, r => r.Method == "demo/seed");
+
+        settings.SeedDataEnabled = true;
+        Assert.True(preferences.SeedDataEnabled);
+        Assert.True(engine.SamplesSeeded);
+        Assert.Contains("8 sample consultations added", status.LatestActivity);
+
+        settings.SeedDataEnabled = false;
+        Assert.False(preferences.SeedDataEnabled);
+        Assert.False(engine.SamplesSeeded);
+        Assert.Contains("8 sample consultations removed", status.LatestActivity);
+    }
+
+    [Fact]
+    public async Task DeleteAllAsksFirstThenErasesAndTurnsSeedDataOff()
+    {
+        var preferences = TempPreferences();
+        var engine = new FakeEngineClient { StoredSessions = 3 };
+        var status = new StatusBarViewModel();
+        var settings = new SettingsViewModel(preferences, status: status, client: engine);
+        settings.SeedDataEnabled = true;
+        var answer = false;
+        settings.ConfirmDeleteAllConsultations = () => Task.FromResult(answer);
+
+        await settings.DeleteAllConsultationsCommand.ExecuteAsync(null);
+        Assert.DoesNotContain(engine.Requests, r => r.Method == "session/deleteAll");
+        Assert.True(settings.SeedDataEnabled);
+
+        answer = true;
+        await settings.DeleteAllConsultationsCommand.ExecuteAsync(null);
+        Assert.Single(engine.Requests, r => r.Method == "session/deleteAll");
+        Assert.Contains("11 consultations deleted", status.LatestActivity);
+        Assert.False(settings.SeedDataEnabled);
+        Assert.False(preferences.SeedDataEnabled);
+        Assert.DoesNotContain(engine.Requests, r => r.Method == "demo/clear");  // nothing left to clear
+        Assert.Equal(0, engine.StoredSessions);
+    }
+
+    [Fact]
+    public async Task DeleteAllRefusesDuringAConsultation()
+    {
+        var engine = new FakeEngineClient { StoredSessions = 3 };
+        var status = new StatusBarViewModel();
+        var settings = new SettingsViewModel(TempPreferences(), session: new FakeSession { ConsultationActive = true },
+            status: status, client: engine)
+        {
+            ConfirmDeleteAllConsultations = () => Task.FromResult(true),
+        };
+
+        await settings.DeleteAllConsultationsCommand.ExecuteAsync(null);
+
+        Assert.DoesNotContain(engine.Requests, r => r.Method == "session/deleteAll");
+        Assert.Contains("finish the consultation", status.LatestActivity);
+    }
+
+    [Fact]
+    public void ALaunchWithSeedDataOnSeedsOnceAndQuietly()
+    {
+        var preferences = TempPreferences();
+        preferences.SeedDataEnabled = true;
+        var engine = new FakeEngineClient { SamplesSeeded = true };
+        var status = new StatusBarViewModel();
+
+        var settings = new SettingsViewModel(preferences, status: status, client: engine);
+
+        Assert.True(settings.SeedDataEnabled);
+        Assert.Single(engine.Requests, r => r.Method == "demo/seed");
+        Assert.DoesNotContain("sample", status.LatestActivity);  // nothing added: already there
+    }
+
+    [Fact]
     public void KeepConsultationsDefaultsOffAndPersists()
     {
         var preferences = TempPreferences();
