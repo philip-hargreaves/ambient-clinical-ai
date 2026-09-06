@@ -26,6 +26,7 @@ public sealed partial class DemoTrayViewModel : ObservableObject
                 case nameof(ConsultationViewModel.State):
                 case nameof(ConsultationViewModel.EngineReady):
                     OnPropertyChanged(nameof(IsReplaying));
+                    OnPropertyChanged(nameof(Idle));
                     PlayCommand.NotifyCanExecuteChanged();
                     StopCommand.NotifyCanExecuteChanged();
                     TogglePauseCommand.NotifyCanExecuteChanged();
@@ -115,6 +116,9 @@ public sealed partial class DemoTrayViewModel : ObservableObject
 
     public bool IsReplaying => _session.State == SessionState.Recording
         && _session.ActiveReplay is not null;
+
+    /// <summary>Replay controls show only while idle.</summary>
+    public bool Idle => _session.State == SessionState.Idle;
 
     public string PauseGlyph => _session.Paused ? "\uE768" : "\uE769";  // play / pause
 
