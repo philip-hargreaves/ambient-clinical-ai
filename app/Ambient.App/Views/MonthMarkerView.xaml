@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="Ambient.App.Views.MonthMarkerView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- One calendar cell: name in ink when it has entries, accent underline when selected -->
+    <Button
+        Padding="0"
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Stretch"
+        HorizontalContentAlignment="Stretch"
+        VerticalContentAlignment="Stretch"
+        Background="Transparent"
+        BorderThickness="0"
+        CornerRadius="0"
+        Click="OnClick"
+        ToolTipService.ToolTip="{x:Bind Tip, Mode=OneWay}">
+        <Border
+            Background="{x:Bind Fill, Mode=OneWay}"
+            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+            BorderThickness="{x:Bind Divider, Mode=OneWay}"
+            Height="30">
+            <Grid Padding="9,0,7,0">
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontWeight="{x:Bind Weight, Mode=OneWay}"
+                    Foreground="{x:Bind Label, Mode=OneWay}"
+                    Style="{StaticResource CaptionText}"
+                    Text="{x:Bind Marker.Name, Mode=OneWay}" />
+                <Border
+                    Height="2"
+                    Margin="-9,0,-7,0"
+                    VerticalAlignment="Bottom"
+                    Background="{ThemeResource AccentFillColorDefaultBrush}"
+                    Visibility="{x:Bind Selected, Mode=OneWay}" />
+            </Grid>
+        </Border>
+    </Button>
+</UserControl>

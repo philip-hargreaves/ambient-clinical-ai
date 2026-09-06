@@ -17,5 +17,8 @@ public sealed partial class ShellViewModel : ObservableObject
     private void ShowSessions() => _navigation.NavigateTo("sessions");
 
     [RelayCommand]
+    private void ShowAppraisals() => _navigation.NavigateTo("appraisals");
+
+    [RelayCommand]
     private void GoBack() => _navigation.GoBack();
 }

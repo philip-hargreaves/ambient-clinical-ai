@@ -87,6 +87,7 @@ public partial class App : Application
         services.AddSingleton<SettingsViewModel>();
         services.AddSingleton<VoiceViewModel>();
         services.AddSingleton<SessionsViewModel>();
+        services.AddSingleton<AppraisalsViewModel>();
         services.AddSingleton<DemoTrayViewModel>();
         services.AddSingleton<CreditsViewModel>();
 
@@ -99,6 +100,7 @@ public partial class App : Application
         services.AddTransient<StatusBarView>();
         services.AddTransient<ConsultationView>();
         services.AddTransient<SessionsView>();
+        services.AddTransient<AppraisalsView>();
         services.AddTransient<SettingsView>();
         services.AddTransient<MainWindow>();
 

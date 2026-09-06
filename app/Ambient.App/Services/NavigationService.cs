@@ -17,6 +17,7 @@ public sealed class NavigationService(IServiceProvider services) : INavigationSe
     {
         ["consultation"] = typeof(ConsultationView),
         ["sessions"] = typeof(SessionsView),
+        ["appraisals"] = typeof(AppraisalsView),
         ["settings"] = typeof(SettingsView),
     };
 
