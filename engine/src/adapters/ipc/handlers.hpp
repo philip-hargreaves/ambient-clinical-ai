@@ -1,5 +1,6 @@
 #pragma once
 
+#include <filesystem>
 #include <variant>
 
 #include "adapters/audio/capture_devices.hpp"
@@ -57,8 +58,21 @@ std::variant<json, Error> HandleSessionPatient(ambient::store::ISessionStore& se
 std::variant<json, Error> HandleSessionTranscript(ambient::store::ISessionStore& sessions,
                                                   const json& params);
 
+// Appraisal reflections on a stored session
+std::variant<json, Error> HandleReflectionGet(ambient::store::ISessionStore& sessions,
+                                              const json& params);
+std::variant<json, Error> HandleReflectionUpdate(ambient::store::ISessionStore& sessions,
+                                                 const json& params);
+std::variant<json, Error> HandleReflectionDelete(ambient::store::ISessionStore& sessions,
+                                                 const json& params);
+json HandleReflectionList(ambient::store::ISessionStore& sessions);
 std::variant<json, Error> HandleSessionDelete(ambient::store::ISessionStore& sessions,
                                               const json& params);
+
+// Seed data from demo_dir: a no-op while present; cleared without touching real sessions
+std::variant<json, Error> HandleDemoSeed(ambient::store::ISessionStore& sessions,
+                                         const std::filesystem::path& demo_dir);
+json HandleDemoClear(ambient::store::ISessionStore& sessions);
 
 // Every method the engine serves. first_use: model caches were cold at
 // launch, so the one-off compiles are running and readiness reports them.
@@ -70,6 +84,7 @@ void RegisterMethods(PipeServer& server, ambient::audio::SessionController& cont
                      ambient::translate::ITranslator* translator = nullptr,
                      ambient::translate::TranslateLane* translate_lane = nullptr,
                      bool first_use = false, ambient::diar::AnchorStore* anchors = nullptr,
-                     ambient::note::INoteLane* note_lane = nullptr, bool stray_note_host = false);
+                     ambient::note::INoteLane* note_lane = nullptr, bool stray_note_host = false,
+                     const std::filesystem::path& demo_dir = {});
 
 }  // namespace ambient::ipc

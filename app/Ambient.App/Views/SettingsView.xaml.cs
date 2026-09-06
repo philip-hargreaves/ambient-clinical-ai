@@ -42,6 +42,20 @@ public sealed partial class SettingsView : UserControl
         // never just toggled. Cancel is the safe default.
         viewModel.PickSavePath = suggested =>
             SavePickerHelper.PickAsync(suggested, "HTML report", ".html");
+        viewModel.ConfirmDeleteAllConsultations = async () =>
+        {
+            var dialog = new ContentDialog
+            {
+                XamlRoot = XamlRoot,
+                Title = "Delete all consultation data?",
+                Content = "Every stored consultation on this device is erased: transcripts, notes, "
+                    + "patient sheets and appraisal reflections. This cannot be undone.",
+                PrimaryButtonText = "Delete all",
+                CloseButtonText = "Cancel",
+                DefaultButton = ContentDialogButton.Close,
+            };
+            return await dialog.ShowAsync() == ContentDialogResult.Primary;
+        };
         viewModel.ConfirmKeepConsultations = async () =>
         {
             var dialog = new ContentDialog

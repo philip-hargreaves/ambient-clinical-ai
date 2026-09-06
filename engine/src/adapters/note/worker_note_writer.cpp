@@ -579,6 +579,13 @@ std::string WorkerNoteWriter::WritePatient(const std::string& note, const Progre
     return impl_->Run("writePatient", {{"note", note}}, progress);
 }
 
+std::string WorkerNoteWriter::WriteSummary(const std::string& note) {
+    if (note.empty()) {
+        throw std::runtime_error("nothing to summarise: the note is empty");
+    }
+    return impl_->Run("summary", {{"note", note}}, nullptr);
+}
+
 // A failed title is no title, never a failed note: no respawn, no throw
 std::string WorkerNoteWriter::WriteLabel(const std::string& note) {
     if (note.empty()) {

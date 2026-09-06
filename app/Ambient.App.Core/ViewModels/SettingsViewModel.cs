@@ -43,6 +43,7 @@ public sealed partial class SettingsViewModel : ObservableObject
         // handlers (persist, confirm, engine restart) must not fire here
         _initialising = true;
         DemoTrayEnabled = preferences?.DemoTrayEnabled ?? false;
+        SeedDataEnabled = preferences?.SeedDataEnabled ?? false;
         NpuTranscription = preferences?.NpuTranscription ?? false;
         CollectPerformanceData = preferences?.CollectPerformanceData ?? false;
         KeepConsultations = preferences?.KeepConsultations ?? false;
@@ -59,6 +60,10 @@ public sealed partial class SettingsViewModel : ObservableObject
                 if (connected)
                 {
                     _ = LoadNoteModelsAsync();
+                    if (SeedDataEnabled)
+                    {
+                        _ = ApplySeedDataAsync(true);
+                    }
                 }
             });
             client.NotificationReceived += (method, parameters) =>
@@ -72,6 +77,10 @@ public sealed partial class SettingsViewModel : ObservableObject
             if (client.Connected)
             {
                 _ = LoadNoteModelsAsync();
+                if (SeedDataEnabled)
+                {
+                    _ = ApplySeedDataAsync(true);
+                }
             }
         }
     }
@@ -432,6 +441,100 @@ public sealed partial class SettingsViewModel : ObservableObject
         {
             _preferences.DemoTrayEnabled = value;
             _preferences.Save();
+        }
+    }
+
+    /// <summary>
+    /// Seed data: a year of sample consultations with reflections. A developer control.
+    /// </summary>
+    [ObservableProperty]
+    public partial bool SeedDataEnabled { get; set; }
+
+    partial void OnSeedDataEnabledChanged(bool value)
+    {
+        if (_initialising)
+        {
+            return;
+        }
+
+        if (_preferences is not null)
+        {
+            _preferences.SeedDataEnabled = value;
+            _preferences.Save();
+        }
+
+        if (!_seedFollowsStore)
+        {
+            _ = ApplySeedDataAsync(value);
+        }
+    }
+
+    // Set while the switch is aligned to the store, so the engine is not asked again
+    private bool _seedFollowsStore;
+
+    /// <summary>The view supplies the confirmation dialog.</summary>
+    public Func<Task<bool>>? ConfirmDeleteAllConsultations { get; set; }
+
+    /// <summary>Erases every stored consultation, seeded or real.</summary>
+    [RelayCommand]
+    private async Task DeleteAllConsultations()
+    {
+        if (_client is null || !_client.Connected)
+        {
+            return;
+        }
+
+        if (_session?.ConsultationActive == true)
+        {
+            _status?.Append("finish the consultation before deleting stored data");
+            return;
+        }
+
+        if (ConfirmDeleteAllConsultations is not null
+            && !await ConfirmDeleteAllConsultations().ConfigureAwait(true))
+        {
+            return;
+        }
+
+        try
+        {
+            var result = await _client.RequestAsync("session/deleteAll", null, RequestTimeout).ConfigureAwait(true);
+            var removed = result.TryGetProperty("removed", out var n) ? n.GetInt32() : 0;
+            _status?.Append(removed == 1 ? "1 consultation deleted" : $"{removed} consultations deleted");
+            // The seed was erased too; the switch follows, and switching on reseeds
+            _seedFollowsStore = true;
+            SeedDataEnabled = false;
+            _seedFollowsStore = false;
+        }
+        catch (Exception e) when (e is not OperationCanceledException)
+        {
+            _status?.Append($"could not delete: {e.Message}");
+        }
+    }
+
+    // On seeds, a no-op when already seeded; off clears
+    private async Task ApplySeedDataAsync(bool enabled)
+    {
+        if (_client is null || !_client.Connected)
+        {
+            return;
+        }
+
+        try
+        {
+            var result = await _client.RequestAsync(enabled ? "demo/seed" : "demo/clear", null, RequestTimeout)
+                .ConfigureAwait(true);
+            var count = result.TryGetProperty(enabled ? "added" : "removed", out var n) ? n.GetInt32() : 0;
+            if (count > 0)
+            {
+                _status?.Append(enabled
+                    ? $"{count} sample consultations added"
+                    : $"{count} sample consultations removed");
+            }
+        }
+        catch (Exception e) when (e is not OperationCanceledException)
+        {
+            _status?.Append($"seed data: {e.Message}");
         }
     }
 

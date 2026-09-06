@@ -11,7 +11,7 @@ public class EngineStatusInShellTest
         var bar = new StatusBarViewModel();
 
         bar.SetEngineState(EngineStatus.Running, null);
-        Assert.Equal("Setting up", bar.EngineStateLabel);
+        Assert.Equal("Starting up", bar.EngineStateLabel);
         Assert.True(bar.EngineStarting);
 
         bar.SetEngineReady(true);

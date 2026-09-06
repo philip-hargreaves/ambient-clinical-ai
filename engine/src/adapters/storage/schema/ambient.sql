@@ -16,7 +16,8 @@ CREATE TABLE sessions (
     device_id    TEXT,                            -- capture device at the time, a snapshot
     device_name  TEXT,
     lost_frames  INTEGER NOT NULL DEFAULT 0,      -- frames the device dropped
-    retain       INTEGER NOT NULL DEFAULT 1       -- 0: erased once the consultation is left
+    retain       INTEGER NOT NULL DEFAULT 1,      -- 0: erased once the consultation is left
+    demo         INTEGER NOT NULL DEFAULT 0       -- 1: a seeded sample, never a real record
 );
 
 CREATE TABLE session_keys (
@@ -51,9 +52,10 @@ CREATE TABLE turns (
 CREATE TABLE documents (
     session_id   TEXT    NOT NULL REFERENCES sessions (id) ON DELETE CASCADE,
     kind         TEXT    NOT NULL
-                 CHECK (kind IN ('note', 'patient', 'translation', 'label')),
+                 CHECK (kind IN ('note', 'patient', 'translation', 'label',
+                                 'summary', 'reflection')),
     language     TEXT    NOT NULL,                -- BCP 47
-    payload      BLOB    NOT NULL,                -- sealed text, domain 2..5 by kind
+    payload      BLOB    NOT NULL,                -- sealed text, domain 2..7 by kind
     generated_at TEXT,                            -- when the model wrote it
     edited_at    TEXT,                            -- NULL until a person changed it
     PRIMARY KEY (session_id, kind)

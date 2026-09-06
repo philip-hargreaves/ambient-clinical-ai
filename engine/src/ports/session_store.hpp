@@ -30,13 +30,24 @@ struct SessionSummary {
     std::string ended_at;    // Empty while recording or after a crash
     std::string state;       // recording | finalised
     int sample_rate = 0;
-    std::string label;         // The consultation in a line; empty until a note exists
-    std::string edited_at;     // Latest clinician edit to note or sheet; empty when none
-    double audio_seconds = 0;  // The consultation's audio length, from the sealed turns
+    std::string label;            // The consultation in a line; empty until a note exists
+    std::string edited_at;        // Latest clinician edit to note or sheet; empty when none
+    double audio_seconds = 0;     // The consultation's audio length, from the sealed turns
+    bool has_reflection = false;  // An appraisal entry exists: a summary or a reflection
+    bool demo = false;            // A seeded sample, never a real record
 };
 
-// The texts a finalised session holds, one of each; a rewrite replaces
-enum class DocumentKind { kNote, kPatient, kTranslation, kLabel };
+// A seeded session: finalised, with given times, flagged for clearing
+struct SessionSeed {
+    std::string started_at;  // ISO 8601 UTC
+    std::string ended_at;
+    int sample_rate = 16000;
+    std::vector<asr::Turn> turns;
+};
+
+// The texts a finalised session holds, one of each; a rewrite replaces. Summary and reflection are
+// appraisal documents, not the clinical record
+enum class DocumentKind { kNote, kPatient, kTranslation, kLabel, kSummary, kReflection };
 
 struct Document {
     std::string text;             // Empty when the session has no such document
@@ -82,6 +93,9 @@ class ISessionStore {
     virtual void EditDocument(const SessionId& id, DocumentKind kind, const std::string& text) = 0;
     virtual Document ReadDocument(const SessionId& id, DocumentKind kind) = 0;
 
+    // Removes one kind; a kind the session never had is not an error
+    virtual void DeleteDocument(const SessionId& id, DocumentKind kind) = 0;
+
     // Read-back and disposal; all refuse the session currently recording
     virtual std::vector<asr::Turn> ReadTurns(const SessionId& id) = 0;
 
@@ -93,6 +107,13 @@ class ISessionStore {
     // Erases every finalised session recorded with retain off. A crashed one
     // waits for its recovery, so the audio is never lost to the setting
     virtual void EraseUnretained() = 0;
+
+    // Seeded samples carry demo; ClearDemo removes only those
+    virtual SessionId Seed(const SessionSeed& seed) = 0;
+    virtual std::size_t ClearDemo() = 0;
+
+    // Crypto-erases every stored session; one still recording is left. Returns the count
+    virtual std::size_t DeleteAll() = 0;
 };
 
 }  // namespace ambient::store

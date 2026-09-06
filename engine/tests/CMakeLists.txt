@@ -34,10 +34,12 @@ add_executable(engine_tests
     core/throughput_test.cpp
     core/session_controller_test.cpp
     core/slice_refinement_test.cpp
+    core/summary_scrub_test.cpp
     core/turn_assembly_test.cpp
     core/turn_reconcile_test.cpp
     core/version_test.cpp
     adapters/anchor_store_test.cpp
+    adapters/sample_year_test.cpp
     adapters/capture_errors_test.cpp
     adapters/capture_timeline_test.cpp
     adapters/chunk_cipher_test.cpp
@@ -64,6 +66,7 @@ add_executable(engine_tests
 target_compile_definitions(engine_tests PRIVATE
     AMBIENT_CMAKE_VERSION="${ambient_VERSION}"
     AMBIENT_FIXTURE_DIR="${ambient_SOURCE_DIR}/schema/fixtures"
+    AMBIENT_DEMO_DIR="${ambient_SOURCE_DIR}/demo/reflections"
     AMBIENT_CRASH_HELPER="$<TARGET_FILE:store_crash_helper>")
 
 # The recovery test's kill victim

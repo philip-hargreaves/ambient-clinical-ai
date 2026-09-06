@@ -51,6 +51,7 @@ class QwenNoteWriter : public INoteWriter {
     std::string WritePatient(const std::string& note, const Progress& progress) override;
 
     std::string WriteLabel(const std::string& note) override;
+    std::string WriteSummary(const std::string& note) override;
 
     // Loads the pipeline in the background; idempotent, retried on failure
     void Prepare() override;

@@ -285,6 +285,162 @@ TEST(Handlers, SessionNoteReturnsTheStoredText) {
     ASSERT_TRUE(std::holds_alternative<Error>(missing));
 }
 
+// Seeds once, lists as samples, clears without touching the real session
+TEST(Handlers, TheSampleYearSeedsOnceAndClearsCleanly) {
+    using ambient::store::DocumentKind;
+    SessionStoreFixture fixture;
+    const auto real = fixture.store->Begin({16000, "", ""});
+    fixture.store->Finalise(real);
+
+    const auto seeded = HandleDemoSeed(*fixture.store, AMBIENT_DEMO_DIR);
+    ASSERT_TRUE(std::holds_alternative<json>(seeded))
+        << (std::holds_alternative<Error>(seeded) ? std::get<Error>(seeded).message : "");
+    EXPECT_EQ(std::get<json>(seeded)["added"], 8);
+    const auto again = HandleDemoSeed(*fixture.store, AMBIENT_DEMO_DIR);
+    ASSERT_TRUE(std::holds_alternative<json>(again));
+    EXPECT_EQ(std::get<json>(again)["added"], 0) << "already seeded is a no-op, not an error";
+
+    const json sessions = HandleSessionList(*fixture.store)["sessions"];
+    EXPECT_EQ(sessions.size(), 9u);
+    std::size_t samples = 0;
+    for (const auto& s : sessions) {
+        if (s["demo"].get<bool>()) {
+            samples += 1;
+            EXPECT_FALSE(s["label"].get<std::string>().empty());
+            EXPECT_GT(s["audioSeconds"].get<double>(), 300.0);
+        } else {
+            EXPECT_EQ(s["id"], real);
+        }
+    }
+    EXPECT_EQ(samples, 8u);
+
+    const json entries = HandleReflectionList(*fixture.store)["reflections"];
+    ASSERT_EQ(entries.size(), 8u);
+    for (const auto& e : entries) {
+        EXPECT_TRUE(e["demo"].get<bool>());
+        EXPECT_FALSE(e["learned"].get<std::string>().empty());
+        EXPECT_FALSE(e["summary"].get<std::string>().empty());
+    }
+    const auto id = entries[0]["id"].get<std::string>();
+    const json got = std::get<json>(HandleReflectionGet(*fixture.store, json{{"id", id}}));
+    EXPECT_FALSE(got["reflection"]["happened"].get<std::string>().empty());
+    EXPECT_FALSE(fixture.store->ReadDocument(id, DocumentKind::kNote).text.empty());
+    EXPECT_FALSE(fixture.store->ReadDocument(id, DocumentKind::kPatient).text.empty());
+    EXPECT_EQ(fixture.store->ReadDocument(id, DocumentKind::kNote).style, "prose");
+
+    EXPECT_EQ(HandleDemoClear(*fixture.store)["removed"], 8);
+    const json left = HandleSessionList(*fixture.store)["sessions"];
+    ASSERT_EQ(left.size(), 1u);
+    EXPECT_EQ(left[0]["id"], real);
+    EXPECT_EQ(HandleReflectionList(*fixture.store)["reflections"].size(), 0u);
+
+    // Everything, samples and real alike, in one erase
+    ASSERT_TRUE(std::holds_alternative<json>(HandleDemoSeed(*fixture.store, AMBIENT_DEMO_DIR)));
+    EXPECT_EQ(fixture.store->DeleteAll(), 9u);
+    EXPECT_EQ(HandleSessionList(*fixture.store)["sessions"].size(), 0u);
+}
+
+// Stored summaries leave scrubbed whoever wrote them
+TEST(Handlers, AStoredSummaryLeavesScrubbedWhateverWasStored) {
+    using ambient::store::DocumentKind;
+    SessionStoreFixture fixture;
+    const auto id = fixture.store->Begin({16000, "", ""});
+    fixture.store->Finalise(id);
+    fixture.store->SaveDocument(id, DocumentKind::kSummary,
+                                {.text = "A 53-year-old male presented with a swollen elbow."});
+
+    const json got = std::get<json>(HandleReflectionGet(*fixture.store, json{{"id", id}}));
+    EXPECT_EQ(got["summary"]["text"], "A male in their fifties presented with a swollen elbow.");
+    const json listed = HandleReflectionList(*fixture.store)["reflections"];
+    ASSERT_EQ(listed.size(), 1u);
+    EXPECT_EQ(listed[0]["summary"], "A male in their fifties presented with a swollen elbow.");
+
+    ASSERT_TRUE(std::holds_alternative<json>(HandleReflectionUpdate(
+        *fixture.store, json{{"id", id}, {"summary", "The patient, aged 67, was seen."}})));
+    EXPECT_EQ(fixture.store->ReadDocument(id, DocumentKind::kSummary).text,
+              "The patient, in their sixties, was seen.");
+}
+
+TEST(Handlers, ReflectionGetUpdateListAndDelete) {
+    using ambient::store::DocumentKind;
+    SessionStoreFixture fixture;
+    const auto id = fixture.store->Begin({16000, "", ""});
+    fixture.store->Finalise(id);
+    fixture.store->SaveDocument(id, DocumentKind::kLabel, {.text = "Elbow swelling"});
+
+    // Nothing yet: label only, both parts null, not listed
+    json got = std::get<json>(HandleReflectionGet(*fixture.store, json{{"id", id}}));
+    EXPECT_EQ(got["label"], "Elbow swelling");
+    EXPECT_TRUE(got["summary"].is_null());
+    EXPECT_TRUE(got["reflection"].is_null());
+    EXPECT_EQ(HandleReflectionList(*fixture.store)["reflections"].size(), 0u);
+
+    // A summary alone is an entry: the sheet was opened, the writing can follow
+    fixture.store->SaveDocument(id, DocumentKind::kSummary,
+                                {.text = "A patient in their forties."});
+    json listed = HandleReflectionList(*fixture.store)["reflections"];
+    ASSERT_EQ(listed.size(), 1u);
+    EXPECT_EQ(listed[0]["learned"], "");
+    EXPECT_EQ(listed[0]["summary"], "A patient in their forties.");
+    EXPECT_TRUE(listed[0]["createdAt"].is_string());
+
+    // Three empty answers keep the entry; only delete removes it
+    ASSERT_TRUE(std::holds_alternative<json>(HandleReflectionUpdate(
+        *fixture.store, json{{"id", id}, {"happened", ""}, {"learned", ""}, {"next", ""}})));
+    EXPECT_EQ(HandleReflectionList(*fixture.store)["reflections"].size(), 1u);
+
+    // A first answer creates the entry; a later one merges into it
+    ASSERT_TRUE(std::holds_alternative<json>(HandleReflectionUpdate(
+        *fixture.store, json{{"id", id}, {"learned", "check the temperature"}})));
+    ASSERT_TRUE(std::holds_alternative<json>(HandleReflectionUpdate(
+        *fixture.store, json{{"id", id}, {"next", "add a red-flag check"}})));
+    got = std::get<json>(HandleReflectionGet(*fixture.store, json{{"id", id}}));
+    EXPECT_EQ(got["reflection"]["happened"], "");
+    EXPECT_EQ(got["reflection"]["learned"], "check the temperature");
+    EXPECT_EQ(got["reflection"]["next"], "add a red-flag check");
+    EXPECT_TRUE(got["reflection"]["createdAt"].is_string());
+    EXPECT_TRUE(got["reflection"]["editedAt"].is_string()) << "the merge is an edit";
+    const json fixture_shape = LoadFixture("reflection-get.json")["result"];
+    for (const auto& [key, value] : fixture_shape.items()) {
+        EXPECT_TRUE(got.contains(key)) << key;
+    }
+    for (const auto& [key, value] : fixture_shape["reflection"].items()) {
+        EXPECT_TRUE(got["reflection"].contains(key)) << key;
+    }
+
+    // The summary rides on the same update when the clinician corrects it
+    ASSERT_TRUE(std::holds_alternative<json>(HandleReflectionUpdate(
+        *fixture.store, json{{"id", id}, {"summary", "A patient in their forties."}})));
+    got = std::get<json>(HandleReflectionGet(*fixture.store, json{{"id", id}}));
+    EXPECT_EQ(got["summary"]["text"], "A patient in their forties.");
+    EXPECT_TRUE(got["summary"]["editedAt"].is_string());
+
+    // Listed with the card's line
+    const json list = HandleReflectionList(*fixture.store)["reflections"];
+    ASSERT_EQ(list.size(), 1u);
+    EXPECT_EQ(list[0]["id"], id);
+    EXPECT_EQ(list[0]["label"], "Elbow swelling");
+    EXPECT_EQ(list[0]["learned"], "check the temperature");
+    // Named first: iterating a temporary's sub-object dangles
+    const json list_fixture = LoadFixture("reflection-list.json");
+    for (const auto& [key, value] : list_fixture["result"]["reflections"][0].items()) {
+        EXPECT_TRUE(list[0].contains(key)) << key;
+    }
+
+    // Wrong types are parameter errors; unknown ids session errors
+    EXPECT_TRUE(std::holds_alternative<Error>(
+        HandleReflectionUpdate(*fixture.store, json{{"id", id}, {"learned", 3}})));
+    EXPECT_TRUE(
+        std::holds_alternative<Error>(HandleReflectionGet(*fixture.store, json{{"id", "nope"}})));
+
+    ASSERT_TRUE(
+        std::holds_alternative<json>(HandleReflectionDelete(*fixture.store, json{{"id", id}})));
+    got = std::get<json>(HandleReflectionGet(*fixture.store, json{{"id", id}}));
+    EXPECT_TRUE(got["reflection"].is_null());
+    EXPECT_TRUE(got["summary"].is_null());
+    EXPECT_EQ(HandleReflectionList(*fixture.store)["reflections"].size(), 0u);
+}
+
 TEST(Handlers, SessionPatientCarriesTheTranslationWhenStored) {
     using ambient::store::DocumentKind;
     SessionStoreFixture fixture;

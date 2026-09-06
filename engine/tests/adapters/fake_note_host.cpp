@@ -48,6 +48,10 @@ int main(int argc, char* argv[]) {
             server.PushNotification("ready", {{"text", "A note from " + info.id}});
             return json::object();
         });
+        server.RegisterMethod("summary", [&](const json&) {
+            server.PushNotification("ready", {{"text", "A summary from " + info.id}});
+            return json::object();
+        });
         server.ServeOneClient();
         if (loader.joinable()) loader.join();
         return 0;

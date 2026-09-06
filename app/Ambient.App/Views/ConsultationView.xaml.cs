@@ -9,12 +9,16 @@ public sealed partial class ConsultationView : UserControl
     public ConsultationView(
         ShellViewModel shell, SessionControlsView controls, TranscriptPaneView transcript,
         NotePaneView note, StatusBarView status, DemoTrayView demoTray, SettingsViewModel settings,
-        MicViewModel mic)
+        MicViewModel mic, ConsultationViewModel consultation, Ambient.Client.IEngineClient engine,
+        Ambient.App.Core.IUiDispatcher dispatcher, StatusBarViewModel statusBar)
     {
         Shell = shell;
         Controls = controls.ViewModel;
         Mic = mic;
         InitializeComponent();
+        // The page showing the note opens the sheet
+        Loaded += (_, _) => consultation.OpenReflection = (id, startedAt) =>
+            ReflectionSheet.ShowAsync(XamlRoot, engine, dispatcher, statusBar, id, startedAt);
 
         // Refreshed as the flyout opens: a just-plugged headset must appear
         MicFlyout.Opening += async (_, _) =>

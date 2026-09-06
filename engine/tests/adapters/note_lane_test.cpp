@@ -174,5 +174,15 @@ TEST(NoteLane, TheHostServesTheConfiguredTier) {
     EXPECT_EQ(lane.State().phase, Phase::kReady);
 }
 
+// The case summary goes through the host like the label: one call, one text
+TEST(NoteLane, TheSummaryComesBackFromTheHost) {
+    TieredStore staged;
+    const models::ModelStore store(staged.root);
+    WorkerNoteWriter lane(AMBIENT_FAKE_NOTE_HOST, staged.root, staged.root, &store);
+
+    EXPECT_EQ(lane.WriteSummary("the note"), "A summary from qwen3.5-9b-int4");
+    EXPECT_THROW(lane.WriteSummary(""), std::runtime_error);
+}
+
 }  // namespace
 }  // namespace ambient::note

@@ -91,6 +91,7 @@ public sealed partial class ConsultationViewModel : ObservableObject, ISessionSt
         Note.RegenerateRequested = RegenerateNoteAsync;
         Note.WriteAnywayRequested = WriteNoteAnywayAsync;
         Note.RegeneratePatientRequested = RegeneratePatientAsync;
+        Note.ReflectRequested = ReflectAsync;
         Note.SaveNoteRequested = SaveNoteAsync;
         Note.SavePatientRequested = SavePatientAsync;
         // Persisted options applied before the change callback is wired,
@@ -224,6 +225,22 @@ public sealed partial class ConsultationViewModel : ObservableObject, ISessionSt
     }
 
     private string? _finalisedSessionId;
+    private string _finalisedStartedAt = "";
+
+    /// <summary>The view opens the reflection sheet for (session id, started at).</summary>
+    public Func<string, string, Task>? OpenReflection { get; set; }
+
+    // Opening the sheet creates the entry, so the button reads Open from here on
+    private async Task ReflectAsync()
+    {
+        if (_finalisedSessionId is null || OpenReflection is null)
+        {
+            return;
+        }
+
+        await OpenReflection(_finalisedSessionId, _finalisedStartedAt).ConfigureAwait(true);
+        Note.HasReflection = true;
+    }
     private string? _recordingSessionId;
 
     // What the store holds, for autosaving in-place edits on leave
@@ -354,7 +371,8 @@ public sealed partial class ConsultationViewModel : ObservableObject, ISessionSt
     /// the same panes, and regenerate, translate and save act on it. Refused
     /// while recording. Unsaved edits to the previous review are saved first.
     /// </summary>
-    public async Task<bool> OpenStoredSessionAsync(string id, string startedLabel = "")
+    public async Task<bool> OpenStoredSessionAsync(string id, string startedLabel = "",
+        string startedAt = "", bool hasReflection = false)
     {
         if (State is SessionState.Recording or SessionState.Finalising)
         {
@@ -368,9 +386,12 @@ public sealed partial class ConsultationViewModel : ObservableObject, ISessionSt
         }
 
         _finalisedSessionId = id;
+        _finalisedStartedAt = startedAt;
         _recordingSessionId = null;
         _regenerating = false;
         Note.Reset();
+        Note.ReflectAvailable = true;  // stored, so it will still be there
+        Note.HasReflection = hasReflection;
         await LoadFinalTranscriptAsync(id).ConfigureAwait(true);
 
         var note = await RequestValueAsync("session/note", null, new { id }).ConfigureAwait(true);
@@ -425,6 +446,7 @@ public sealed partial class ConsultationViewModel : ObservableObject, ISessionSt
         Phase = FinalisePhase.None;
         _regenerating = false;
         _finalisedSessionId = null;
+        _finalisedStartedAt = "";
         _loadedNote = "";
         _loadedPatient = "";
         State = SessionState.Idle;
@@ -593,6 +615,10 @@ public sealed partial class ConsultationViewModel : ObservableObject, ISessionSt
             && stop.TryGetProperty("sessionId", out var sessionId))
         {
             _finalisedSessionId = sessionId.GetString();
+            _finalisedStartedAt = "";
+            // An unkept consultation is erased on leaving; a reflection cannot outlive it
+            Note.ReflectAvailable = _preferences?.KeepConsultations != false;
+            Note.HasReflection = false;
             await LoadFinalTranscriptAsync(_finalisedSessionId).ConfigureAwait(true);
         }
     }
@@ -674,24 +700,21 @@ public sealed partial class ConsultationViewModel : ObservableObject, ISessionSt
 
         switch (method)
         {
-            // A note model loading outside a consultation blocks recording;
-            // inside one the load overlaps capture
+            // A warm model load never blocks recording; only the first-use compile does
             case "note/model" when State == SessionState.Idle
                 && parameters.ValueKind == JsonValueKind.Object:
                 var laneState = parameters.TryGetProperty("state", out var s) ? s.GetString() : "";
-                var modelName = parameters.TryGetProperty("name", out var n) ? n.GetString() : "";
-                if (laneState == "loading")
+                var firstUse = parameters.TryGetProperty("firstUse", out var f) && f.GetBoolean();
+                if (laneState == "loading" && firstUse)
                 {
                     ModelsReady = false;
-                    var firstUse = parameters.TryGetProperty("firstUse", out var f) && f.GetBoolean();
-                    Status.Append(firstUse
-                        ? $"Preparing {modelName} for this computer - this can take a few minutes"
-                        : $"Loading {modelName}", busy: true);
+                    Status.Append("Preparing note model for this computer - this can take a few minutes",
+                        busy: true);
                 }
-                else if (laneState is "ready" or "failed")
+                else if ((laneState is "ready" or "failed") && !ModelsReady)
                 {
                     ModelsReady = true;
-                    Status.Append(laneState == "ready" ? $"{modelName} ready" : "Ready");
+                    Status.Append("Ready");
                 }
 
                 break;

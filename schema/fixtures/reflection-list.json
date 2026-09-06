@@ -1,0 +1,20 @@
+{
+    "jsonrpc": "2.0",
+    "id": 16,
+    "result": {
+        "reflections": [
+            {
+                "id": "a1b2c3d4e5f60718293a4b5c6d7e8f90",
+                "startedAt": "2026-08-17T10:15:00Z",
+                "label": "Elbow swelling",
+                "happened": "I reassured too quickly.",
+                "learned": "Warmth over a bursa needs a temperature and a look for a portal of entry.",
+                "next": "Check for a portal of entry first.",
+                "summary": "A patient in their forties presented with a week of painless swelling over one elbow, warm to the touch, with no injury. Olecranon bursitis was suspected and rest with anti-inflammatory treatment agreed.",
+                "createdAt": "2026-09-06T10:26:40Z",
+                "editedAt": null,
+                "demo": false
+            }
+        ]
+    }
+}

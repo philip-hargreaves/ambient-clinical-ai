@@ -72,8 +72,11 @@ set_target_properties(sqlite3 PROPERTIES COMPILE_WARNING_AS_ERROR OFF)
 set(ambient_schema_dir ${CMAKE_CURRENT_SOURCE_DIR}/src/adapters/storage/schema)
 file(READ ${ambient_schema_dir}/ambient.sql AMBIENT_SCHEMA_SQL)
 file(READ ${ambient_schema_dir}/migrate-2-to-3.sql AMBIENT_MIGRATE_2_TO_3_SQL)
+file(READ ${ambient_schema_dir}/migrate-3-to-4.sql AMBIENT_MIGRATE_3_TO_4_SQL)
+file(READ ${ambient_schema_dir}/migrate-4-to-5.sql AMBIENT_MIGRATE_4_TO_5_SQL)
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
-    ${ambient_schema_dir}/ambient.sql ${ambient_schema_dir}/migrate-2-to-3.sql)
+    ${ambient_schema_dir}/ambient.sql ${ambient_schema_dir}/migrate-2-to-3.sql
+    ${ambient_schema_dir}/migrate-3-to-4.sql ${ambient_schema_dir}/migrate-4-to-5.sql)
 configure_file(src/adapters/storage/schema.hpp.in
     ${CMAKE_CURRENT_BINARY_DIR}/generated/adapters/storage/schema.hpp @ONLY)
 

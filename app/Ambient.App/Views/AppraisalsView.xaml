@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="Ambient.App.Views.AppraisalsView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Ambient.App.Views"
+    xmlns:vm="using:Ambient.App.Core.ViewModels">
+
+    <!-- One centred reading column -->
+    <Border Margin="8,0,8,8" Style="{StaticResource CardSurface}">
+        <ScrollViewer>
+            <Grid
+                MaxWidth="880"
+                Margin="24,20,24,24"
+                HorizontalAlignment="Center"
+                RowSpacing="18">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Grid ColumnSpacing="12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Button Click="OnBackClick" ToolTipService.ToolTip="Back">
+                        <FontIcon FontSize="14" Glyph="&#xE72B;" />
+                    </Button>
+                    <TextBlock
+                        Grid.Column="1"
+                        VerticalAlignment="Center"
+                        Style="{ThemeResource TitleTextBlockStyle}"
+                        Text="Appraisal" />
+                </Grid>
+
+                <!-- Search sits inside the journal, above the year -->
+                <TextBox
+                    Grid.Row="1"
+                    Width="240"
+                    Margin="0,0,0,-6"
+                    HorizontalAlignment="Right"
+                    AutomationProperties.Name="Search reflections"
+                    PlaceholderText="Search reflections"
+                    Text="{x:Bind ViewModel.Search, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                <!-- The year: a line, then the twelve months beneath it -->
+                <Grid Grid.Row="2" ColumnSpacing="16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Button
+                            Command="{x:Bind ViewModel.PreviousYearCommand}"
+                            Style="{StaticResource TrayButton}"
+                            ToolTipService.ToolTip="Earlier">
+                            <FontIcon FontSize="11" Glyph="&#xE76B;" />
+                        </Button>
+                        <!-- Pressing the year shows the whole year -->
+                        <Button
+                            MinWidth="52"
+                            Padding="6,2"
+                            VerticalAlignment="Center"
+                            Command="{x:Bind ViewModel.ShowWholeYearCommand}"
+                            Style="{StaticResource TrayButton}"
+                            ToolTipService.ToolTip="Show the whole year">
+                            <TextBlock
+                                Style="{ThemeResource SubtitleTextBlockStyle}"
+                                TextAlignment="Center"
+                                Text="{x:Bind ViewModel.YearLabel, Mode=OneWay}" />
+                        </Button>
+                        <Button
+                            Command="{x:Bind ViewModel.NextYearCommand}"
+                            Style="{StaticResource TrayButton}"
+                            ToolTipService.ToolTip="Later">
+                            <FontIcon FontSize="11" Glyph="&#xE76C;" />
+                        </Button>
+                    </StackPanel>
+                    <TextBlock
+                        Grid.Column="1"
+                        VerticalAlignment="Center"
+                        Foreground="{ThemeResource FaintTextBrush}"
+                        Text="{x:Bind ViewModel.CountLabel, Mode=OneWay}" />
+                </Grid>
+
+                <!-- Twelve equal cells across the width -->
+                <Border
+                    Grid.Row="3"
+                    Margin="0,-6,0,0"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="6">
+                    <ItemsRepeater ItemsSource="{x:Bind ViewModel.Months, Mode=OneWay}">
+                        <ItemsRepeater.Layout>
+                            <UniformGridLayout
+                                ItemsStretch="Fill"
+                                MaximumRowsOrColumns="12"
+                                MinColumnSpacing="0"
+                                MinItemWidth="40" />
+                        </ItemsRepeater.Layout>
+                        <ItemsRepeater.ItemTemplate>
+                            <DataTemplate x:DataType="vm:MonthMarker">
+                                <local:MonthMarkerView Marker="{x:Bind}" />
+                            </DataTemplate>
+                        </ItemsRepeater.ItemTemplate>
+                    </ItemsRepeater>
+                </Border>
+
+                <Grid Grid.Row="4">
+                    <ItemsControl ItemsSource="{x:Bind ViewModel.Cards}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="vm:ReflectionCard">
+                                <local:ReflectionCardView Card="{x:Bind}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <StackPanel
+                        Margin="0,56,0,0"
+                        HorizontalAlignment="Center"
+                        Spacing="8"
+                        Visibility="{x:Bind ViewModel.Empty, Mode=OneWay}">
+                        <TextBlock
+                            Style="{StaticResource PaneHeaderText}"
+                            TextAlignment="Center"
+                            Text="Nothing here yet" />
+                        <TextBlock
+                            MaxWidth="440"
+                            Foreground="{ThemeResource MutedTextBrush}"
+                            TextAlignment="Center"
+                            TextWrapping="Wrap"
+                            Text="After a consultation, press Create reflection on the clinical note to write what stood out, what you learned and whether you would do anything differently. Your reflections gather here by month, ready for your appraisal." />
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </ScrollViewer>
+    </Border>
+</UserControl>

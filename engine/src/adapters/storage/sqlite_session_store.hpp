@@ -37,10 +37,14 @@ class SqliteSessionStore : public ISessionStore {
     void SaveDocument(const SessionId& id, DocumentKind kind, const Document& document) override;
     void EditDocument(const SessionId& id, DocumentKind kind, const std::string& text) override;
     Document ReadDocument(const SessionId& id, DocumentKind kind) override;
+    void DeleteDocument(const SessionId& id, DocumentKind kind) override;
     std::vector<asr::Turn> ReadTurns(const SessionId& id) override;
     std::vector<float> ReadAudio(const SessionId& id) override;
     void Delete(const SessionId& id) override;
     void EraseUnretained() override;
+    SessionId Seed(const SessionSeed& seed) override;
+    std::size_t ClearDemo() override;
+    std::size_t DeleteAll() override;
 
    private:
     struct Open {
