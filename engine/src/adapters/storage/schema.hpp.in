@@ -13,4 +13,12 @@ inline constexpr const char* kMigrate2To3Sql = R"sql(
 @AMBIENT_MIGRATE_2_TO_3_SQL@
 )sql";
 
+inline constexpr const char* kMigrate3To4Sql = R"sql(
+@AMBIENT_MIGRATE_3_TO_4_SQL@
+)sql";
+
+inline constexpr const char* kMigrate4To5Sql = R"sql(
+@AMBIENT_MIGRATE_4_TO_5_SQL@
+)sql";
+
 }  // namespace ambient::store

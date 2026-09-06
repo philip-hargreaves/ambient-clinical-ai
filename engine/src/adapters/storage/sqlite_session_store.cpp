@@ -15,8 +15,8 @@ namespace ambient::store {
 namespace {
 
 // 1 was a catalog beside one file per session; 2 the single database;
-// 3 adds the retention flag
-constexpr std::int64_t kSchemaVersion = 3;
+// 3 adds retain; 4 the summary and reflection kinds; 5 the demo flag
+constexpr std::int64_t kSchemaVersion = 5;
 
 struct KindSpec {
     const char* name;  // documents.kind
@@ -33,6 +33,10 @@ KindSpec SpecFor(DocumentKind kind) {
             return {"translation", Domain::kTranslation};
         case DocumentKind::kLabel:
             return {"label", Domain::kLabel};
+        case DocumentKind::kSummary:
+            return {"summary", Domain::kSummary};
+        case DocumentKind::kReflection:
+            return {"reflection", Domain::kReflection};
     }
     throw std::invalid_argument("unknown document kind");
 }
@@ -76,7 +80,7 @@ std::filesystem::path DatabasePath(const std::filesystem::path& root) {
 // A file created by a newer build is refused, never best-effort read
 Db OpenDatabase(const std::filesystem::path& root) {
     Db db(DatabasePath(root));
-    const std::int64_t version = db.UserVersion();
+    std::int64_t version = db.UserVersion();
     if (version == 0) {
         // Incremental vacuum is creation-time; the WAL switch already wrote the
         // header, so the empty file is rebuilt to take it
@@ -88,11 +92,33 @@ Db OpenDatabase(const std::filesystem::path& root) {
         db.SetUserVersion(kSchemaVersion);
     } else if (version > kSchemaVersion) {
         throw std::runtime_error("store schema is newer than this build");
-    } else if (version == 2) {
-        Db::Transaction txn(db);
-        db.Exec(kMigrate2To3Sql);
-        txn.Commit();
-        db.SetUserVersion(3);
+    } else {
+        if (version == 2) {
+            Db::Transaction txn(db);
+            db.Exec(kMigrate2To3Sql);
+            txn.Commit();
+            db.SetUserVersion(3);
+            version = 3;
+        }
+        if (version == 3) {
+            // note_options references the dropped table: keys off, or the drop cascades. The pragma
+            // is a no-op inside a transaction
+            db.Exec("PRAGMA foreign_keys=OFF");
+            {
+                Db::Transaction txn(db);
+                db.Exec(kMigrate3To4Sql);
+                txn.Commit();
+            }
+            db.Exec("PRAGMA foreign_keys=ON");
+            db.SetUserVersion(4);
+            version = 4;
+        }
+        if (version == 4) {
+            Db::Transaction txn(db);
+            db.Exec(kMigrate4To5Sql);
+            txn.Commit();
+            db.SetUserVersion(5);
+        }
     }
     return db;
 }
@@ -288,11 +314,14 @@ std::vector<SessionSummary> SqliteSessionStore::ListSessions() {
     std::vector<SessionSummary> sessions;
     Db::Stmt select = db_.Prepare(
         "SELECT s.id, s.started_at, s.ended_at, s.state, s.sample_rate, k.wrapped, l.payload,"
-        // A retitle is housekeeping, not an edit to the record
+        // Label, summary and reflection are not edits to the record
         " (SELECT max(edited_at) FROM documents d WHERE d.session_id = s.id"
-        "  AND d.kind != 'label'),"
+        "  AND d.kind NOT IN ('label', 'summary', 'reflection')),"
         // The audio's length outlives the audio: the turns' end is plaintext
-        " (SELECT max(first_frame + frame_count) FROM turns t WHERE t.session_id = s.id)"
+        " (SELECT max(first_frame + frame_count) FROM turns t WHERE t.session_id = s.id),"
+        " EXISTS(SELECT 1 FROM documents r WHERE r.session_id = s.id"
+        "  AND r.kind IN ('reflection', 'summary')),"
+        " s.demo"
         " FROM sessions s"
         " LEFT JOIN session_keys k ON k.session_id = s.id"
         " LEFT JOIN documents l ON l.session_id = s.id AND l.kind = 'label'"
@@ -314,9 +343,62 @@ std::vector<SessionSummary> SqliteSessionStore::ListSessions() {
             summary.audio_seconds =
                 static_cast<double>(select.ColumnInt64(8)) / summary.sample_rate;
         }
+        summary.has_reflection = select.ColumnInt64(9) != 0;
+        summary.demo = select.ColumnInt64(10) != 0;
         sessions.push_back(std::move(summary));
     }
     return sessions;
+}
+
+// Row, key and turns land in one transaction, already finalised
+SessionId SqliteSessionStore::Seed(const SessionSeed& seed) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    const SessionId id = RandomId();
+    const ChunkCipher cipher = ChunkCipher::Generate();
+
+    Db::Transaction txn(db_);
+    Db::Stmt insert = db_.Prepare(
+        "INSERT INTO sessions(id, started_at, ended_at, state, sample_rate, retain, demo)"
+        " VALUES(?, ?, ?, 'finalised', ?, 1, 1)");
+    insert.BindText(1, id);
+    insert.BindText(2, seed.started_at);
+    insert.BindText(3, seed.ended_at);
+    insert.BindInt64(4, seed.sample_rate);
+    insert.Step();
+    Db::Stmt key = db_.Prepare("INSERT INTO session_keys(session_id, wrapped) VALUES(?, ?)");
+    key.BindText(1, id);
+    key.BindBlob(2, cipher.Wrapped());
+    key.Step();
+    std::int64_t seq = 0;
+    for (const asr::Turn& turn : seed.turns) {
+        InsertTurn(id, seq, cipher, turn);
+        seq += 1;
+    }
+    txn.Commit();
+    return id;
+}
+
+std::size_t SqliteSessionStore::DeleteAll() {
+    std::lock_guard<std::mutex> lock(mutex_);
+    Db::Stmt erase = db_.Prepare("DELETE FROM sessions WHERE id <> ?");
+    erase.BindText(1, open_.has_value() ? open_->id : std::string());
+    erase.Step();
+    const auto removed = static_cast<std::size_t>(db_.QueryInt64("SELECT changes()"));
+    if (removed > 0) {
+        db_.Exec("PRAGMA incremental_vacuum");
+    }
+    return removed;
+}
+
+std::size_t SqliteSessionStore::ClearDemo() {
+    std::lock_guard<std::mutex> lock(mutex_);
+    Db::Stmt erase = db_.Prepare("DELETE FROM sessions WHERE demo = 1");
+    erase.Step();
+    const auto removed = static_cast<std::size_t>(db_.QueryInt64("SELECT changes()"));
+    if (removed > 0) {
+        db_.Exec("PRAGMA incremental_vacuum");
+    }
+    return removed;
 }
 
 ChunkCipher SqliteSessionStore::CipherFor(const SessionId& id) {
@@ -384,6 +466,15 @@ void SqliteSessionStore::EditDocument(const SessionId& id, DocumentKind kind,
 Document SqliteSessionStore::ReadDocument(const SessionId& id, DocumentKind kind) {
     std::lock_guard<std::mutex> lock(mutex_);
     return ReadDocumentLocked(id, kind);
+}
+
+void SqliteSessionStore::DeleteDocument(const SessionId& id, DocumentKind kind) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    (void)CipherFor(id);  // the same refusals as a read: recording, or no such session
+    Db::Stmt remove = db_.Prepare("DELETE FROM documents WHERE session_id = ? AND kind = ?");
+    remove.BindText(1, id);
+    remove.BindText(2, SpecFor(kind).name);
+    remove.Step();
 }
 
 Document SqliteSessionStore::ReadDocumentLocked(const SessionId& id, DocumentKind kind) {

@@ -284,6 +284,167 @@ TEST(SessionStore, EveryDocumentKindRoundTrips) {
     EXPECT_EQ(store.ReadDocument(id, DocumentKind::kNote).text, "");
 }
 
+TEST(SessionStore, SummaryAndReflectionRoundTripAndDelete) {
+    TempRoot root;
+    SqliteSessionStore store(root.path, kNever);
+    const SessionId id = store.Begin({16000, "", ""});
+    store.Finalise(id);
+    store.SaveDocument(id, DocumentKind::kSummary, {.text = "A patient in their forties."});
+    store.SaveDocument(id, DocumentKind::kReflection,
+                       {.text = R"({"happened":"x","learned":"y","next":"z"})"});
+
+    EXPECT_EQ(store.ReadDocument(id, DocumentKind::kSummary).text, "A patient in their forties.");
+    EXPECT_EQ(store.ReadDocument(id, DocumentKind::kReflection).text,
+              R"({"happened":"x","learned":"y","next":"z"})");
+    EXPECT_TRUE(store.ReadDocument(id, DocumentKind::kReflection).edited_at.empty());
+    ASSERT_EQ(store.ListSessions().size(), 1u);
+    EXPECT_TRUE(store.ListSessions()[0].has_reflection);
+    EXPECT_TRUE(store.ListSessions()[0].edited_at.empty())
+        << "a reflection is not an edit to the clinical record";
+
+    store.EditDocument(id, DocumentKind::kReflection, R"({"happened":"x2"})");
+    EXPECT_FALSE(store.ReadDocument(id, DocumentKind::kReflection).edited_at.empty());
+    EXPECT_TRUE(store.ListSessions()[0].edited_at.empty());
+
+    store.DeleteDocument(id, DocumentKind::kReflection);
+    EXPECT_EQ(store.ReadDocument(id, DocumentKind::kReflection).text, "");
+    EXPECT_TRUE(store.ListSessions()[0].has_reflection) << "the summary alone is an entry";
+    EXPECT_EQ(store.ReadDocument(id, DocumentKind::kSummary).text, "A patient in their forties.");
+    store.DeleteDocument(id, DocumentKind::kSummary);
+    EXPECT_FALSE(store.ListSessions()[0].has_reflection);
+    store.DeleteDocument(id, DocumentKind::kReflection);  // gone already: not an error
+    EXPECT_THROW(store.DeleteDocument("nope", DocumentKind::kReflection), std::runtime_error);
+}
+
+TEST(SessionStore, SamplesSeedWholeListFlaggedAndClearTogether) {
+    TempRoot root;
+    SqliteSessionStore store(root.path, kNever);
+    const SessionId real = store.Begin({16000, "", ""});
+    store.Finalise(real);
+
+    SessionSeed seed;
+    seed.started_at = "2026-03-09T14:20:00Z";
+    seed.ended_at = "2026-03-09T14:31:51Z";
+    seed.turns = {{0, 16000, "Doctor", "Hello."}, {16000, 32000, "Patient", "Hi."}};
+    const SessionId sample = store.Seed(seed);
+    store.SaveDocument(sample, DocumentKind::kLabel, {.text = "Suspected multiple sclerosis"});
+    store.SaveDocument(sample, DocumentKind::kReflection, {.text = "{}"});
+
+    const auto listed = store.ListSessions();
+    ASSERT_EQ(listed.size(), 2u);
+    const auto& first = listed[0].id == sample ? listed[0] : listed[1];
+    EXPECT_TRUE(first.demo);
+    EXPECT_EQ(first.started_at, "2026-03-09T14:20:00Z");
+    EXPECT_EQ(first.ended_at, "2026-03-09T14:31:51Z");
+    EXPECT_EQ(first.state, "finalised");
+    EXPECT_EQ(first.label, "Suspected multiple sclerosis");
+    EXPECT_TRUE(first.has_reflection);
+    EXPECT_DOUBLE_EQ(first.audio_seconds, 3.0);
+    EXPECT_FALSE((listed[0].id == real ? listed[0] : listed[1]).demo);
+    EXPECT_EQ(store.ReadTurns(sample).size(), 2u);
+
+    EXPECT_EQ(store.ClearDemo(), 1u);
+    const auto after = store.ListSessions();
+    ASSERT_EQ(after.size(), 1u);
+    EXPECT_EQ(after[0].id, real);
+    EXPECT_EQ(store.ClearDemo(), 0u);
+}
+
+TEST(SessionStore, DeleteAllErasesEveryStoredSessionButNotTheOneRecording) {
+    TempRoot root;
+    SqliteSessionStore store(root.path, kNever);
+    const SessionId first = store.Begin({16000, "", ""});
+    store.Finalise(first);
+    store.SaveDocument(first, DocumentKind::kNote, {.text = "a note"});
+    SessionSeed seed;
+    seed.started_at = "2026-03-09T14:20:00Z";
+    seed.ended_at = "2026-03-09T14:31:51Z";
+    store.Seed(seed);
+    const SessionId live = store.Begin({16000, "", ""});
+
+    EXPECT_EQ(store.DeleteAll(), 2u);
+
+    EXPECT_THROW((void)store.ReadDocument(first, DocumentKind::kNote), std::runtime_error);
+    store.Finalise(live);
+    const auto left = store.ListSessions();
+    ASSERT_EQ(left.size(), 1u);
+    EXPECT_EQ(left[0].id, live);
+    EXPECT_EQ(store.DeleteAll(), 1u);
+    EXPECT_TRUE(store.ListSessions().empty());
+}
+
+TEST(SessionStore, AVersionFourDatabaseGainsTheSampleFlag) {
+    TempRoot root;
+    SessionId id;
+    {
+        SqliteSessionStore store(root.path, kNever);
+        id = store.Begin({16000, "", ""});
+        store.Finalise(id);
+    }
+    {
+        // Back to the version-4 shape: sessions without demo
+        Db db(root.DbPath());
+        db.Exec("PRAGMA foreign_keys=OFF");
+        db.Exec(
+            "CREATE TABLE sessions_v4(id TEXT PRIMARY KEY, started_at TEXT NOT NULL,"
+            " ended_at TEXT, state TEXT NOT NULL, sample_rate INTEGER NOT NULL,"
+            " device_id TEXT, device_name TEXT, lost_frames INTEGER NOT NULL DEFAULT 0,"
+            " retain INTEGER NOT NULL DEFAULT 1);"
+            "INSERT INTO sessions_v4 SELECT id, started_at, ended_at, state, sample_rate,"
+            " device_id, device_name, lost_frames, retain FROM sessions;"
+            "DROP TABLE sessions;"
+            "ALTER TABLE sessions_v4 RENAME TO sessions");
+        db.SetUserVersion(4);
+    }
+
+    SqliteSessionStore migrated(root.path, kNever);
+    Db db(root.DbPath());
+    EXPECT_EQ(db.UserVersion(), 5);
+    const auto listed = migrated.ListSessions();
+    ASSERT_EQ(listed.size(), 1u);
+    EXPECT_FALSE(listed[0].demo);
+}
+
+TEST(SessionStore, AVersionThreeDatabaseGainsTheNewDocumentKinds) {
+    TempRoot root;
+    SessionId id;
+    {
+        SqliteSessionStore store(root.path, kNever);
+        id = store.Begin({16000, "", ""});
+        store.Finalise(id);
+        store.SaveDocument(id, DocumentKind::kNote,
+                           {.text = "the note", .style = "soap", .detail = "concise"});
+        store.SaveDocument(id, DocumentKind::kLabel, {.text = "Elbow swelling"});
+    }
+    {
+        // Back to the version-3 shape: documents with the four-kind check
+        Db db(root.DbPath());
+        db.Exec("PRAGMA foreign_keys=OFF");
+        db.Exec(
+            "CREATE TABLE documents_v3(session_id TEXT NOT NULL REFERENCES sessions (id)"
+            " ON DELETE CASCADE, kind TEXT NOT NULL CHECK (kind IN ('note', 'patient',"
+            " 'translation', 'label')), language TEXT NOT NULL, payload BLOB NOT NULL,"
+            " generated_at TEXT, edited_at TEXT, PRIMARY KEY (session_id, kind));"
+            "INSERT INTO documents_v3 SELECT session_id, kind, language, payload,"
+            " generated_at, edited_at FROM documents;"
+            "DROP TABLE documents;"
+            "ALTER TABLE documents_v3 RENAME TO documents;"
+            "ALTER TABLE sessions DROP COLUMN demo");
+        db.SetUserVersion(3);
+    }
+
+    SqliteSessionStore migrated(root.path, kNever);
+    Db db(root.DbPath());
+    EXPECT_EQ(db.UserVersion(), 5);
+    const Document note = migrated.ReadDocument(id, DocumentKind::kNote);
+    EXPECT_EQ(note.text, "the note");
+    EXPECT_EQ(note.style, "soap") << "note_options survived the rebuild";
+    EXPECT_EQ(migrated.ReadDocument(id, DocumentKind::kLabel).text, "Elbow swelling");
+    migrated.SaveDocument(id, DocumentKind::kReflection, {.text = "{}"});
+    EXPECT_EQ(migrated.ReadDocument(id, DocumentKind::kReflection).text, "{}");
+    EXPECT_EQ(db.QueryInt64("PRAGMA foreign_keys"), 1) << "keys back on after the rebuild";
+}
+
 TEST(SessionStore, DocumentsRefuseTheRecordingSessionAndUnknownIds) {
     TempRoot root;
     SqliteSessionStore store(root.path, kNever);
@@ -490,7 +651,7 @@ TEST(SessionStore, AVersionTwoDatabaseGainsTheRetentionFlag) {
 
     SqliteSessionStore migrated(root.path, kNever);
     Db db(root.DbPath());
-    EXPECT_EQ(db.UserVersion(), 3);
+    EXPECT_EQ(db.UserVersion(), 5);
     Db::Stmt row = db.Prepare("SELECT retain FROM sessions WHERE id = ?");
     row.BindText(1, id);
     ASSERT_TRUE(row.Step());
@@ -615,7 +776,7 @@ TEST(SessionStore, OneDatabaseStampedWithTheSchemaVersion) {
     EXPECT_FALSE(std::filesystem::exists(root.path / "main.db"));
 
     Db db(root.DbPath());
-    EXPECT_EQ(db.UserVersion(), 3);
+    EXPECT_EQ(db.UserVersion(), 5);
     EXPECT_EQ(db.QueryInt64("PRAGMA auto_vacuum"), 2) << "incremental";
     EXPECT_EQ(db.QueryInt64("PRAGMA foreign_keys"), 1);
     Db::Stmt row = db.Prepare("SELECT id, sample_rate FROM sessions");
