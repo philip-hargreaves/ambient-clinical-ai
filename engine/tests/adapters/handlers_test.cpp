@@ -421,8 +421,9 @@ TEST(Handlers, ReflectionGetUpdateListAndDelete) {
     EXPECT_EQ(list[0]["id"], id);
     EXPECT_EQ(list[0]["label"], "Elbow swelling");
     EXPECT_EQ(list[0]["learned"], "check the temperature");
-    for (const auto& [key, value] :
-         LoadFixture("reflection-list.json")["result"]["reflections"][0].items()) {
+    // Named first: iterating a temporary's sub-object dangles
+    const json list_fixture = LoadFixture("reflection-list.json");
+    for (const auto& [key, value] : list_fixture["result"]["reflections"][0].items()) {
         EXPECT_TRUE(list[0].contains(key)) << key;
     }
 
