@@ -652,8 +652,26 @@ public sealed partial class ConsultationViewModel : ObservableObject, ISessionSt
 
     public void StartNewConsultation() => _ = CloseReviewAsync();
 
+    // The engine's own token rate, when the notification carries one
+    private static double? Rate(JsonElement parameters) =>
+        parameters.ValueKind == JsonValueKind.Object
+            && parameters.TryGetProperty("tokensPerSecond", out var rate)
+            && rate.ValueKind == JsonValueKind.Number
+        ? rate.GetDouble()
+        : null;
+
     private void HandleNotification(string method, JsonElement parameters)
     {
+        if (method == "note/model" && parameters.ValueKind == JsonValueKind.Object
+            && parameters.TryGetProperty("state", out var lane) && lane.GetString() == "ready")
+        {
+            _metrics?.NoteModel(
+                parameters.TryGetProperty("name", out var name) ? name.GetString() : null,
+                parameters.TryGetProperty("tier", out var tier) ? tier.GetString() : null,
+                parameters.TryGetProperty("seconds", out var sec) && sec.ValueKind == JsonValueKind.Number
+                    ? sec.GetDouble() : null);
+        }
+
         switch (method)
         {
             // A note model loading outside a consultation blocks recording;
@@ -703,7 +721,7 @@ public sealed partial class ConsultationViewModel : ObservableObject, ISessionSt
                 Note.ClinicalNoteText = parameters.GetProperty("text").GetString() ?? "";
                 if (!_regenerating)
                 {
-                    _metrics?.NotePartial();
+                    _metrics?.NotePartial(Rate(parameters));
                 }
 
                 break;
@@ -717,9 +735,9 @@ public sealed partial class ConsultationViewModel : ObservableObject, ISessionSt
                 Note.Apply(NotePipelineEvent.NoteReady);
                 _loadedNote = Note.ClinicalNoteText;
                 State = SessionState.Review;
-                if (_metrics is not null && !_regenerating)
+                if (!_regenerating)
                 {
-                    _ = _metrics.SessionFinishedAsync(null, Note.ClinicalNoteText.Length);
+                    _metrics?.NoteReady(Rate(parameters));
                 }
 
                 break;
@@ -764,6 +782,11 @@ public sealed partial class ConsultationViewModel : ObservableObject, ISessionSt
                 }
 
                 Note.PatientInfoText = parameters.GetProperty("text").GetString() ?? "";
+                if (!_regenerating)
+                {
+                    _metrics?.PatientPartial(Rate(parameters));
+                }
+
                 break;
             case "patient/ready":
                 if (parameters.ValueKind == JsonValueKind.Object
@@ -776,11 +799,22 @@ public sealed partial class ConsultationViewModel : ObservableObject, ISessionSt
                 _loadedPatient = Note.PatientInfoText;
                 Note.PatientStale = false;  // freshly written from the note
                 Status.Append("Ready for review");
+                if (_metrics is not null && !_regenerating)
+                {
+                    _ = _metrics.SessionFinishedAsync(null, Note.ClinicalNoteText.Length,
+                        patientTokensPerSecond: Rate(parameters));
+                }
+
                 _regenerating = false;
                 break;
             case "patient/failed":
                 Note.Apply(NotePipelineEvent.PatientInfoFailed);
                 Status.Append("Patient note failed");
+                if (_metrics is not null && !_regenerating)
+                {
+                    _ = _metrics.SessionFinishedAsync(null, Note.ClinicalNoteText.Length, "failed");
+                }
+
                 _regenerating = false;
                 break;
             case "translate/partial" when parameters.ValueKind == JsonValueKind.Object:
