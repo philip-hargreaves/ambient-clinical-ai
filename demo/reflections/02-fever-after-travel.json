@@ -9,644 +9,6 @@
   "patient": "Your appointment today\nYou came to see us because you have been unwell for one week. You described having a fever and sweating at night. You also mentioned feeling tired and having muscle aches.\n\nYour assessment\nThe working diagnosis is undifferentiated fever. This means you have a high temperature but we do not know the cause yet. We suspect you may have malaria or another rare infection. This is linked to your recent trip to rural Vietnam.\n\nYour treatment and next steps\nYou must go to a central London clinic or your local A&E now. You need to have blood tests done there. These tests include thick and thin blood films for malaria. They also check your inflammatory markers. You should stay home from work until this is resolved.\n\nWhen to contact us\nWe did not discuss any specific warning signs to watch for.",
   "summary": "A patient in their thirties presented with fever, night sweats, myalgia, and nausea following travel to Vietnam. A working diagnosis of undifferentiated fever with high suspicion for malaria was made. The patient was advised to stay home and attend a clinic for blood tests, including malaria films.",
   "audioSeconds": 632.05,
-  "turns": [
-    {
-      "speaker": "doctor",
-      "firstFrame": 41696,
-      "frameCount": 19520,
-      "text": "Hi, good morning."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 73344,
-      "frameCount": 9376,
-      "text": "it, eh?"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 85216,
-      "frameCount": 48704,
-      "text": "Hi there, this is Dr. Jean Mizor from GP at Hand."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 147168,
-      "frameCount": 48192,
-      "text": "Hello there, I'm wondering if you can help me today."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 202976,
-      "frameCount": 101440,
-      "text": "Okay, sure, I'll try. Before we start, can I please confirm your full name and date of birth?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 318688,
-      "frameCount": 102976,
-      "text": "Yes, it's Sarah Smith and it's the 2nd of November, 1992."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 428768,
-      "frameCount": 62016,
-      "text": "That's great. Thank you, Sarah. Sarah, are you in a private place where you're okay to speak at the moment?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 497888,
-      "frameCount": 20142,
-      "text": "I am indeed, yes."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 518030,
-      "frameCount": 30610,
-      "text": "Okay, so tell me what's been going on."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 563936,
-      "frameCount": 219200,
-      "text": "Okay, I've really not been feeling so well at all recently. I've been struggling with fever for the past week. Yeah, I would say it's passed about seven days ago. I'm just, I'm really hot and sweaty all the time and just generally not feeling good."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 798370,
-      "frameCount": 96894,
-      "text": "all right sorry to hear that now um along with this fever and this feeling of sweaty any other symptoms at all"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 913632,
-      "frameCount": 225344,
-      "text": "I'd say that I'm aching all over really my muscles are really aching I'm feeling quite nauseous so I've not been able to eat very much and I have been drinking but it's been quite a small amount"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 1152736,
-      "frameCount": 21050,
-      "text": "And..."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 1173786,
-      "frameCount": 101894,
-      "text": "just generally quite tired and unwell and sweating during the night I'm quite cold"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 1287392,
-      "frameCount": 130112,
-      "text": "Okay, all right. And so you're having periods of when you're feeling hot and also periods when you're feeling cold as well?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 1427168,
-      "frameCount": 53824,
-      "text": "Yes, yeah, it's quite interchangeable. It's not really a pattern to it."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 1489120,
-      "frameCount": 47168,
-      "text": "Okay, and have you been taking any medication?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 1553632,
-      "frameCount": 171325,
-      "text": "I've been trying to like take ibuprofen and paracetamol just from over the counter but it's not really helping just been taking the recommended dose every day of those"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 1724957,
-      "frameCount": 56067,
-      "text": "And when you say it's not helping, is it bringing the temperature down at all?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 1794272,
-      "frameCount": 91200,
-      "text": "Perhaps slightly, yes, but I'm still experiencing these symptoms, so it does take the edge off of it."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 1892064,
-      "frameCount": 100928,
-      "text": "Okay, all right. And can I just tell you, have you got any cough or cold or sore throat, anybody knows anything like that?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 2000950,
-      "frameCount": 49898,
-      "text": "Not those sort of symptoms really."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 2057952,
-      "frameCount": 55872,
-      "text": "Which symptoms are you getting, other than the ones you've already mentioned to me?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 2130144,
-      "frameCount": 222784,
-      "text": "um so i have i have a it's mainly just the sweating really and the nausea uh that's overtaking all day and the the aching muscles all over"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 2355449,
-      "frameCount": 37415,
-      "text": "Sure. Have you had any earpaints?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 2410720,
-      "frameCount": 73280,
-      "text": "No, my ears are fine actually, I haven't had any problems for my ears."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 2490080,
-      "frameCount": 134208,
-      "text": "Okay, I just need to check for any other causes of infection in the body. So I'm going to go through some kind of systemic questions. Have you had any diarrhea?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 2642656,
-      "frameCount": 84544,
-      "text": "Not really, no."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 2730208,
-      "frameCount": 37952,
-      "text": "Okay, have you got any next difference at all?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 2787552,
-      "frameCount": 76352,
-      "text": "um no okay next been fine"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 2874592,
-      "frameCount": 42048,
-      "text": "All right. Do you have any headache?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 2951904,
-      "frameCount": 156224,
-      "text": "not more than usual no just like the general headaches but not just from staring at the screen no migraines or anything"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 3110112,
-      "frameCount": 62528,
-      "text": "okay so you know your normal headache where is that in the back of the head or the front of the head"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 3189472,
-      "frameCount": 63040,
-      "text": "um it's quite centralized over over the head"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 3270368,
-      "frameCount": 36928,
-      "text": "Okay, and how long have you been having that for?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 3327200,
-      "frameCount": 200768,
-      "text": "it's something that I've struggled with for years really just related to screen use or like changes in weather patterns high pressure days sometimes I struggle with migraines and headaches"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 3534048,
-      "frameCount": 54848,
-      "text": "Okay, have you got any irrational body anywhere at all?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 3606752,
-      "frameCount": 48192,
-      "text": "I haven't noticed any rushes, no."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 3660441,
-      "frameCount": 42631,
-      "text": "Are any joints swollen or tender or sore?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 3715808,
-      "frameCount": 171072,
-      "text": "Not really I mean I often have problems with back pain but not really any other joints. Okay all right. Any problems?"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 3898080,
-      "frameCount": 92224,
-      "text": "Right. And have you got any kind of symptoms down below when you're passing urine?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 4012256,
-      "frameCount": 24687,
-      "text": "No, there's been no problems there."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 4045024,
-      "frameCount": 37440,
-      "text": "Okay, any painful urination at all?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 4099296,
-      "frameCount": 23616,
-      "text": "Not at all, no."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 4125408,
-      "frameCount": 35904,
-      "text": "Are you pulsing urine more often than normal?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 4183264,
-      "frameCount": 65088,
-      "text": "I don't think so. No, it's been fairly regular."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 4254432,
-      "frameCount": 37440,
-      "text": "Okay. Have you been abroad anywhere recently?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 4311264,
-      "frameCount": 22080,
-      "text": "Yes, I have actually."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 4345806,
-      "frameCount": 10066,
-      "text": "Where have you been?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 4365536,
-      "frameCount": 65088,
-      "text": "I went to Vietnam, I came back four weeks ago now."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 4452064,
-      "frameCount": 116288,
-      "text": "Okay. And did you take malaria preventive medication when you went out there?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 4582624,
-      "frameCount": 16960,
-      "text": "I did, yes."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 4607200,
-      "frameCount": 14400,
-      "text": "Which one did you take?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 4654304,
-      "frameCount": 41926,
-      "text": "Ooh, I can't remember now off the top of my head."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 4696230,
-      "frameCount": 33914,
-      "text": "Was it a weekly tablet or a daily tablet?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 4740780,
-      "frameCount": 16500,
-      "text": "I think it was daily."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 4778720,
-      "frameCount": 94784,
-      "text": "Okay and was it one tablet or was there another one that you would take on top of the first one?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 4899040,
-      "frameCount": 55872,
-      "text": "I think it was another one that I took on top of the first one."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 4962528,
-      "frameCount": 134110,
-      "text": "okay and what were you doing out in vietnam was it just you're saying the cities or going through villages or hiking what kind of activities"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 5096638,
-      "frameCount": 137314,
-      "text": "five really because we were there for a few weeks and we toured to several different parts of the country in the countryside and some cities as well."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 5252320,
-      "frameCount": 117824,
-      "text": "Okay and did you do any kind of were you in rivers or things like that? How adventurous were you?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 5382368,
-      "frameCount": 27750,
-      "text": "Sorry, could you repeat that?"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 5412563,
-      "frameCount": 90730,
-      "text": "Were you going out into the rivers? Were you going on beaches? I mean, how adventurous was your trip?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 5503293,
-      "frameCount": 178659,
-      "text": "Yes it was quite adventurous we were sort of trekking and cycling through farmland and seeing how people lived in their day-to-day life in farmland."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 5685472,
-      "frameCount": 138816,
-      "text": "Right, okay. Thank you for sharing that with me. Now do you have any other illnesses at all in the past?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 5837536,
-      "frameCount": 132160,
-      "text": "As I said, I've been struggling with back pain for quite a while, but I haven't really had any major illnesses in the past."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 5974057,
-      "frameCount": 47863,
-      "text": "And that back pain, have you seen anyone about that?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 6046944,
-      "frameCount": 54336,
-      "text": "Yes, yeah, I'm under a physiotherapist at the moment for that."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 6112869,
-      "frameCount": 41147,
-      "text": "Have they given you any kind of diagnosis at all?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 6185184,
-      "frameCount": 206912,
-      "text": "um they've said that it's related to long periods of time sitting at a desk and just a bad posture so mainly the exercises are focused on improving posture and and strength of the muscles in the back"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 6403296,
-      "frameCount": 51264,
-      "text": "Are there any illnesses in your family at all?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 6484192,
-      "frameCount": 136928,
-      "text": "um the main one would be um heart attack my my father passed away of that"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 6604278,
-      "frameCount": 50798,
-      "text": "How old was he when that happened?"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 6655076,
-      "frameCount": 6844,
-      "text": "happens."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 6686432,
-      "frameCount": 44608,
-      "text": "um 68 i think yeah"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 6747360,
-      "frameCount": 45632,
-      "text": "Okay, are you on any medication at all?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 6825184,
-      "frameCount": 32320,
-      "text": "Just Serizet."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 6877920,
-      "frameCount": 78912,
-      "text": "Okay. Do you have any allergies at all, Tonya, medication?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 6968032,
-      "frameCount": 45120,
-      "text": "No, I've just really, pollen allergy, that's all I have."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 7031520,
-      "frameCount": 18720,
-      "text": "Okay, so hay fever."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 7062240,
-      "frameCount": 20544,
-      "text": "Yes, yeah, just take fever."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 7091936,
-      "frameCount": 63552,
-      "text": "All right. Are you, you're working at the moment?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 7192288,
-      "frameCount": 22109,
-      "text": "I am, yes."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 7214397,
-      "frameCount": 16355,
-      "text": "What do you work as?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 7255264,
-      "frameCount": 29248,
-      "text": "I work as a nurse."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 7301344,
-      "frameCount": 98880,
-      "text": "okay all right um and um you're up to date with all vaccinations hepatitis B that kind of thing"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 7409376,
-      "frameCount": 16960,
-      "text": "Yes, indeed, yeah."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 7432416,
-      "frameCount": 8768,
-      "text": "OK."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 7464672,
-      "frameCount": 107212,
-      "text": "I'm really struggling quite a lot of work at the moment. It's been quite difficult, feeling so tired all the time."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 7571884,
-      "frameCount": 73076,
-      "text": "Sure. Okay. And are you a smoker at all?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 7656672,
-      "frameCount": 15424,
-      "text": "No, I'm not."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 7677664,
-      "frameCount": 35904,
-      "text": "Okay, and are you doing much alcohol?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 7727840,
-      "frameCount": 77888,
-      "text": "moderate alcohol intake, I don't drink too much"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 7809575,
-      "frameCount": 37625,
-      "text": "and how much kind of physical exercise do you do normally"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 7868640,
-      "frameCount": 73792,
-      "text": "I try and do some moderate physical exercise a few times a week."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 7949536,
-      "frameCount": 1048128,
-      "text": "Okay, that's good. All right. So what I think we're going to need to do is we're going to need to bring you into one of our clinics exam and we're going to need to arrange some blood tests as well. Okay. So what I want to do is the first question that I have in my mind is that we need to find a reason for why you've got this fever and these symptoms because there's no apparent reason from what you've told me. When someone has got fever and sweats, we want to find out have they got chest infection, have they got a throat infection, and if we can't find a focus of infection, then that's an outstanding question that needs to be answered. The second thing, second factor is that you've recently come from Vietnam and you've had exposure to rural areas, and we need to think about things like malaria or other exotic infections as well. So you're probably going to need some blood tests after you've been seen by somebody. Now the urgency of those blood tests depends partly on what we find when we examine you, which is why we're going to go for the examination first."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 9003744,
-      "frameCount": 10304,
-      "text": "Okay."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 9017056,
-      "frameCount": 672320,
-      "text": "come into one of our clinics in central London. That's one option. And then the GP there who examines you can then decide on how urgent the blood tests and things are going to be. Or if it's inconvenient for you to come into central London because you're living further out, you could actually just attend a local A&E. I'm going to type up what my thought process is and what kind of tests I think you need in the notes for this appointment. So you could show that to them at reception. I'll be asking for something called thick and thin blood films to check for malaria and inflammatory markers and things like that. It's technical terms, but they'll understand what I'm talking about. But I don't think you can go into work until we've sorted this out. And we need to sort this out sooner rather than later."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 9699040,
-      "frameCount": 9792,
-      "text": "Okay."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 9715721,
-      "frameCount": 4890,
-      "text": "Bye."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 9720611,
-      "frameCount": 100509,
-      "text": "That sounds great. Thank you so much for your help. I think, yeah, I can come straight into central London today to get that sorted."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 9821120,
-      "frameCount": 194400,
-      "text": "fine so what I'm going to do is I will send a message to one of admin team members asking them to book you in and if you can ring the number that I leave in your consultation notes after a few minutes and then they'll slot you in and then we can sort things out from there okay"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 10028768,
-      "frameCount": 30858,
-      "text": "That's brilliant. Thank you very much."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 10059626,
-      "frameCount": 31670,
-      "text": "All right then. Okay. Take care then. All the best."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 10096352,
-      "frameCount": 8768,
-      "text": "Goodbye."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 10106592,
-      "frameCount": 6208,
-      "text": "Bye."
-    }
-  ],
   "answers": {
     "happened": "The travel history came out only because I asked directly, well into a fever history that had no focus. Rural travel, trekking and cycling, malaria tablets she could not name. That one question changed the consultation from a viral illness to a possible malaria.",
     "learned": "Ask about travel early in any fever without a focus, and ask what the prophylaxis was rather than whether it was taken. A patient with clinical knowledge of their own still needs the same safety-netting as anyone else.",
@@ -656,5 +18,113 @@
     "happened": "Have you been abroad anywhere recently? / Yes, I have actually. ... I went to Vietnam.",
     "learned": "did you take malaria preventative medication when you went out there? / I did, yes. / Which one did you take? / Ooo, I can't remember now",
     "next": "I'm going to type up what my thought process is and what kind of test I think you need in the notes for this appointment, so you could show that to them at reception"
-  }
+  },
+  "turns": [
+    {"speaker": "doctor", "firstFrame": 41696, "frameCount": 19520, "text": "Hi, good morning."},
+    {"speaker": "patient", "firstFrame": 73344, "frameCount": 9376, "text": "it, eh?"},
+    {"speaker": "doctor", "firstFrame": 85216, "frameCount": 48704, "text": "Hi there, this is Dr. Jean Mizor from GP at Hand."},
+    {"speaker": "patient", "firstFrame": 147168, "frameCount": 48192, "text": "Hello there, I'm wondering if you can help me today."},
+    {"speaker": "doctor", "firstFrame": 202976, "frameCount": 101440, "text": "Okay, sure, I'll try. Before we start, can I please confirm your full name and date of birth?"},
+    {"speaker": "patient", "firstFrame": 318688, "frameCount": 102976, "text": "Yes, it's Sarah Smith and it's the 2nd of November, 1992."},
+    {"speaker": "doctor", "firstFrame": 428768, "frameCount": 62016, "text": "That's great. Thank you, Sarah. Sarah, are you in a private place where you're okay to speak at the moment?"},
+    {"speaker": "patient", "firstFrame": 497888, "frameCount": 20142, "text": "I am indeed, yes."},
+    {"speaker": "doctor", "firstFrame": 518030, "frameCount": 30610, "text": "Okay, so tell me what's been going on."},
+    {"speaker": "patient", "firstFrame": 563936, "frameCount": 219200, "text": "Okay, I've really not been feeling so well at all recently. I've been struggling with fever for the past week. Yeah, I would say it's passed about seven days ago. I'm just, I'm really hot and sweaty all the time and just generally not feeling good."},
+    {"speaker": "doctor", "firstFrame": 798370, "frameCount": 96894, "text": "all right sorry to hear that now um along with this fever and this feeling of sweaty any other symptoms at all"},
+    {"speaker": "patient", "firstFrame": 913632, "frameCount": 225344, "text": "I'd say that I'm aching all over really my muscles are really aching I'm feeling quite nauseous so I've not been able to eat very much and I have been drinking but it's been quite a small amount"},
+    {"speaker": "doctor", "firstFrame": 1152736, "frameCount": 21050, "text": "And..."},
+    {"speaker": "patient", "firstFrame": 1173786, "frameCount": 101894, "text": "just generally quite tired and unwell and sweating during the night I'm quite cold"},
+    {"speaker": "doctor", "firstFrame": 1287392, "frameCount": 130112, "text": "Okay, all right. And so you're having periods of when you're feeling hot and also periods when you're feeling cold as well?"},
+    {"speaker": "patient", "firstFrame": 1427168, "frameCount": 53824, "text": "Yes, yeah, it's quite interchangeable. It's not really a pattern to it."},
+    {"speaker": "doctor", "firstFrame": 1489120, "frameCount": 47168, "text": "Okay, and have you been taking any medication?"},
+    {"speaker": "patient", "firstFrame": 1553632, "frameCount": 171325, "text": "I've been trying to like take ibuprofen and paracetamol just from over the counter but it's not really helping just been taking the recommended dose every day of those"},
+    {"speaker": "doctor", "firstFrame": 1724957, "frameCount": 56067, "text": "And when you say it's not helping, is it bringing the temperature down at all?"},
+    {"speaker": "patient", "firstFrame": 1794272, "frameCount": 91200, "text": "Perhaps slightly, yes, but I'm still experiencing these symptoms, so it does take the edge off of it."},
+    {"speaker": "doctor", "firstFrame": 1892064, "frameCount": 100928, "text": "Okay, all right. And can I just tell you, have you got any cough or cold or sore throat, anybody knows anything like that?"},
+    {"speaker": "patient", "firstFrame": 2000950, "frameCount": 49898, "text": "Not those sort of symptoms really."},
+    {"speaker": "doctor", "firstFrame": 2057952, "frameCount": 55872, "text": "Which symptoms are you getting, other than the ones you've already mentioned to me?"},
+    {"speaker": "patient", "firstFrame": 2130144, "frameCount": 222784, "text": "um so i have i have a it's mainly just the sweating really and the nausea uh that's overtaking all day and the the aching muscles all over"},
+    {"speaker": "doctor", "firstFrame": 2355449, "frameCount": 37415, "text": "Sure. Have you had any earpaints?"},
+    {"speaker": "patient", "firstFrame": 2410720, "frameCount": 73280, "text": "No, my ears are fine actually, I haven't had any problems for my ears."},
+    {"speaker": "doctor", "firstFrame": 2490080, "frameCount": 134208, "text": "Okay, I just need to check for any other causes of infection in the body. So I'm going to go through some kind of systemic questions. Have you had any diarrhea?"},
+    {"speaker": "patient", "firstFrame": 2642656, "frameCount": 84544, "text": "Not really, no."},
+    {"speaker": "doctor", "firstFrame": 2730208, "frameCount": 37952, "text": "Okay, have you got any next difference at all?"},
+    {"speaker": "patient", "firstFrame": 2787552, "frameCount": 76352, "text": "um no okay next been fine"},
+    {"speaker": "doctor", "firstFrame": 2874592, "frameCount": 42048, "text": "All right. Do you have any headache?"},
+    {"speaker": "patient", "firstFrame": 2951904, "frameCount": 156224, "text": "not more than usual no just like the general headaches but not just from staring at the screen no migraines or anything"},
+    {"speaker": "doctor", "firstFrame": 3110112, "frameCount": 62528, "text": "okay so you know your normal headache where is that in the back of the head or the front of the head"},
+    {"speaker": "patient", "firstFrame": 3189472, "frameCount": 63040, "text": "um it's quite centralized over over the head"},
+    {"speaker": "doctor", "firstFrame": 3270368, "frameCount": 36928, "text": "Okay, and how long have you been having that for?"},
+    {"speaker": "patient", "firstFrame": 3327200, "frameCount": 200768, "text": "it's something that I've struggled with for years really just related to screen use or like changes in weather patterns high pressure days sometimes I struggle with migraines and headaches"},
+    {"speaker": "doctor", "firstFrame": 3534048, "frameCount": 54848, "text": "Okay, have you got any irrational body anywhere at all?"},
+    {"speaker": "patient", "firstFrame": 3606752, "frameCount": 48192, "text": "I haven't noticed any rushes, no."},
+    {"speaker": "doctor", "firstFrame": 3660441, "frameCount": 42631, "text": "Are any joints swollen or tender or sore?"},
+    {"speaker": "patient", "firstFrame": 3715808, "frameCount": 171072, "text": "Not really I mean I often have problems with back pain but not really any other joints. Okay all right. Any problems?"},
+    {"speaker": "doctor", "firstFrame": 3898080, "frameCount": 92224, "text": "Right. And have you got any kind of symptoms down below when you're passing urine?"},
+    {"speaker": "patient", "firstFrame": 4012256, "frameCount": 24687, "text": "No, there's been no problems there."},
+    {"speaker": "doctor", "firstFrame": 4045024, "frameCount": 37440, "text": "Okay, any painful urination at all?"},
+    {"speaker": "patient", "firstFrame": 4099296, "frameCount": 23616, "text": "Not at all, no."},
+    {"speaker": "doctor", "firstFrame": 4125408, "frameCount": 35904, "text": "Are you pulsing urine more often than normal?"},
+    {"speaker": "patient", "firstFrame": 4183264, "frameCount": 65088, "text": "I don't think so. No, it's been fairly regular."},
+    {"speaker": "doctor", "firstFrame": 4254432, "frameCount": 37440, "text": "Okay. Have you been abroad anywhere recently?"},
+    {"speaker": "patient", "firstFrame": 4311264, "frameCount": 22080, "text": "Yes, I have actually."},
+    {"speaker": "doctor", "firstFrame": 4345806, "frameCount": 10066, "text": "Where have you been?"},
+    {"speaker": "patient", "firstFrame": 4365536, "frameCount": 65088, "text": "I went to Vietnam, I came back four weeks ago now."},
+    {"speaker": "doctor", "firstFrame": 4452064, "frameCount": 116288, "text": "Okay. And did you take malaria preventive medication when you went out there?"},
+    {"speaker": "patient", "firstFrame": 4582624, "frameCount": 16960, "text": "I did, yes."},
+    {"speaker": "doctor", "firstFrame": 4607200, "frameCount": 14400, "text": "Which one did you take?"},
+    {"speaker": "patient", "firstFrame": 4654304, "frameCount": 41926, "text": "Ooh, I can't remember now off the top of my head."},
+    {"speaker": "doctor", "firstFrame": 4696230, "frameCount": 33914, "text": "Was it a weekly tablet or a daily tablet?"},
+    {"speaker": "patient", "firstFrame": 4740780, "frameCount": 16500, "text": "I think it was daily."},
+    {"speaker": "doctor", "firstFrame": 4778720, "frameCount": 94784, "text": "Okay and was it one tablet or was there another one that you would take on top of the first one?"},
+    {"speaker": "patient", "firstFrame": 4899040, "frameCount": 55872, "text": "I think it was another one that I took on top of the first one."},
+    {"speaker": "doctor", "firstFrame": 4962528, "frameCount": 134110, "text": "okay and what were you doing out in vietnam was it just you're saying the cities or going through villages or hiking what kind of activities"},
+    {"speaker": "patient", "firstFrame": 5096638, "frameCount": 137314, "text": "five really because we were there for a few weeks and we toured to several different parts of the country in the countryside and some cities as well."},
+    {"speaker": "doctor", "firstFrame": 5252320, "frameCount": 117824, "text": "Okay and did you do any kind of were you in rivers or things like that? How adventurous were you?"},
+    {"speaker": "patient", "firstFrame": 5382368, "frameCount": 27750, "text": "Sorry, could you repeat that?"},
+    {"speaker": "doctor", "firstFrame": 5412563, "frameCount": 90730, "text": "Were you going out into the rivers? Were you going on beaches? I mean, how adventurous was your trip?"},
+    {"speaker": "patient", "firstFrame": 5503293, "frameCount": 178659, "text": "Yes it was quite adventurous we were sort of trekking and cycling through farmland and seeing how people lived in their day-to-day life in farmland."},
+    {"speaker": "doctor", "firstFrame": 5685472, "frameCount": 138816, "text": "Right, okay. Thank you for sharing that with me. Now do you have any other illnesses at all in the past?"},
+    {"speaker": "patient", "firstFrame": 5837536, "frameCount": 132160, "text": "As I said, I've been struggling with back pain for quite a while, but I haven't really had any major illnesses in the past."},
+    {"speaker": "doctor", "firstFrame": 5974057, "frameCount": 47863, "text": "And that back pain, have you seen anyone about that?"},
+    {"speaker": "patient", "firstFrame": 6046944, "frameCount": 54336, "text": "Yes, yeah, I'm under a physiotherapist at the moment for that."},
+    {"speaker": "doctor", "firstFrame": 6112869, "frameCount": 41147, "text": "Have they given you any kind of diagnosis at all?"},
+    {"speaker": "patient", "firstFrame": 6185184, "frameCount": 206912, "text": "um they've said that it's related to long periods of time sitting at a desk and just a bad posture so mainly the exercises are focused on improving posture and and strength of the muscles in the back"},
+    {"speaker": "doctor", "firstFrame": 6403296, "frameCount": 51264, "text": "Are there any illnesses in your family at all?"},
+    {"speaker": "patient", "firstFrame": 6484192, "frameCount": 136928, "text": "um the main one would be um heart attack my my father passed away of that"},
+    {"speaker": "doctor", "firstFrame": 6604278, "frameCount": 50798, "text": "How old was he when that happened?"},
+    {"speaker": "doctor", "firstFrame": 6655076, "frameCount": 6844, "text": "happens."},
+    {"speaker": "patient", "firstFrame": 6686432, "frameCount": 44608, "text": "um 68 i think yeah"},
+    {"speaker": "doctor", "firstFrame": 6747360, "frameCount": 45632, "text": "Okay, are you on any medication at all?"},
+    {"speaker": "patient", "firstFrame": 6825184, "frameCount": 32320, "text": "Just Serizet."},
+    {"speaker": "doctor", "firstFrame": 6877920, "frameCount": 78912, "text": "Okay. Do you have any allergies at all, Tonya, medication?"},
+    {"speaker": "patient", "firstFrame": 6968032, "frameCount": 45120, "text": "No, I've just really, pollen allergy, that's all I have."},
+    {"speaker": "doctor", "firstFrame": 7031520, "frameCount": 18720, "text": "Okay, so hay fever."},
+    {"speaker": "patient", "firstFrame": 7062240, "frameCount": 20544, "text": "Yes, yeah, just take fever."},
+    {"speaker": "doctor", "firstFrame": 7091936, "frameCount": 63552, "text": "All right. Are you, you're working at the moment?"},
+    {"speaker": "patient", "firstFrame": 7192288, "frameCount": 22109, "text": "I am, yes."},
+    {"speaker": "doctor", "firstFrame": 7214397, "frameCount": 16355, "text": "What do you work as?"},
+    {"speaker": "patient", "firstFrame": 7255264, "frameCount": 29248, "text": "I work as a nurse."},
+    {"speaker": "doctor", "firstFrame": 7301344, "frameCount": 98880, "text": "okay all right um and um you're up to date with all vaccinations hepatitis B that kind of thing"},
+    {"speaker": "patient", "firstFrame": 7409376, "frameCount": 16960, "text": "Yes, indeed, yeah."},
+    {"speaker": "doctor", "firstFrame": 7432416, "frameCount": 8768, "text": "OK."},
+    {"speaker": "patient", "firstFrame": 7464672, "frameCount": 107212, "text": "I'm really struggling quite a lot of work at the moment. It's been quite difficult, feeling so tired all the time."},
+    {"speaker": "doctor", "firstFrame": 7571884, "frameCount": 73076, "text": "Sure. Okay. And are you a smoker at all?"},
+    {"speaker": "patient", "firstFrame": 7656672, "frameCount": 15424, "text": "No, I'm not."},
+    {"speaker": "doctor", "firstFrame": 7677664, "frameCount": 35904, "text": "Okay, and are you doing much alcohol?"},
+    {"speaker": "patient", "firstFrame": 7727840, "frameCount": 77888, "text": "moderate alcohol intake, I don't drink too much"},
+    {"speaker": "doctor", "firstFrame": 7809575, "frameCount": 37625, "text": "and how much kind of physical exercise do you do normally"},
+    {"speaker": "patient", "firstFrame": 7868640, "frameCount": 73792, "text": "I try and do some moderate physical exercise a few times a week."},
+    {"speaker": "doctor", "firstFrame": 7949536, "frameCount": 1048128, "text": "Okay, that's good. All right. So what I think we're going to need to do is we're going to need to bring you into one of our clinics exam and we're going to need to arrange some blood tests as well. Okay. So what I want to do is the first question that I have in my mind is that we need to find a reason for why you've got this fever and these symptoms because there's no apparent reason from what you've told me. When someone has got fever and sweats, we want to find out have they got chest infection, have they got a throat infection, and if we can't find a focus of infection, then that's an outstanding question that needs to be answered. The second thing, second factor is that you've recently come from Vietnam and you've had exposure to rural areas, and we need to think about things like malaria or other exotic infections as well. So you're probably going to need some blood tests after you've been seen by somebody. Now the urgency of those blood tests depends partly on what we find when we examine you, which is why we're going to go for the examination first."},
+    {"speaker": "patient", "firstFrame": 9003744, "frameCount": 10304, "text": "Okay."},
+    {"speaker": "doctor", "firstFrame": 9017056, "frameCount": 672320, "text": "come into one of our clinics in central London. That's one option. And then the GP there who examines you can then decide on how urgent the blood tests and things are going to be. Or if it's inconvenient for you to come into central London because you're living further out, you could actually just attend a local A&E. I'm going to type up what my thought process is and what kind of tests I think you need in the notes for this appointment. So you could show that to them at reception. I'll be asking for something called thick and thin blood films to check for malaria and inflammatory markers and things like that. It's technical terms, but they'll understand what I'm talking about. But I don't think you can go into work until we've sorted this out. And we need to sort this out sooner rather than later."},
+    {"speaker": "patient", "firstFrame": 9699040, "frameCount": 9792, "text": "Okay."},
+    {"speaker": "doctor", "firstFrame": 9715721, "frameCount": 4890, "text": "Bye."},
+    {"speaker": "patient", "firstFrame": 9720611, "frameCount": 100509, "text": "That sounds great. Thank you so much for your help. I think, yeah, I can come straight into central London today to get that sorted."},
+    {"speaker": "doctor", "firstFrame": 9821120, "frameCount": 194400, "text": "fine so what I'm going to do is I will send a message to one of admin team members asking them to book you in and if you can ring the number that I leave in your consultation notes after a few minutes and then they'll slot you in and then we can sort things out from there okay"},
+    {"speaker": "patient", "firstFrame": 10028768, "frameCount": 30858, "text": "That's brilliant. Thank you very much."},
+    {"speaker": "doctor", "firstFrame": 10059626, "frameCount": 31670, "text": "All right then. Okay. Take care then. All the best."},
+    {"speaker": "patient", "firstFrame": 10096352, "frameCount": 8768, "text": "Goodbye."},
+    {"speaker": "doctor", "firstFrame": 10106592, "frameCount": 6208, "text": "Bye."}
+  ]
 }

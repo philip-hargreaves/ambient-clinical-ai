@@ -9,542 +9,6 @@
   "patient": "Your appointment today\nYou came to see us about feeling worried. You said you could not sleep well. You have felt low energy for two months. You also feel sad about things you used to enjoy. You feel your heart beat fast and irregular.\n\nYour assessment\nThe working diagnosis is anxiety disorder. This is a mental health condition. It causes worry and fear. It can affect your sleep and mood.\n\nYour treatment and next steps\nWe will send blood tests. These check your heart health. You must refer yourself to NHS talking therapies. You should use online resources for help. We will see you again in one week. This is after you get the blood test results.\n\nWhen to contact us\nWe did not agree any warning signs to watch for today.",
   "summary": "A patient in their thirties presented with anxiety, sleep disturbance, and palpitations. The working diagnosis was an anxiety disorder. The plan involved self-referral for talking therapies, online resources, and blood tests to rule out physiological causes.",
   "audioSeconds": 776.34,
-  "turns": [
-    {
-      "speaker": "doctor",
-      "firstFrame": 22752,
-      "frameCount": 32320,
-      "text": "Hi there, I'm Dr. Smith from Babylon."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 61152,
-      "frameCount": 5401,
-      "text": "Hi."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 66553,
-      "frameCount": 72999,
-      "text": "Hi there, can you just confirm your name, date of birth, and the first line of your address, first of all, please?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 151264,
-      "frameCount": 278080,
-      "text": "My name is Valerie Paul. My date of birth is the 19th of September 1993. My address is at 64 Cliveden Place in South Wimbledon."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 443104,
-      "frameCount": 60704,
-      "text": "Okay, are you in a private place where you can have a confidential consultation today?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 513760,
-      "frameCount": 12864,
-      "text": "Yes, I am."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 530656,
-      "frameCount": 18496,
-      "text": "What can I do for you?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 564960,
-      "frameCount": 288320,
-      "text": "I've been feeling really anxious over the past few months and I just get really nervous every morning about leaving the house and it started to really worry me and just add up and build up on that anxiety and I just didn't know who to talk to so I wanted to check with my GP."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 854752,
-      "frameCount": 145472,
-      "text": "okay do you mind just telling me a bit more about when it started do you think there's something which changed in your life that time"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 1020640,
-      "frameCount": 369728,
-      "text": "I guess so. I think I would say maybe about two months or so I've been feeling like this and that probably coincides with me starting a new job which I would say it's quite, I mean every job is stressful when you first start but it's been really stressful I think over the past two months definitely."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 1391840,
-      "frameCount": 15424,
-      "text": "What's your job?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 1422560,
-      "frameCount": 516672,
-      "text": "So I work for a fashion retailer in the head office team and it's just a brand new sector I've never worked in retail before my boss is not very nice to me and but I also think that it's just been I just really dread going there I just hate speaking to her I hate seeing everyone and really worried about whether I'm doing well or not and it's really packing on like on the rest of my life like my sleep and stuff like that."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 1947360,
-      "frameCount": 241728,
-      "text": "Okay, so just day to day, tell me from the start of your day how it affects, you said you dread going to work, how does it affect you in terms of like your sleep at night and things like that?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 2198240,
-      "frameCount": 278092,
-      "text": "Yeah, so as I say, I don't want to go to work in the morning so I just find no way I can't get out of bed. But it's also because when I leave, when I've left work, I just feel so stressed. I'm so worried about everything I've done. I can't get to sleep for hours and hours and hours."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 2469269,
-      "frameCount": 36747,
-      "text": "What time do you go to bed at night time?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 2519264,
-      "frameCount": 24864,
-      "text": "About 10, 11."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 2544128,
-      "frameCount": 24864,
-      "text": "And what time do you get to sleep?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 2584288,
-      "frameCount": 45120,
-      "text": "not for ages i'm lying awake all night"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 2645216,
-      "frameCount": 118848,
-      "text": "Okay. And when you eventually get to sleep, do you wake up with your alarm in the morning or does something else wake you up before then?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 2774240,
-      "frameCount": 314384,
-      "text": "So I find my heart kind of racing and then I'm just like panicking that I'm going to be late and that that's going to make work even more stressful. So I do have an alarm, but I find myself waking up before that because I'm just, my heart is racing. And actually the other day I was just like, I was lying in bed and I really thought my heart was racing so much. I thought I was going to have a heart attack in the morning."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 3088624,
-      "frameCount": 49200,
-      "text": "Okay. And so how many hours sleep do you think you get a night?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 3155680,
-      "frameCount": 153664,
-      "text": "I just I can't even tell because I feel like I'm even when I'm in sleep it's such a shallow sleep but maybe three four hours I'm getting now"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 3324640,
-      "frameCount": 101440,
-      "text": "okay and what about your eating patterns any change in how you're eating or whether you let's change"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 3440352,
-      "frameCount": 198720,
-      "text": "probably not significant changes maybe no I wouldn't say that I wouldn't say I'm eating like much differently oh I'd probably have more chocolate than normal just because I feel so down"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 3647712,
-      "frameCount": 39488,
-      "text": "okay you're eating regularly otherwise"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 3703008,
-      "frameCount": 12864,
-      "text": "Yeah."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 3729120,
-      "frameCount": 70208,
-      "text": "And you told me about the palpitations, just tell me a bit more about that."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 3816160,
-      "frameCount": 417999,
-      "text": "Yeah, so it's usually kind of like when I realise in the morning that either I feel like I'm going to be late because I've overslept because I'm so tired, or I wake up in a panic thinking I'm going to be late. So it's just kind of like, just a constant like rapid heart beating. It's really stressful. I don't know if it's stress or I did think it was like a heart problem initially."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 4234159,
-      "frameCount": 59249,
-      "text": "Does it feel like a regular fast beat or an irregular beat?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 4316384,
-      "frameCount": 23104,
-      "text": "irregular I think."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 4350176,
-      "frameCount": 34880,
-      "text": "And how long do you think it lasts for when you get it?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 4415712,
-      "frameCount": 131648,
-      "text": "it can be anything I think a couple of minutes or the other day I was actually just sort of lying there for like holding my hand on my chest for like 10 minutes"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 4557536,
-      "frameCount": 68160,
-      "text": "Okay, is that something that you've had before this or is it a new thing?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 4652256,
-      "frameCount": 91712,
-      "text": "Yeah, I would say this is only in the past, sort of like couple of months, as I say that I've been experiencing this."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 4746976,
-      "frameCount": 25664,
-      "text": "Okay, any chest pain with that?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 4792032,
-      "frameCount": 100416,
-      "text": "No, well yeah it's painful when the heart when my heart is being fought but yeah."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 4905184,
-      "frameCount": 120384,
-      "text": "and in the daytime how how you said you you're not getting much sleep so how's your energy level in the daytime"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 5039328,
-      "frameCount": 330528,
-      "text": "it's just really really low i'm finding now that i'm just i find no enjoyment at all kind of day to day and anything that i'm doing it's not just my job it's you know when i leave i'm just so tired that anything that previously was really fun is just not it's not enjoyable and i'm like yeah on edge the whole time"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 5369856,
-      "frameCount": 26912,
-      "text": "Okay, so what do you do in the evenings?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 5419744,
-      "frameCount": 206912,
-      "text": "Well right now I'm working so late, everything is really stressful so I don't really get much time for myself but when I do want to go out or be friends or just relax it seems quite difficult to do that."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 5634784,
-      "frameCount": 59968,
-      "text": "Okay, and are you avoiding contact with friends or do you still see them?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 5713632,
-      "frameCount": 146496,
-      "text": "I avoid them in so much that I feel like I'm yeah so I mean sometimes it just I know that I'm not going to have fun because I don't want to go out anymore."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 5870304,
-      "frameCount": 26688,
-      "text": "things that I would normally have done."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 5904608,
-      "frameCount": 95808,
-      "text": "Okay, what about hobbies or exercise or anything else outside work? Do you do anything else outside work?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 6007008,
-      "frameCount": 304192,
-      "text": "Yeah, as I say, everything that I've had previously been doing has been just difficult to continue with. I did used to go running and to play tennis and stuff, but now it's just not, I'm just not enjoying it. I'm not going out to do that quite so much."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 6312672,
-      "frameCount": 48192,
-      "text": "And if it ever got so bad that you've actually had to miss work."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 6391008,
-      "frameCount": 141376,
-      "text": "no because i think that would just add to the tension but i do pretty much every morning i think oh i should call in sick or like okay it's not good"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 6558432,
-      "frameCount": 203328,
-      "text": "And what's the worst that it's got? Have you ever been so overwhelmed that you couldn't get into the office, you couldn't go into a situation? Have you ever had a panic attack?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 6736027,
-      "frameCount": 283781,
-      "text": "No I wouldn't say so I think I've always managed to make it to work but I wonder if it's building up so this is why I wanted to call it so I'm worried it's building up to that I don't know what to do because I've had to feel it felt it."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 7022304,
-      "frameCount": 216128,
-      "text": "get worse and worse over the past. Okay, and apart from work, are there any other situations which would evoke quite extreme anxiety, like being in public places, social situations, public transport, anything like that?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 7247072,
-      "frameCount": 226204,
-      "text": "Yeah, I mean, I find public transport really stressful in a way, especially being on the trip, because it's quite getting warmer, so it's just really airlift. But I think the majority of it, because my life is just so focused around work right now, the majority of it is focused around work as well."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 7473276,
-      "frameCount": 79524,
-      "text": "Okay, before this did you have any similar times in your life when you felt like this?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 7581408,
-      "frameCount": 185408,
-      "text": "not really i'm no i would say i mean everybody always has a bit of tension a bit of anxiety but i've never felt anything that's bad before"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 7773920,
-      "frameCount": 129088,
-      "text": "Okay. And what about your mood day to day? I mean, I can see that you're quite distressed by it, but do you ever get really down about this? Yeah."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 7920864,
-      "frameCount": 373057,
-      "text": "um i mean yeah yeah because i do yeah i'm pretty much down like i don't enjoy being a rough with my day at all because i'm just so worried about everything um and i find that even when i'm not like even at the weekends and stuff it's just the kind of like constant feeling of just being a bit down a bit unhappy"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 8293921,
-      "frameCount": 31199,
-      "text": "When do you think you last felt yourself?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 8363744,
-      "frameCount": 112704,
-      "text": "um i don't know if that's like a question i can't really i can't really put a date on that"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 8488160,
-      "frameCount": 158784,
-      "text": "And your mood ever been so low that you felt like you just couldn't carry on with your job or with your life or with your normal things as they were going on?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 8656608,
-      "frameCount": 319040,
-      "text": "I wouldn't say that I haven't had any suicidal thoughts or any thoughts that have been that extreme. I have a good support system, I do have a good family and stuff so I don't have worries about actually wanting to not go on, it's just that I don't want to go on like this."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 8978144,
-      "frameCount": 34880,
-      "text": "Okay, and who do you live with at home?"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 9038048,
-      "frameCount": 20544,
-      "text": "Who do you live with at home?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 9064672,
-      "frameCount": 33856,
-      "text": "Yeah, I live with my parents. It's my parents."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 9122016,
-      "frameCount": 51776,
-      "text": "and how much alcohol do you have in an average week do you think?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 9193696,
-      "frameCount": 363584,
-      "text": "um i don't know probably quite a lot on the friday or saturday just because that's kind of normal um maybe maybe i do have like a bit during the week that my parents obviously are retired so they just drink whenever they want so whenever they're having a glass of wine they'll offer it to me and it's like i guess i don't really keep track of it that much"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 9565920,
-      "frameCount": 43072,
-      "text": "Okay, so how much would you guess?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 9629920,
-      "frameCount": 211008,
-      "text": "probably like probably quite a lot on Friday or Saturday because it's usually going out so maybe like I probably go over my limit just on those days anyway and then like maybe a glass of wine during the week."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 9847520,
-      "frameCount": 46656,
-      "text": "Okay, do you smoke or take any other drugs or anything?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 9915616,
-      "frameCount": 76864,
-      "text": "um i try not to smoke but i do occasionally but i don't take"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 9998048,
-      "frameCount": 157760,
-      "text": "Okay. And have you done anything yourself to help? Have you talked to anyone, talked to any counsellors, done any online, looked online at all?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 10161888,
-      "frameCount": 377408,
-      "text": "anyways I talked to my mum because she also suffers from or she's suffered from like depression in the past I didn't think that it was that I was suffering from actual depression because it just seems to be manifesting as as just stress the whole time but I did talk to my mum about it but I haven't saw any she recommended that I come to the GP but I haven't saw any other"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 10556640,
-      "frameCount": 65088,
-      "text": "we'd be happy to have some one-to-one therapy"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 10644704,
-      "frameCount": 57408,
-      "text": "Yeah, I think so. I've never done that before."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 10706656,
-      "frameCount": 496192,
-      "text": "I mean, what we would suggest in the first instance is to do, so you can self refer via the NHS for what we call like talking therapy, which is a type of behavioural therapy where they can really look at your situation, how you're reacting to the what was provoking the anxiety and what you can do to try and overcome that. So I can send you the link for that. In the meantime, it can be a bit of a wait. there are some online resources that are really helpful."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 11206368,
-      "frameCount": 7968,
-      "text": "uh"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 11214336,
-      "frameCount": 105460,
-      "text": "put the details on there and you can get on with them straight away and try and work through them as well and"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 11319796,
-      "frameCount": 9516,
-      "text": "Yeah."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 11335392,
-      "frameCount": 424512,
-      "text": "and if you're feeling like it's not helping at all or your anxiety is getting worse to the point where you can't cope with work or you can't just do your normal things day to day then it's important for you to give us a call back and just discuss that further. I mean some people with anxiety they do need to take medication to control that but that's not something that we've suggested in the first instance."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 11771616,
-      "frameCount": 7232,
-      "text": "Okay."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 11782880,
-      "frameCount": 88128,
-      "text": "I'll put some more information on your notes about helping with your sleep patterns and things like that."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 11881184,
-      "frameCount": 26456,
-      "text": "That's great, I look forward to reading it."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 11907640,
-      "frameCount": 265960,
-      "text": "In terms of palpitations, it is more likely to be associated with anxiety, but it's probably worth having a couple of basic blood tests just to make sure that there's not something triggering that off, and then arranging a GP follow-up a week after you've had the test, and we can just go through the results with you."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 12181216,
-      "frameCount": 14912,
-      "text": "Okay, okay."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 12205280,
-      "frameCount": 60992,
-      "text": "So if you call this point line, you can arrange the blood test done."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 12278496,
-      "frameCount": 17472,
-      "text": "Okay, I'll call them up."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 12301024,
-      "frameCount": 9792,
-      "text": "Okay."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 12319968,
-      "frameCount": 12256,
-      "text": "Thank you so much."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 12332224,
-      "frameCount": 23648,
-      "text": "All right, take care."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 12363488,
-      "frameCount": 19008,
-      "text": "Have a good day. Bye."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 12393184,
-      "frameCount": 28256,
-      "text": "Sorry. It's like whatever."
-    }
-  ],
   "answers": {
     "happened": "The patient came with anxiety about a new job and left with a plan, but what stood out was how much I had to ask before the low mood, the loss of enjoyment and the weekend drinking came through. She had framed it all as stress, because a relative's depression had looked different from this.",
     "learned": "Anxiety and low mood travel together, and a patient's own label for what they feel is where the history starts, not where it ends. Asking directly about thoughts of not carrying on was easier than I expected, and she was glad to be asked.",
@@ -554,5 +18,96 @@
     "happened": "I didn't think that it was, that I was suffering from, actual depression because it just seems to be ... just stress the whole time",
     "learned": "has your mood ever been so low that you've felt like you just couldn't carry on ... / I haven't had any suicidal thoughts ... It's just that, I don't wanna go on like this.",
     "next": "I'll put some more information on your notes about, helping with your, sleep patterns and things like that ... arranging a GP follow-up a week after you've had the tests"
-  }
+  },
+  "turns": [
+    {"speaker": "doctor", "firstFrame": 22752, "frameCount": 32320, "text": "Hi there, I'm Dr. Smith from Babylon."},
+    {"speaker": "patient", "firstFrame": 61152, "frameCount": 5401, "text": "Hi."},
+    {"speaker": "doctor", "firstFrame": 66553, "frameCount": 72999, "text": "Hi there, can you just confirm your name, date of birth, and the first line of your address, first of all, please?"},
+    {"speaker": "patient", "firstFrame": 151264, "frameCount": 278080, "text": "My name is Valerie Paul. My date of birth is the 19th of September 1993. My address is at 64 Cliveden Place in South Wimbledon."},
+    {"speaker": "doctor", "firstFrame": 443104, "frameCount": 60704, "text": "Okay, are you in a private place where you can have a confidential consultation today?"},
+    {"speaker": "patient", "firstFrame": 513760, "frameCount": 12864, "text": "Yes, I am."},
+    {"speaker": "doctor", "firstFrame": 530656, "frameCount": 18496, "text": "What can I do for you?"},
+    {"speaker": "patient", "firstFrame": 564960, "frameCount": 288320, "text": "I've been feeling really anxious over the past few months and I just get really nervous every morning about leaving the house and it started to really worry me and just add up and build up on that anxiety and I just didn't know who to talk to so I wanted to check with my GP."},
+    {"speaker": "doctor", "firstFrame": 854752, "frameCount": 145472, "text": "okay do you mind just telling me a bit more about when it started do you think there's something which changed in your life that time"},
+    {"speaker": "patient", "firstFrame": 1020640, "frameCount": 369728, "text": "I guess so. I think I would say maybe about two months or so I've been feeling like this and that probably coincides with me starting a new job which I would say it's quite, I mean every job is stressful when you first start but it's been really stressful I think over the past two months definitely."},
+    {"speaker": "doctor", "firstFrame": 1391840, "frameCount": 15424, "text": "What's your job?"},
+    {"speaker": "patient", "firstFrame": 1422560, "frameCount": 516672, "text": "So I work for a fashion retailer in the head office team and it's just a brand new sector I've never worked in retail before my boss is not very nice to me and but I also think that it's just been I just really dread going there I just hate speaking to her I hate seeing everyone and really worried about whether I'm doing well or not and it's really packing on like on the rest of my life like my sleep and stuff like that."},
+    {"speaker": "doctor", "firstFrame": 1947360, "frameCount": 241728, "text": "Okay, so just day to day, tell me from the start of your day how it affects, you said you dread going to work, how does it affect you in terms of like your sleep at night and things like that?"},
+    {"speaker": "patient", "firstFrame": 2198240, "frameCount": 278092, "text": "Yeah, so as I say, I don't want to go to work in the morning so I just find no way I can't get out of bed. But it's also because when I leave, when I've left work, I just feel so stressed. I'm so worried about everything I've done. I can't get to sleep for hours and hours and hours."},
+    {"speaker": "doctor", "firstFrame": 2469269, "frameCount": 36747, "text": "What time do you go to bed at night time?"},
+    {"speaker": "patient", "firstFrame": 2519264, "frameCount": 24864, "text": "About 10, 11."},
+    {"speaker": "doctor", "firstFrame": 2544128, "frameCount": 24864, "text": "And what time do you get to sleep?"},
+    {"speaker": "patient", "firstFrame": 2584288, "frameCount": 45120, "text": "not for ages i'm lying awake all night"},
+    {"speaker": "doctor", "firstFrame": 2645216, "frameCount": 118848, "text": "Okay. And when you eventually get to sleep, do you wake up with your alarm in the morning or does something else wake you up before then?"},
+    {"speaker": "patient", "firstFrame": 2774240, "frameCount": 314384, "text": "So I find my heart kind of racing and then I'm just like panicking that I'm going to be late and that that's going to make work even more stressful. So I do have an alarm, but I find myself waking up before that because I'm just, my heart is racing. And actually the other day I was just like, I was lying in bed and I really thought my heart was racing so much. I thought I was going to have a heart attack in the morning."},
+    {"speaker": "doctor", "firstFrame": 3088624, "frameCount": 49200, "text": "Okay. And so how many hours sleep do you think you get a night?"},
+    {"speaker": "patient", "firstFrame": 3155680, "frameCount": 153664, "text": "I just I can't even tell because I feel like I'm even when I'm in sleep it's such a shallow sleep but maybe three four hours I'm getting now"},
+    {"speaker": "doctor", "firstFrame": 3324640, "frameCount": 101440, "text": "okay and what about your eating patterns any change in how you're eating or whether you let's change"},
+    {"speaker": "patient", "firstFrame": 3440352, "frameCount": 198720, "text": "probably not significant changes maybe no I wouldn't say that I wouldn't say I'm eating like much differently oh I'd probably have more chocolate than normal just because I feel so down"},
+    {"speaker": "doctor", "firstFrame": 3647712, "frameCount": 39488, "text": "okay you're eating regularly otherwise"},
+    {"speaker": "patient", "firstFrame": 3703008, "frameCount": 12864, "text": "Yeah."},
+    {"speaker": "doctor", "firstFrame": 3729120, "frameCount": 70208, "text": "And you told me about the palpitations, just tell me a bit more about that."},
+    {"speaker": "patient", "firstFrame": 3816160, "frameCount": 417999, "text": "Yeah, so it's usually kind of like when I realise in the morning that either I feel like I'm going to be late because I've overslept because I'm so tired, or I wake up in a panic thinking I'm going to be late. So it's just kind of like, just a constant like rapid heart beating. It's really stressful. I don't know if it's stress or I did think it was like a heart problem initially."},
+    {"speaker": "doctor", "firstFrame": 4234159, "frameCount": 59249, "text": "Does it feel like a regular fast beat or an irregular beat?"},
+    {"speaker": "patient", "firstFrame": 4316384, "frameCount": 23104, "text": "irregular I think."},
+    {"speaker": "doctor", "firstFrame": 4350176, "frameCount": 34880, "text": "And how long do you think it lasts for when you get it?"},
+    {"speaker": "patient", "firstFrame": 4415712, "frameCount": 131648, "text": "it can be anything I think a couple of minutes or the other day I was actually just sort of lying there for like holding my hand on my chest for like 10 minutes"},
+    {"speaker": "doctor", "firstFrame": 4557536, "frameCount": 68160, "text": "Okay, is that something that you've had before this or is it a new thing?"},
+    {"speaker": "patient", "firstFrame": 4652256, "frameCount": 91712, "text": "Yeah, I would say this is only in the past, sort of like couple of months, as I say that I've been experiencing this."},
+    {"speaker": "doctor", "firstFrame": 4746976, "frameCount": 25664, "text": "Okay, any chest pain with that?"},
+    {"speaker": "patient", "firstFrame": 4792032, "frameCount": 100416, "text": "No, well yeah it's painful when the heart when my heart is being fought but yeah."},
+    {"speaker": "doctor", "firstFrame": 4905184, "frameCount": 120384, "text": "and in the daytime how how you said you you're not getting much sleep so how's your energy level in the daytime"},
+    {"speaker": "patient", "firstFrame": 5039328, "frameCount": 330528, "text": "it's just really really low i'm finding now that i'm just i find no enjoyment at all kind of day to day and anything that i'm doing it's not just my job it's you know when i leave i'm just so tired that anything that previously was really fun is just not it's not enjoyable and i'm like yeah on edge the whole time"},
+    {"speaker": "doctor", "firstFrame": 5369856, "frameCount": 26912, "text": "Okay, so what do you do in the evenings?"},
+    {"speaker": "patient", "firstFrame": 5419744, "frameCount": 206912, "text": "Well right now I'm working so late, everything is really stressful so I don't really get much time for myself but when I do want to go out or be friends or just relax it seems quite difficult to do that."},
+    {"speaker": "doctor", "firstFrame": 5634784, "frameCount": 59968, "text": "Okay, and are you avoiding contact with friends or do you still see them?"},
+    {"speaker": "patient", "firstFrame": 5713632, "frameCount": 146496, "text": "I avoid them in so much that I feel like I'm yeah so I mean sometimes it just I know that I'm not going to have fun because I don't want to go out anymore."},
+    {"speaker": "patient", "firstFrame": 5870304, "frameCount": 26688, "text": "things that I would normally have done."},
+    {"speaker": "doctor", "firstFrame": 5904608, "frameCount": 95808, "text": "Okay, what about hobbies or exercise or anything else outside work? Do you do anything else outside work?"},
+    {"speaker": "patient", "firstFrame": 6007008, "frameCount": 304192, "text": "Yeah, as I say, everything that I've had previously been doing has been just difficult to continue with. I did used to go running and to play tennis and stuff, but now it's just not, I'm just not enjoying it. I'm not going out to do that quite so much."},
+    {"speaker": "doctor", "firstFrame": 6312672, "frameCount": 48192, "text": "And if it ever got so bad that you've actually had to miss work."},
+    {"speaker": "patient", "firstFrame": 6391008, "frameCount": 141376, "text": "no because i think that would just add to the tension but i do pretty much every morning i think oh i should call in sick or like okay it's not good"},
+    {"speaker": "doctor", "firstFrame": 6558432, "frameCount": 203328, "text": "And what's the worst that it's got? Have you ever been so overwhelmed that you couldn't get into the office, you couldn't go into a situation? Have you ever had a panic attack?"},
+    {"speaker": "patient", "firstFrame": 6736027, "frameCount": 283781, "text": "No I wouldn't say so I think I've always managed to make it to work but I wonder if it's building up so this is why I wanted to call it so I'm worried it's building up to that I don't know what to do because I've had to feel it felt it."},
+    {"speaker": "doctor", "firstFrame": 7022304, "frameCount": 216128, "text": "get worse and worse over the past. Okay, and apart from work, are there any other situations which would evoke quite extreme anxiety, like being in public places, social situations, public transport, anything like that?"},
+    {"speaker": "patient", "firstFrame": 7247072, "frameCount": 226204, "text": "Yeah, I mean, I find public transport really stressful in a way, especially being on the trip, because it's quite getting warmer, so it's just really airlift. But I think the majority of it, because my life is just so focused around work right now, the majority of it is focused around work as well."},
+    {"speaker": "doctor", "firstFrame": 7473276, "frameCount": 79524, "text": "Okay, before this did you have any similar times in your life when you felt like this?"},
+    {"speaker": "patient", "firstFrame": 7581408, "frameCount": 185408, "text": "not really i'm no i would say i mean everybody always has a bit of tension a bit of anxiety but i've never felt anything that's bad before"},
+    {"speaker": "doctor", "firstFrame": 7773920, "frameCount": 129088, "text": "Okay. And what about your mood day to day? I mean, I can see that you're quite distressed by it, but do you ever get really down about this? Yeah."},
+    {"speaker": "patient", "firstFrame": 7920864, "frameCount": 373057, "text": "um i mean yeah yeah because i do yeah i'm pretty much down like i don't enjoy being a rough with my day at all because i'm just so worried about everything um and i find that even when i'm not like even at the weekends and stuff it's just the kind of like constant feeling of just being a bit down a bit unhappy"},
+    {"speaker": "doctor", "firstFrame": 8293921, "frameCount": 31199, "text": "When do you think you last felt yourself?"},
+    {"speaker": "patient", "firstFrame": 8363744, "frameCount": 112704, "text": "um i don't know if that's like a question i can't really i can't really put a date on that"},
+    {"speaker": "doctor", "firstFrame": 8488160, "frameCount": 158784, "text": "And your mood ever been so low that you felt like you just couldn't carry on with your job or with your life or with your normal things as they were going on?"},
+    {"speaker": "patient", "firstFrame": 8656608, "frameCount": 319040, "text": "I wouldn't say that I haven't had any suicidal thoughts or any thoughts that have been that extreme. I have a good support system, I do have a good family and stuff so I don't have worries about actually wanting to not go on, it's just that I don't want to go on like this."},
+    {"speaker": "doctor", "firstFrame": 8978144, "frameCount": 34880, "text": "Okay, and who do you live with at home?"},
+    {"speaker": "doctor", "firstFrame": 9038048, "frameCount": 20544, "text": "Who do you live with at home?"},
+    {"speaker": "patient", "firstFrame": 9064672, "frameCount": 33856, "text": "Yeah, I live with my parents. It's my parents."},
+    {"speaker": "doctor", "firstFrame": 9122016, "frameCount": 51776, "text": "and how much alcohol do you have in an average week do you think?"},
+    {"speaker": "patient", "firstFrame": 9193696, "frameCount": 363584, "text": "um i don't know probably quite a lot on the friday or saturday just because that's kind of normal um maybe maybe i do have like a bit during the week that my parents obviously are retired so they just drink whenever they want so whenever they're having a glass of wine they'll offer it to me and it's like i guess i don't really keep track of it that much"},
+    {"speaker": "doctor", "firstFrame": 9565920, "frameCount": 43072, "text": "Okay, so how much would you guess?"},
+    {"speaker": "patient", "firstFrame": 9629920, "frameCount": 211008, "text": "probably like probably quite a lot on Friday or Saturday because it's usually going out so maybe like I probably go over my limit just on those days anyway and then like maybe a glass of wine during the week."},
+    {"speaker": "doctor", "firstFrame": 9847520, "frameCount": 46656, "text": "Okay, do you smoke or take any other drugs or anything?"},
+    {"speaker": "patient", "firstFrame": 9915616, "frameCount": 76864, "text": "um i try not to smoke but i do occasionally but i don't take"},
+    {"speaker": "doctor", "firstFrame": 9998048, "frameCount": 157760, "text": "Okay. And have you done anything yourself to help? Have you talked to anyone, talked to any counsellors, done any online, looked online at all?"},
+    {"speaker": "patient", "firstFrame": 10161888, "frameCount": 377408, "text": "anyways I talked to my mum because she also suffers from or she's suffered from like depression in the past I didn't think that it was that I was suffering from actual depression because it just seems to be manifesting as as just stress the whole time but I did talk to my mum about it but I haven't saw any she recommended that I come to the GP but I haven't saw any other"},
+    {"speaker": "doctor", "firstFrame": 10556640, "frameCount": 65088, "text": "we'd be happy to have some one-to-one therapy"},
+    {"speaker": "patient", "firstFrame": 10644704, "frameCount": 57408, "text": "Yeah, I think so. I've never done that before."},
+    {"speaker": "doctor", "firstFrame": 10706656, "frameCount": 496192, "text": "I mean, what we would suggest in the first instance is to do, so you can self refer via the NHS for what we call like talking therapy, which is a type of behavioural therapy where they can really look at your situation, how you're reacting to the what was provoking the anxiety and what you can do to try and overcome that. So I can send you the link for that. In the meantime, it can be a bit of a wait. there are some online resources that are really helpful."},
+    {"speaker": "patient", "firstFrame": 11206368, "frameCount": 7968, "text": "uh"},
+    {"speaker": "doctor", "firstFrame": 11214336, "frameCount": 105460, "text": "put the details on there and you can get on with them straight away and try and work through them as well and"},
+    {"speaker": "patient", "firstFrame": 11319796, "frameCount": 9516, "text": "Yeah."},
+    {"speaker": "doctor", "firstFrame": 11335392, "frameCount": 424512, "text": "and if you're feeling like it's not helping at all or your anxiety is getting worse to the point where you can't cope with work or you can't just do your normal things day to day then it's important for you to give us a call back and just discuss that further. I mean some people with anxiety they do need to take medication to control that but that's not something that we've suggested in the first instance."},
+    {"speaker": "patient", "firstFrame": 11771616, "frameCount": 7232, "text": "Okay."},
+    {"speaker": "doctor", "firstFrame": 11782880, "frameCount": 88128, "text": "I'll put some more information on your notes about helping with your sleep patterns and things like that."},
+    {"speaker": "patient", "firstFrame": 11881184, "frameCount": 26456, "text": "That's great, I look forward to reading it."},
+    {"speaker": "doctor", "firstFrame": 11907640, "frameCount": 265960, "text": "In terms of palpitations, it is more likely to be associated with anxiety, but it's probably worth having a couple of basic blood tests just to make sure that there's not something triggering that off, and then arranging a GP follow-up a week after you've had the test, and we can just go through the results with you."},
+    {"speaker": "patient", "firstFrame": 12181216, "frameCount": 14912, "text": "Okay, okay."},
+    {"speaker": "doctor", "firstFrame": 12205280, "frameCount": 60992, "text": "So if you call this point line, you can arrange the blood test done."},
+    {"speaker": "patient", "firstFrame": 12278496, "frameCount": 17472, "text": "Okay, I'll call them up."},
+    {"speaker": "doctor", "firstFrame": 12301024, "frameCount": 9792, "text": "Okay."},
+    {"speaker": "patient", "firstFrame": 12319968, "frameCount": 12256, "text": "Thank you so much."},
+    {"speaker": "doctor", "firstFrame": 12332224, "frameCount": 23648, "text": "All right, take care."},
+    {"speaker": "patient", "firstFrame": 12363488, "frameCount": 19008, "text": "Have a good day. Bye."},
+    {"speaker": "doctor", "firstFrame": 12393184, "frameCount": 28256, "text": "Sorry. It's like whatever."}
+  ]
 }

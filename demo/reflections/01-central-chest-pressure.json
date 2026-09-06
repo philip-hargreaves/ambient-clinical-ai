@@ -9,620 +9,6 @@
   "patient": "Your appointment today\nYou came to the surgery with chest pressure. It feels like someone is sitting on your chest. You have been gardening for a couple of hours. The pain is seven out of ten. You also feel short of breath. You feel lightheaded and nauseous. The pain goes to your left shoulder. You have high cholesterol and high blood pressure. You take a medicine called amixin. You get tired when climbing stairs. Your legs sometimes swell.\n\nYour diagnosis\nThe working diagnosis is suspected cardiac origin. This means the heart may be the cause. We think the heart is not getting enough blood. This is a medical term for heart problems.\n\nYour treatment and next steps\nWe called an ambulance for you. You will go to the hospital now. You must stay calm. You should drink water. Do not take other medicines. Paramedics will check your heart. They will check your lungs too. We will book a follow-up appointment. This will happen after you leave hospital.\n\nWhen to contact us\nWe did not agree any warning signs to watch for.",
   "summary": "A patient in their fifties presented with central chest pressure, shortness of breath, and nausea. The working diagnosis was suspected cardiac origin. An ambulance was called for immediate hospital transfer.",
   "audioSeconds": 512.754,
-  "turns": [
-    {
-      "speaker": "doctor",
-      "firstFrame": 80608,
-      "frameCount": 8768,
-      "text": "Hello?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 96480,
-      "frameCount": 19520,
-      "text": "Hello, can you hear me?"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 120544,
-      "frameCount": 21056,
-      "text": "Yeah, I can. Can you hear me?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 147680,
-      "frameCount": 65088,
-      "text": "by trying to break down the user."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 247008,
-      "frameCount": 151616,
-      "text": "Hi, my name is Dr. Gohil. Hi. Hi, I'm one of the physicians that works at Babylon. Are you in a quiet and private space to talk?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 408288,
-      "frameCount": 15936,
-      "text": "Well, I am, yes."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 429792,
-      "frameCount": 47168,
-      "text": "Good. And can I confirm your name and date of birth, please?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 485088,
-      "frameCount": 111680,
-      "text": "It's Joe Bloggs. It's the 7th of June, 1974."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 612576,
-      "frameCount": 35392,
-      "text": "74. And how old does that make you?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 655584,
-      "frameCount": 16960,
-      "text": "Sorry, 54."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 675552,
-      "frameCount": 9280,
-      "text": "covered."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 687840,
-      "frameCount": 33856,
-      "text": "I'm supposedly 53, but yeah."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 726752,
-      "frameCount": 88128,
-      "text": "Great. And it says here, it says you're having chest discomfort. Is that correct?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 819936,
-      "frameCount": 64064,
-      "text": "that is correct yes"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 886496,
-      "frameCount": 78912,
-      "text": "Can you tell me a little bit more about your chest discomfort when it started and how you're feeling at the moment?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 981728,
-      "frameCount": 156736,
-      "text": "Sure, it's been ongoing for a couple of hours now. I'll tell you that it's gone quite suddenly. I was digging in the garden."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 1149152,
-      "frameCount": 349248,
-      "text": "and if i had to describe where it is somewhere in the middle of my chest and it's more it feels more like a pressure they just comfort them more than a pain um if i had to if well if i had to describe what that comfort feeling it's like someone sitting on my chest"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 1502750,
-      "frameCount": 11010,
-      "text": "Okay."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 1540780,
-      "frameCount": 54388,
-      "text": "And yeah."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 1597152,
-      "frameCount": 71744,
-      "text": "Great, so you've talked about your chest, are you still in discomfort at the moment?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 1674464,
-      "frameCount": 22592,
-      "text": "Yes, as we speak."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 1700576,
-      "frameCount": 53824,
-      "text": "Okay, and when it started, how would you rate it out of 10?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 1790176,
-      "frameCount": 69696,
-      "text": "I'd say about a seven out of 10."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 1861344,
-      "frameCount": 5956,
-      "text": "Okay."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 1867300,
-      "frameCount": 118524,
-      "text": "It can be very unbearable and you see that, hey, seven is quite manageable, it's quite this old and comfortable."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 1995517,
-      "frameCount": 17955,
-      "text": "And how about now?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 2026208,
-      "frameCount": 20544,
-      "text": "it's still the same."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 2070240,
-      "frameCount": 67136,
-      "text": "Okay and tell me before this happened what were you doing?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 2159328,
-      "frameCount": 136256,
-      "text": "um i was relaxing my wife and we're watching jeremy kyle"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 2300128,
-      "frameCount": 10816,
-      "text": "Okay?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 2317024,
-      "frameCount": 19520,
-      "text": "Still got it."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 2343136,
-      "frameCount": 34368,
-      "text": "Okay, and how often do you do gardening?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 2385632,
-      "frameCount": 50752,
-      "text": "every other week so fortnightly"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 2440416,
-      "frameCount": 76352,
-      "text": "And are you normally fit and well? So are you normally okay to garden as you would?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 2526432,
-      "frameCount": 10304,
-      "text": "Yes."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 2554080,
-      "frameCount": 67648,
-      "text": "Great and apart from this do you have any other medical problems?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 2677984,
-      "frameCount": 96320,
-      "text": "um high cholesterol and they've had hypertension"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 2781408,
-      "frameCount": 75840,
-      "text": "Okay so that's high blood pressure and high cholesterol. Do you take any"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 2931424,
-      "frameCount": 27712,
-      "text": "No, I do take an amixin."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 2964704,
-      "frameCount": 28224,
-      "text": "Are you allergic to anything?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 3002592,
-      "frameCount": 22592,
-      "text": "uh"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 3053792,
-      "frameCount": 237632,
-      "text": "Okay so let me summarize what you've told me already. You were gardening a few hours ago and you experienced chest discomfort which was roughly seven out of ten. It feels more like someone sitting on your chest as opposed to pain."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 3302624,
-      "frameCount": 18802,
-      "text": "Yes, that's fair."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 3336416,
-      "frameCount": 77888,
-      "text": "And apart from this, have you noticed anything else unusual, specifically with your breathing?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 3473120,
-      "frameCount": 121408,
-      "text": "uh yes i have um i've got shortness of breath i feel slightly lightheaded"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 3629792,
-      "frameCount": 29248,
-      "text": "Okay, and is that getting worse or better?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 3709664,
-      "frameCount": 236549,
-      "text": "It's remained the same although I'll say recently I've noticed in terms of sort of breathing I've had some difficulty climbing stairs and if I had to sort of walk uphill there's that sort of challenge as well."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 3946213,
-      "frameCount": 86075,
-      "text": "And when you get short of breath, when you're walking up the stairs, have you noticed any pain?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 4085472,
-      "frameCount": 117312,
-      "text": "um no pain as such but there's often calf pain and leg swelling sometimes"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 4209376,
-      "frameCount": 88640,
-      "text": "Okay so let me confirm you have the pressure at the moment and you have shortness of breath, is that correct?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 4301024,
-      "frameCount": 11369,
-      "text": "That is correct, yeah."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 4312393,
-      "frameCount": 355799,
-      "text": "So given what you've told me about your past medical history, I think it might be worth you calling an ambulance. Okay. Get you to the hospital as soon as possible, because my concern is it might be something to do with your heart. So while I talk to you, I will ring an ambulance who should come to your address."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 4675808,
-      "frameCount": 8480,
-      "text": "Right."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 4684288,
-      "frameCount": 114976,
-      "text": "But in the meantime, I think we should stay on the phone so I can gather some more information that we can give to the paramedics. Is that okay?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 4816096,
-      "frameCount": 40512,
-      "text": "Should I be concerned about anything?"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 4869344,
-      "frameCount": 165440,
-      "text": "It's nothing to worry about at the moment, but given that you've got high blood pressure and high cholesterol and you've got some chest pain, I'm always worried about the heart first before anything."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 5044448,
-      "frameCount": 21056,
-      "text": "again"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 5071072,
-      "frameCount": 165440,
-      "text": "we need to look after your heart before anything else. So apart from this lightheadedness and this chest discomfort have you noticed anything else unusual?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 5306080,
-      "frameCount": 136636,
-      "text": "nothing else unusual I'm not sure if I spoke to you about nausea I've noticed nausea but no vomiting yeah"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 5442716,
-      "frameCount": 34436,
-      "text": "Do you have anything to eat or drink this morning?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 5481184,
-      "frameCount": 11840,
-      "text": "No."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 5519072,
-      "frameCount": 37440,
-      "text": "and you still feel nauseous at the moment?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 5570272,
-      "frameCount": 23616,
-      "text": "I have yet. I am yet."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 5609184,
-      "frameCount": 97344,
-      "text": "So I have a couple of other questions to ask you and I'm going to reel them off. So apologies for not letting you talk very much."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 5712096,
-      "frameCount": 11503,
-      "text": "No, that's fine."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 5723599,
-      "frameCount": 49489,
-      "text": "Have you noticed this pressure radiating to your head?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 5790432,
-      "frameCount": 24640,
-      "text": "uh no to my head no"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 5820033,
-      "frameCount": 32415,
-      "text": "And how about to your left or right arm?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 5822207,
-      "frameCount": 118817,
-      "text": "Yes, there is some pain in my left shoulder right now."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 5955808,
-      "frameCount": 53312,
-      "text": "And does that pain go anywhere else, to your left arm or to your back?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 6023904,
-      "frameCount": 25152,
-      "text": "No."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 6055136,
-      "frameCount": 52800,
-      "text": "And have you noticed any problems swallowing or drinking water?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 6161120,
-      "frameCount": 10304,
-      "text": "No."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 6189280,
-      "frameCount": 57920,
-      "text": "Good. And have you noticed any problems going into the loo?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 6261984,
-      "frameCount": 22592,
-      "text": "No problem is going to leave."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 6313184,
-      "frameCount": 55872,
-      "text": "And you'll normally fit in well apart from the two things you told me about."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 6381280,
-      "frameCount": 266304,
-      "text": "um yes however there are some problems just performing daily activities um like i said with the difficulties climbing upstairs and going uphill i tried to limit my daily activity to just moving around the house nothing to stress"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 6682336,
-      "frameCount": 35904,
-      "text": "And do you live at home with your wife at the moment?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 6722784,
-      "frameCount": 10528,
-      "text": "Yes."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 6733312,
-      "frameCount": 144672,
-      "text": "Okay. I would suggest if she's there, you let her know that you'll both be having an adventure to the hospital today. So she might need to get your things together."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 6888160,
-      "frameCount": 15936,
-      "text": "Got it. I guess."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 6911712,
-      "frameCount": 155200,
-      "text": "The ambulance should be there very soon. In the meantime, I would suggest that you stay calm and have some water if you need to. Don't take any of those medications."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 7079648,
-      "frameCount": 4896,
-      "text": "again."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 7084544,
-      "frameCount": 45344,
-      "text": "The paramedics should be with you very shortly."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 7142624,
-      "frameCount": 8256,
-      "text": "All right."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 7154912,
-      "frameCount": 53824,
-      "text": "So when they do come, there are two things they will be worried about."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 7213792,
-      "frameCount": 7456,
-      "text": "Okay."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 7221248,
-      "frameCount": 78624,
-      "text": "The one is your chest, so your heart. And the second is your breathing, which is your lungs."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 7306464,
-      "frameCount": 6208,
-      "text": "Take care."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 7315168,
-      "frameCount": 148032,
-      "text": "So they will give you lots of things to breathe through and attach things to your arms, just to check things like your blood pressure and your heart rate. So don't be worried."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 7470816,
-      "frameCount": 5696,
-      "text": "again."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 7478496,
-      "frameCount": 83520,
-      "text": "and when you get to the hospital you'll be seen by a consultant pretty much immediately."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 7594208,
-      "frameCount": 69696,
-      "text": "Yeah, that sounds reassuring."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 7683296,
-      "frameCount": 153664,
-      "text": "Sure. So I will let the paramedics do their job and when you're at the hospital the consultant would normally call me within a couple of minutes to let me know how everything's going."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 7841504,
-      "frameCount": 12864,
-      "text": "Oh, that's great."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 7864032,
-      "frameCount": 75328,
-      "text": "Great, I'll book another appointment to see you soon. Once you've had your adventure."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 7959264,
-      "frameCount": 21720,
-      "text": "That's perfect. Thank you so much."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 7980984,
-      "frameCount": 27165,
-      "text": "No problems. Do you have any questions for me?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 8008149,
-      "frameCount": 52555,
-      "text": "uh no questions i'll just await the"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 8079584,
-      "frameCount": 17984,
-      "text": "Great, thank you very much."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 8101600,
-      "frameCount": 64576,
-      "text": "No problem. I'll speak to you soon. Thank you so much. Bye."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 8195808,
-      "frameCount": 8256,
-      "text": "Okay."
-    }
-  ],
   "answers": {
     "happened": "The description was textbook and I nearly missed it, because the patient framed it as discomfort rather than pain: pressure like someone sitting on the chest, brought on by exertion in the garden, with breathlessness and nausea. Once I had summarised it back to him the decision to call an ambulance was obvious, and staying on the line while it was arranged kept him calm.",
     "learned": "Patients underplay cardiac pain with soft words. Repeating the story back in plain language made the risk clear to both of us, and it was the summary, not any single question, that moved me to act.",
@@ -632,5 +18,109 @@
     "happened": "it feels like it's pressure, discomfort, than more, than a pain ... it's like someone's sitting on my chest",
     "learned": "So, let me summarise what you've told me already. You were gardening a few hours ago, and you experienced chest discomfort",
     "next": "And when you get short of breath, when you're walking up the stairs, have you noticed any pain? ... there's often calf pain and, leg swellings"
-  }
+  },
+  "turns": [
+    {"speaker": "doctor", "firstFrame": 80608, "frameCount": 8768, "text": "Hello?"},
+    {"speaker": "patient", "firstFrame": 96480, "frameCount": 19520, "text": "Hello, can you hear me?"},
+    {"speaker": "doctor", "firstFrame": 120544, "frameCount": 21056, "text": "Yeah, I can. Can you hear me?"},
+    {"speaker": "patient", "firstFrame": 147680, "frameCount": 65088, "text": "by trying to break down the user."},
+    {"speaker": "doctor", "firstFrame": 247008, "frameCount": 151616, "text": "Hi, my name is Dr. Gohil. Hi. Hi, I'm one of the physicians that works at Babylon. Are you in a quiet and private space to talk?"},
+    {"speaker": "patient", "firstFrame": 408288, "frameCount": 15936, "text": "Well, I am, yes."},
+    {"speaker": "doctor", "firstFrame": 429792, "frameCount": 47168, "text": "Good. And can I confirm your name and date of birth, please?"},
+    {"speaker": "patient", "firstFrame": 485088, "frameCount": 111680, "text": "It's Joe Bloggs. It's the 7th of June, 1974."},
+    {"speaker": "doctor", "firstFrame": 612576, "frameCount": 35392, "text": "74. And how old does that make you?"},
+    {"speaker": "patient", "firstFrame": 655584, "frameCount": 16960, "text": "Sorry, 54."},
+    {"speaker": "doctor", "firstFrame": 675552, "frameCount": 9280, "text": "covered."},
+    {"speaker": "patient", "firstFrame": 687840, "frameCount": 33856, "text": "I'm supposedly 53, but yeah."},
+    {"speaker": "doctor", "firstFrame": 726752, "frameCount": 88128, "text": "Great. And it says here, it says you're having chest discomfort. Is that correct?"},
+    {"speaker": "patient", "firstFrame": 819936, "frameCount": 64064, "text": "that is correct yes"},
+    {"speaker": "doctor", "firstFrame": 886496, "frameCount": 78912, "text": "Can you tell me a little bit more about your chest discomfort when it started and how you're feeling at the moment?"},
+    {"speaker": "patient", "firstFrame": 981728, "frameCount": 156736, "text": "Sure, it's been ongoing for a couple of hours now. I'll tell you that it's gone quite suddenly. I was digging in the garden."},
+    {"speaker": "patient", "firstFrame": 1149152, "frameCount": 349248, "text": "and if i had to describe where it is somewhere in the middle of my chest and it's more it feels more like a pressure they just comfort them more than a pain um if i had to if well if i had to describe what that comfort feeling it's like someone sitting on my chest"},
+    {"speaker": "doctor", "firstFrame": 1502750, "frameCount": 11010, "text": "Okay."},
+    {"speaker": "patient", "firstFrame": 1540780, "frameCount": 54388, "text": "And yeah."},
+    {"speaker": "doctor", "firstFrame": 1597152, "frameCount": 71744, "text": "Great, so you've talked about your chest, are you still in discomfort at the moment?"},
+    {"speaker": "patient", "firstFrame": 1674464, "frameCount": 22592, "text": "Yes, as we speak."},
+    {"speaker": "doctor", "firstFrame": 1700576, "frameCount": 53824, "text": "Okay, and when it started, how would you rate it out of 10?"},
+    {"speaker": "patient", "firstFrame": 1790176, "frameCount": 69696, "text": "I'd say about a seven out of 10."},
+    {"speaker": "doctor", "firstFrame": 1861344, "frameCount": 5956, "text": "Okay."},
+    {"speaker": "patient", "firstFrame": 1867300, "frameCount": 118524, "text": "It can be very unbearable and you see that, hey, seven is quite manageable, it's quite this old and comfortable."},
+    {"speaker": "doctor", "firstFrame": 1995517, "frameCount": 17955, "text": "And how about now?"},
+    {"speaker": "patient", "firstFrame": 2026208, "frameCount": 20544, "text": "it's still the same."},
+    {"speaker": "doctor", "firstFrame": 2070240, "frameCount": 67136, "text": "Okay and tell me before this happened what were you doing?"},
+    {"speaker": "patient", "firstFrame": 2159328, "frameCount": 136256, "text": "um i was relaxing my wife and we're watching jeremy kyle"},
+    {"speaker": "doctor", "firstFrame": 2300128, "frameCount": 10816, "text": "Okay?"},
+    {"speaker": "patient", "firstFrame": 2317024, "frameCount": 19520, "text": "Still got it."},
+    {"speaker": "doctor", "firstFrame": 2343136, "frameCount": 34368, "text": "Okay, and how often do you do gardening?"},
+    {"speaker": "patient", "firstFrame": 2385632, "frameCount": 50752, "text": "every other week so fortnightly"},
+    {"speaker": "doctor", "firstFrame": 2440416, "frameCount": 76352, "text": "And are you normally fit and well? So are you normally okay to garden as you would?"},
+    {"speaker": "patient", "firstFrame": 2526432, "frameCount": 10304, "text": "Yes."},
+    {"speaker": "doctor", "firstFrame": 2554080, "frameCount": 67648, "text": "Great and apart from this do you have any other medical problems?"},
+    {"speaker": "patient", "firstFrame": 2677984, "frameCount": 96320, "text": "um high cholesterol and they've had hypertension"},
+    {"speaker": "doctor", "firstFrame": 2781408, "frameCount": 75840, "text": "Okay so that's high blood pressure and high cholesterol. Do you take any"},
+    {"speaker": "patient", "firstFrame": 2931424, "frameCount": 27712, "text": "No, I do take an amixin."},
+    {"speaker": "doctor", "firstFrame": 2964704, "frameCount": 28224, "text": "Are you allergic to anything?"},
+    {"speaker": "patient", "firstFrame": 3002592, "frameCount": 22592, "text": "uh"},
+    {"speaker": "doctor", "firstFrame": 3053792, "frameCount": 237632, "text": "Okay so let me summarize what you've told me already. You were gardening a few hours ago and you experienced chest discomfort which was roughly seven out of ten. It feels more like someone sitting on your chest as opposed to pain."},
+    {"speaker": "patient", "firstFrame": 3302624, "frameCount": 18802, "text": "Yes, that's fair."},
+    {"speaker": "doctor", "firstFrame": 3336416, "frameCount": 77888, "text": "And apart from this, have you noticed anything else unusual, specifically with your breathing?"},
+    {"speaker": "patient", "firstFrame": 3473120, "frameCount": 121408, "text": "uh yes i have um i've got shortness of breath i feel slightly lightheaded"},
+    {"speaker": "doctor", "firstFrame": 3629792, "frameCount": 29248, "text": "Okay, and is that getting worse or better?"},
+    {"speaker": "patient", "firstFrame": 3709664, "frameCount": 236549, "text": "It's remained the same although I'll say recently I've noticed in terms of sort of breathing I've had some difficulty climbing stairs and if I had to sort of walk uphill there's that sort of challenge as well."},
+    {"speaker": "doctor", "firstFrame": 3946213, "frameCount": 86075, "text": "And when you get short of breath, when you're walking up the stairs, have you noticed any pain?"},
+    {"speaker": "patient", "firstFrame": 4085472, "frameCount": 117312, "text": "um no pain as such but there's often calf pain and leg swelling sometimes"},
+    {"speaker": "doctor", "firstFrame": 4209376, "frameCount": 88640, "text": "Okay so let me confirm you have the pressure at the moment and you have shortness of breath, is that correct?"},
+    {"speaker": "patient", "firstFrame": 4301024, "frameCount": 11369, "text": "That is correct, yeah."},
+    {"speaker": "doctor", "firstFrame": 4312393, "frameCount": 355799, "text": "So given what you've told me about your past medical history, I think it might be worth you calling an ambulance. Okay. Get you to the hospital as soon as possible, because my concern is it might be something to do with your heart. So while I talk to you, I will ring an ambulance who should come to your address."},
+    {"speaker": "patient", "firstFrame": 4675808, "frameCount": 8480, "text": "Right."},
+    {"speaker": "doctor", "firstFrame": 4684288, "frameCount": 114976, "text": "But in the meantime, I think we should stay on the phone so I can gather some more information that we can give to the paramedics. Is that okay?"},
+    {"speaker": "patient", "firstFrame": 4816096, "frameCount": 40512, "text": "Should I be concerned about anything?"},
+    {"speaker": "doctor", "firstFrame": 4869344, "frameCount": 165440, "text": "It's nothing to worry about at the moment, but given that you've got high blood pressure and high cholesterol and you've got some chest pain, I'm always worried about the heart first before anything."},
+    {"speaker": "patient", "firstFrame": 5044448, "frameCount": 21056, "text": "again"},
+    {"speaker": "doctor", "firstFrame": 5071072, "frameCount": 165440, "text": "we need to look after your heart before anything else. So apart from this lightheadedness and this chest discomfort have you noticed anything else unusual?"},
+    {"speaker": "patient", "firstFrame": 5306080, "frameCount": 136636, "text": "nothing else unusual I'm not sure if I spoke to you about nausea I've noticed nausea but no vomiting yeah"},
+    {"speaker": "doctor", "firstFrame": 5442716, "frameCount": 34436, "text": "Do you have anything to eat or drink this morning?"},
+    {"speaker": "patient", "firstFrame": 5481184, "frameCount": 11840, "text": "No."},
+    {"speaker": "doctor", "firstFrame": 5519072, "frameCount": 37440, "text": "and you still feel nauseous at the moment?"},
+    {"speaker": "patient", "firstFrame": 5570272, "frameCount": 23616, "text": "I have yet. I am yet."},
+    {"speaker": "doctor", "firstFrame": 5609184, "frameCount": 97344, "text": "So I have a couple of other questions to ask you and I'm going to reel them off. So apologies for not letting you talk very much."},
+    {"speaker": "patient", "firstFrame": 5712096, "frameCount": 11503, "text": "No, that's fine."},
+    {"speaker": "doctor", "firstFrame": 5723599, "frameCount": 49489, "text": "Have you noticed this pressure radiating to your head?"},
+    {"speaker": "patient", "firstFrame": 5790432, "frameCount": 24640, "text": "uh no to my head no"},
+    {"speaker": "doctor", "firstFrame": 5820033, "frameCount": 32415, "text": "And how about to your left or right arm?"},
+    {"speaker": "patient", "firstFrame": 5822207, "frameCount": 118817, "text": "Yes, there is some pain in my left shoulder right now."},
+    {"speaker": "doctor", "firstFrame": 5955808, "frameCount": 53312, "text": "And does that pain go anywhere else, to your left arm or to your back?"},
+    {"speaker": "patient", "firstFrame": 6023904, "frameCount": 25152, "text": "No."},
+    {"speaker": "doctor", "firstFrame": 6055136, "frameCount": 52800, "text": "And have you noticed any problems swallowing or drinking water?"},
+    {"speaker": "patient", "firstFrame": 6161120, "frameCount": 10304, "text": "No."},
+    {"speaker": "doctor", "firstFrame": 6189280, "frameCount": 57920, "text": "Good. And have you noticed any problems going into the loo?"},
+    {"speaker": "patient", "firstFrame": 6261984, "frameCount": 22592, "text": "No problem is going to leave."},
+    {"speaker": "doctor", "firstFrame": 6313184, "frameCount": 55872, "text": "And you'll normally fit in well apart from the two things you told me about."},
+    {"speaker": "patient", "firstFrame": 6381280, "frameCount": 266304, "text": "um yes however there are some problems just performing daily activities um like i said with the difficulties climbing upstairs and going uphill i tried to limit my daily activity to just moving around the house nothing to stress"},
+    {"speaker": "doctor", "firstFrame": 6682336, "frameCount": 35904, "text": "And do you live at home with your wife at the moment?"},
+    {"speaker": "patient", "firstFrame": 6722784, "frameCount": 10528, "text": "Yes."},
+    {"speaker": "doctor", "firstFrame": 6733312, "frameCount": 144672, "text": "Okay. I would suggest if she's there, you let her know that you'll both be having an adventure to the hospital today. So she might need to get your things together."},
+    {"speaker": "patient", "firstFrame": 6888160, "frameCount": 15936, "text": "Got it. I guess."},
+    {"speaker": "doctor", "firstFrame": 6911712, "frameCount": 155200, "text": "The ambulance should be there very soon. In the meantime, I would suggest that you stay calm and have some water if you need to. Don't take any of those medications."},
+    {"speaker": "patient", "firstFrame": 7079648, "frameCount": 4896, "text": "again."},
+    {"speaker": "doctor", "firstFrame": 7084544, "frameCount": 45344, "text": "The paramedics should be with you very shortly."},
+    {"speaker": "patient", "firstFrame": 7142624, "frameCount": 8256, "text": "All right."},
+    {"speaker": "doctor", "firstFrame": 7154912, "frameCount": 53824, "text": "So when they do come, there are two things they will be worried about."},
+    {"speaker": "patient", "firstFrame": 7213792, "frameCount": 7456, "text": "Okay."},
+    {"speaker": "doctor", "firstFrame": 7221248, "frameCount": 78624, "text": "The one is your chest, so your heart. And the second is your breathing, which is your lungs."},
+    {"speaker": "patient", "firstFrame": 7306464, "frameCount": 6208, "text": "Take care."},
+    {"speaker": "doctor", "firstFrame": 7315168, "frameCount": 148032, "text": "So they will give you lots of things to breathe through and attach things to your arms, just to check things like your blood pressure and your heart rate. So don't be worried."},
+    {"speaker": "patient", "firstFrame": 7470816, "frameCount": 5696, "text": "again."},
+    {"speaker": "doctor", "firstFrame": 7478496, "frameCount": 83520, "text": "and when you get to the hospital you'll be seen by a consultant pretty much immediately."},
+    {"speaker": "patient", "firstFrame": 7594208, "frameCount": 69696, "text": "Yeah, that sounds reassuring."},
+    {"speaker": "doctor", "firstFrame": 7683296, "frameCount": 153664, "text": "Sure. So I will let the paramedics do their job and when you're at the hospital the consultant would normally call me within a couple of minutes to let me know how everything's going."},
+    {"speaker": "patient", "firstFrame": 7841504, "frameCount": 12864, "text": "Oh, that's great."},
+    {"speaker": "doctor", "firstFrame": 7864032, "frameCount": 75328, "text": "Great, I'll book another appointment to see you soon. Once you've had your adventure."},
+    {"speaker": "patient", "firstFrame": 7959264, "frameCount": 21720, "text": "That's perfect. Thank you so much."},
+    {"speaker": "doctor", "firstFrame": 7980984, "frameCount": 27165, "text": "No problems. Do you have any questions for me?"},
+    {"speaker": "patient", "firstFrame": 8008149, "frameCount": 52555, "text": "uh no questions i'll just await the"},
+    {"speaker": "doctor", "firstFrame": 8079584, "frameCount": 17984, "text": "Great, thank you very much."},
+    {"speaker": "patient", "firstFrame": 8101600, "frameCount": 64576, "text": "No problem. I'll speak to you soon. Thank you so much. Bye."},
+    {"speaker": "doctor", "firstFrame": 8195808, "frameCount": 8256, "text": "Okay."}
+  ]
 }

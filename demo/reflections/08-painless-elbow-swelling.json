@@ -9,470 +9,6 @@
   "patient": "Your appointment today\nYou came to see us because of painless swelling on your left elbow. You said it felt warm and had fluid inside. You noted no injury caused this. We examined the area and saw visible swelling. The skin was dry but the fluid moved.\n\nYour diagnosis\nYour assessment is olecranon bursitis. This is swelling of the fluid sac near the elbow joint. It happens when the sac fills with extra fluid. We did not find any other specific cause.\n\nYour treatment and next steps\nWe will send blood test forms to your home. These tests check for inflammation and infection. They also check for rheumatological antibodies. You must take ibuprofen 400mg twice daily. Take this medicine with food. We have arranged a follow-up appointment. This is to review your test results. We will also check the joint status then.\n\nWhen to contact us\nWe did not discuss any specific warning signs to watch for. No symptoms were listed for you to monitor. Please contact us if you have new concerns.",
   "summary": "A patient in their fifties presented with a one-week history of painless, warm, fluid-filled swelling on the left elbow without trauma. Examination confirmed visible swelling with fluid fluctuation and dry skin. The working diagnosis was olecranon bursitis, managed with ibuprofen and blood tests sent to the patient’s home.",
   "audioSeconds": 539.73,
-  "turns": [
-    {
-      "speaker": "doctor",
-      "firstFrame": 7392,
-      "frameCount": 32832,
-      "text": "Good morning."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 56032,
-      "frameCount": 6208,
-      "text": "Thanks, Tony."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 69344,
-      "frameCount": 49216,
-      "text": "I'm Dr Dean Mirza from GP at hand, nice to see you."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 126688,
-      "frameCount": 11328,
-      "text": "Nice to see you."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 145632,
-      "frameCount": 64064,
-      "text": "Okay, before we start your appointment, could you please tell me your first name and your date of birth?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 220384,
-      "frameCount": 131648,
-      "text": "Yes, my name is John Smith and I was born on the 5th of April 1973."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 357600,
-      "frameCount": 71744,
-      "text": "Okay, that's great. Thank you for that. Are you in a private place where you're okay to speak freely?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 436960,
-      "frameCount": 19008,
-      "text": "Yes, certainly."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 458976,
-      "frameCount": 96832,
-      "text": "Okay, great. Okay, so tell me a bit about what's been happening. You mentioned in the notes that you've got a problem with your elbow."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 569056,
-      "frameCount": 446752,
-      "text": "Yeah, I just noticed this like about a week ago or something. I have like a weird swelling on my elbow. I noticed that when I was in the shower. It's not painful at all. I feel fine, but it's just a bit weird to see that. It's slightly warm. And I kind of feel like it's a bit fluid inside."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 1015808,
-      "frameCount": 20768,
-      "text": "Sure, sure."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 1041632,
-      "frameCount": 15936,
-      "text": "So I..."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 1060576,
-      "frameCount": 29248,
-      "text": "to know what's going on."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 1096638,
-      "frameCount": 41314,
-      "text": "And so did you say it was the left elbow or the right elbow?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 1148128,
-      "frameCount": 54336,
-      "text": "um it's the the left hand elbow"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 1204960,
-      "frameCount": 67648,
-      "text": "left elbow okay and have you banged that elbow did you have any kind of injury"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 1286880,
-      "frameCount": 199232,
-      "text": "No, not really. Not that I know of. I haven't noticed anything. I can actually, like, normally. It's just, I can just see that it feels a bit strange."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 1490144,
-      "frameCount": 104000,
-      "text": "Sure okay and in terms of your job do you do anything physical?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 1606368,
-      "frameCount": 55360,
-      "text": "Not really, no. I just sit at the desk."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 1664736,
-      "frameCount": 8256,
-      "text": "Right."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 1688556,
-      "frameCount": 38196,
-      "text": "And has this happened before?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 1744096,
-      "frameCount": 129088,
-      "text": "no no i haven't noticed that before um i don't have any like history of seeing this i don't remember"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 1881312,
-      "frameCount": 166464,
-      "text": "Sure, okay. And can I just double check, has anyone in your family got any kind of rheumatology diseases like rheumatoid arthritis or lupus or anything like that?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 2056928,
-      "frameCount": 226368,
-      "text": "Well, I do. Well, I think I have something like Osteo Apparises. It sometimes kind of hurts my joints, but in my family, I'm not sure."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 2296544,
-      "frameCount": 155712,
-      "text": "okay sure so you said you think you've got osteoarthritis has anyone ever told you that have you ever seen a doctor who's confirmed that and told you you've got osteoarthritis"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 2461920,
-      "frameCount": 35904,
-      "text": "Yes, a few years ago."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 2513120,
-      "frameCount": 34384,
-      "text": "Okay. Was that a GP or a specialist?"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 2547504,
-      "frameCount": 40944,
-      "text": "or is it physiotherapist?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 2596576,
-      "frameCount": 13088,
-      "text": "GP."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 2609664,
-      "frameCount": 97568,
-      "text": "um gmp okay all right um sorry can i just double check how old you are please"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 2717920,
-      "frameCount": 17984,
-      "text": "I'm 53."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 2740960,
-      "frameCount": 94218,
-      "text": "53, okay. Fantastic, all right. And do you have any other illnesses at all?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 2835178,
-      "frameCount": 13878,
-      "text": "um"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 2866689,
-      "frameCount": 101596,
-      "text": "Well, not for you, no. I'm allergic to peanuts."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 2961222,
-      "frameCount": 15834,
-      "text": "Okay."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 2983136,
-      "frameCount": 53312,
-      "text": "That's pretty cool."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 3043552,
-      "frameCount": 42048,
-      "text": "Are you allergic to any medication?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 3095776,
-      "frameCount": 28736,
-      "text": "No, not that I know of."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 3127520,
-      "frameCount": 78912,
-      "text": "Sure. And do you, are you on any medication on a regular basis?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 3216096,
-      "frameCount": 8256,
-      "text": "and"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 3234528,
-      "frameCount": 71232,
-      "text": "No, okay. And are you normally fit and well, mobile, active?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 3308256,
-      "frameCount": 157984,
-      "text": "I do some sports, I run regularly, like two, three times a week. Yeah, no, I think I'm healthy."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 3466240,
-      "frameCount": 29855,
-      "text": "Okay, good. Well done."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 3496095,
-      "frameCount": 60545,
-      "text": "It's good that you're doing that on a regular basis. Okay. And..."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 3558624,
-      "frameCount": 10304,
-      "text": "uh"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 3575520,
-      "frameCount": 44096,
-      "text": "Can I, is it possible for me to have a look at your elbow now?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 3625696,
-      "frameCount": 11328,
-      "text": "Yes, sure."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 3668192,
-      "frameCount": 400448,
-      "text": "Okay, bear with me one second. Right, okay. And if you can just raise your elbow up a little bit, like that, a bit higher, so I can just see the underside. Okay, fantastic, all right. And then just bring it around to this side, essentially, I can see the other side. Okay, fantastic. All right. And if you can just touch the tip of the elbow with your fingers, is it hot compared to the surrounding skin, the adjacent skin?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 4089371,
-      "frameCount": 13854,
-      "text": "It's a bit warm, yeah."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 4103225,
-      "frameCount": 147687,
-      "text": "It's a bit warmer, okay. And is it very tender when you're pressing on that knob? If you give it a press, does it hurt you at all?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 4275936,
-      "frameCount": 144448,
-      "text": "on the on the tip of the elbow it's it's okay just like next to it like where the the swelling is it's a bit yeah it feels a bit fluid"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 4436192,
-      "frameCount": 132672,
-      "text": "Okay, all right. I noticed the skin was a bit dry on the tip of the elbow. Do you have dry skin anywhere else in the body?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 4586208,
-      "frameCount": 45120,
-      "text": "No, not for you. I have more skin."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 4634336,
-      "frameCount": 38976,
-      "text": "Do you suffer from eczema at all?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 4688608,
-      "frameCount": 6208,
-      "text": "No."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 4703022,
-      "frameCount": 396274,
-      "text": "Alright. Okay, so what I think we should do with regards to your elbow problem, okay, is I think it would be worthwhile. This seems like what we call the bursitis, okay? So that's an inflammation of one of the fluid sacs around the joint. What I think we should do is I think you should be on some anti-inflammatory medication."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 5109984,
-      "frameCount": 7968,
-      "text": "Okay."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 5117952,
-      "frameCount": 566560,
-      "text": "the first instance and as well as that what I would like to do is to get some blood tests done to check for other types of causes of joint swelling okay so what we're going to do is we're going to arrange some blood test forms to be sent out to your house and there'll be instructions within that pack about where to go to get those blood tests done and that will involve you having some tests done to check for inflammatory markers, infection, rheumatological antibodies. So we'll do a full screen and also check for things like gout as well."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 5690592,
-      "frameCount": 14912,
-      "text": "Okay."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 5722848,
-      "frameCount": 1119808,
-      "text": "The time frame for that will be the results will come back to us after about five, six days. It will take time for the forms to come out to you. And if you get the form to get the test done straight away, by the time that we're expecting a result back, one or two days after that, we're looking at maybe six days. And what I would suggest is we can arrange a follow-up appointment for you in one of our clinics, where we can have a look at your joint, feel it, we can review the blood tests, and we can get a gauge as to what's going on. Now, in terms of your joint right now, it doesn't look like, to me, that's something called septic arthritis. So we're worried sometimes that someone might have an acutely infected joint and your joint doesn't look like that. However, if the elbow was to become very red, very painful, and the redness was to spread or become more intense, then you need to get on the phone or have a video appointment with one of us as soon as possible, because that would be an emergency that would require more immediate assessment, more immediate treatment."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 6845152,
-      "frameCount": 120960,
-      "text": "Do you think it's something dangerous? Like something like, could I die from that? Or is it..."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 6966112,
-      "frameCount": 17599,
-      "text": "No, I don't think..."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 6966383,
-      "frameCount": 60593,
-      "text": "think this is anything dangerous. You don't need to worry."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 7029984,
-      "frameCount": 412736,
-      "text": "okay what i'm doing is i'm just outlining the worst case scenario if things were to develop okay so this this is not the case right now right now it looks quite straightforward it's nothing sinister or life-threatening um what i'm doing is i'm just saying in case things worsen these are the things that we'll be looking out for and this is what we have to do but you don't have that now thankfully and i don't think you're going to have it but i'm just saying the what if scenario is that okay"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 7446752,
-      "frameCount": 31296,
-      "text": "Yeah, that sounds good. Thank you."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 7483616,
-      "frameCount": 41536,
-      "text": "Alright, did you have any questions that you wanted to ask me?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 7536864,
-      "frameCount": 109632,
-      "text": "um well just yeah i just wanted to know about this um yeah it feels a bit better now to know that"
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 7648480,
-      "frameCount": 35904,
-      "text": "Okay, all right."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 7687392,
-      "frameCount": 21945,
-      "text": "But yeah, no, that's it. Thank you."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 7709337,
-      "frameCount": 216199,
-      "text": "Okay, so I would take ibuprofen regularly, okay? You can get that over-the-counter. That's 400 milligrams two times a day. And you should take that after food, not in an empty stomach. If you get any heartburn, stop taking it, okay?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 7932640,
-      "frameCount": 6208,
-      "text": "Sure."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 7944928,
-      "frameCount": 324160,
-      "text": "Alright, so what I want to do is I'll get the form sent out to you and we are going to arrange a follow-up appointment. Actually, the follow-up appointment doesn't have to be face-to-face. It's more convenient to do it over the phone. We can do that over the video. We can do that as well. That's your call. But you contact us after you've had the blood test done or we can review things then, okay?"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 8275168,
-      "frameCount": 84032,
-      "text": "OK, yeah, that sounds good. I'll do that. And if I see that it's getting worse, I'll probably ask for it."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 8363744,
-      "frameCount": 210496,
-      "text": "physical appointment. Sure, sure that's good idea. Alright then, okay, take care then. So just leave that with me, I'll sort all those bits and pieces out and then we'll get them sent out to you and then we'll review you after the test."
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 8578272,
-      "frameCount": 21280,
-      "text": "All right. All right."
-    },
-    {
-      "speaker": "doctor",
-      "firstFrame": 8599552,
-      "frameCount": 20256,
-      "text": "all the best bye"
-    },
-    {
-      "speaker": "patient",
-      "firstFrame": 8623840,
-      "frameCount": 11840,
-      "text": "Bye."
-    }
-  ],
   "answers": {
     "happened": "A painless, warm swelling over the elbow with no injury: bursitis on the picture, but the patient's real question was whether it was dangerous, and he asked it plainly. The safety-netting for an infected joint had frightened him more than the swelling had.",
     "learned": "Describing the worst case before saying it is unlikely lands as a warning, not reassurance. Say what it is first, then what to watch for, and check how it was heard.",
@@ -482,5 +18,84 @@
     "happened": "do you, do you think it's something dangerous? Like something, like could I die from that",
     "learned": "No. I, I don't think this is anything dangerous. don't need to worry. OK? What I'm doing, is I'm just outlining the worst case scenario",
     "next": "But you contact us, , after you've had the blood test done, and we can review things then, OK."
-  }
+  },
+  "turns": [
+    {"speaker": "doctor", "firstFrame": 7392, "frameCount": 32832, "text": "Good morning."},
+    {"speaker": "patient", "firstFrame": 56032, "frameCount": 6208, "text": "Thanks, Tony."},
+    {"speaker": "doctor", "firstFrame": 69344, "frameCount": 49216, "text": "I'm Dr Dean Mirza from GP at hand, nice to see you."},
+    {"speaker": "patient", "firstFrame": 126688, "frameCount": 11328, "text": "Nice to see you."},
+    {"speaker": "doctor", "firstFrame": 145632, "frameCount": 64064, "text": "Okay, before we start your appointment, could you please tell me your first name and your date of birth?"},
+    {"speaker": "patient", "firstFrame": 220384, "frameCount": 131648, "text": "Yes, my name is John Smith and I was born on the 5th of April 1973."},
+    {"speaker": "doctor", "firstFrame": 357600, "frameCount": 71744, "text": "Okay, that's great. Thank you for that. Are you in a private place where you're okay to speak freely?"},
+    {"speaker": "patient", "firstFrame": 436960, "frameCount": 19008, "text": "Yes, certainly."},
+    {"speaker": "doctor", "firstFrame": 458976, "frameCount": 96832, "text": "Okay, great. Okay, so tell me a bit about what's been happening. You mentioned in the notes that you've got a problem with your elbow."},
+    {"speaker": "patient", "firstFrame": 569056, "frameCount": 446752, "text": "Yeah, I just noticed this like about a week ago or something. I have like a weird swelling on my elbow. I noticed that when I was in the shower. It's not painful at all. I feel fine, but it's just a bit weird to see that. It's slightly warm. And I kind of feel like it's a bit fluid inside."},
+    {"speaker": "doctor", "firstFrame": 1015808, "frameCount": 20768, "text": "Sure, sure."},
+    {"speaker": "patient", "firstFrame": 1041632, "frameCount": 15936, "text": "So I..."},
+    {"speaker": "patient", "firstFrame": 1060576, "frameCount": 29248, "text": "to know what's going on."},
+    {"speaker": "doctor", "firstFrame": 1096638, "frameCount": 41314, "text": "And so did you say it was the left elbow or the right elbow?"},
+    {"speaker": "patient", "firstFrame": 1148128, "frameCount": 54336, "text": "um it's the the left hand elbow"},
+    {"speaker": "doctor", "firstFrame": 1204960, "frameCount": 67648, "text": "left elbow okay and have you banged that elbow did you have any kind of injury"},
+    {"speaker": "patient", "firstFrame": 1286880, "frameCount": 199232, "text": "No, not really. Not that I know of. I haven't noticed anything. I can actually, like, normally. It's just, I can just see that it feels a bit strange."},
+    {"speaker": "doctor", "firstFrame": 1490144, "frameCount": 104000, "text": "Sure okay and in terms of your job do you do anything physical?"},
+    {"speaker": "patient", "firstFrame": 1606368, "frameCount": 55360, "text": "Not really, no. I just sit at the desk."},
+    {"speaker": "doctor", "firstFrame": 1664736, "frameCount": 8256, "text": "Right."},
+    {"speaker": "doctor", "firstFrame": 1688556, "frameCount": 38196, "text": "And has this happened before?"},
+    {"speaker": "patient", "firstFrame": 1744096, "frameCount": 129088, "text": "no no i haven't noticed that before um i don't have any like history of seeing this i don't remember"},
+    {"speaker": "doctor", "firstFrame": 1881312, "frameCount": 166464, "text": "Sure, okay. And can I just double check, has anyone in your family got any kind of rheumatology diseases like rheumatoid arthritis or lupus or anything like that?"},
+    {"speaker": "patient", "firstFrame": 2056928, "frameCount": 226368, "text": "Well, I do. Well, I think I have something like Osteo Apparises. It sometimes kind of hurts my joints, but in my family, I'm not sure."},
+    {"speaker": "doctor", "firstFrame": 2296544, "frameCount": 155712, "text": "okay sure so you said you think you've got osteoarthritis has anyone ever told you that have you ever seen a doctor who's confirmed that and told you you've got osteoarthritis"},
+    {"speaker": "patient", "firstFrame": 2461920, "frameCount": 35904, "text": "Yes, a few years ago."},
+    {"speaker": "doctor", "firstFrame": 2513120, "frameCount": 34384, "text": "Okay. Was that a GP or a specialist?"},
+    {"speaker": "doctor", "firstFrame": 2547504, "frameCount": 40944, "text": "or is it physiotherapist?"},
+    {"speaker": "patient", "firstFrame": 2596576, "frameCount": 13088, "text": "GP."},
+    {"speaker": "doctor", "firstFrame": 2609664, "frameCount": 97568, "text": "um gmp okay all right um sorry can i just double check how old you are please"},
+    {"speaker": "patient", "firstFrame": 2717920, "frameCount": 17984, "text": "I'm 53."},
+    {"speaker": "doctor", "firstFrame": 2740960, "frameCount": 94218, "text": "53, okay. Fantastic, all right. And do you have any other illnesses at all?"},
+    {"speaker": "patient", "firstFrame": 2835178, "frameCount": 13878, "text": "um"},
+    {"speaker": "patient", "firstFrame": 2866689, "frameCount": 101596, "text": "Well, not for you, no. I'm allergic to peanuts."},
+    {"speaker": "doctor", "firstFrame": 2961222, "frameCount": 15834, "text": "Okay."},
+    {"speaker": "patient", "firstFrame": 2983136, "frameCount": 53312, "text": "That's pretty cool."},
+    {"speaker": "doctor", "firstFrame": 3043552, "frameCount": 42048, "text": "Are you allergic to any medication?"},
+    {"speaker": "patient", "firstFrame": 3095776, "frameCount": 28736, "text": "No, not that I know of."},
+    {"speaker": "doctor", "firstFrame": 3127520, "frameCount": 78912, "text": "Sure. And do you, are you on any medication on a regular basis?"},
+    {"speaker": "patient", "firstFrame": 3216096, "frameCount": 8256, "text": "and"},
+    {"speaker": "doctor", "firstFrame": 3234528, "frameCount": 71232, "text": "No, okay. And are you normally fit and well, mobile, active?"},
+    {"speaker": "patient", "firstFrame": 3308256, "frameCount": 157984, "text": "I do some sports, I run regularly, like two, three times a week. Yeah, no, I think I'm healthy."},
+    {"speaker": "doctor", "firstFrame": 3466240, "frameCount": 29855, "text": "Okay, good. Well done."},
+    {"speaker": "doctor", "firstFrame": 3496095, "frameCount": 60545, "text": "It's good that you're doing that on a regular basis. Okay. And..."},
+    {"speaker": "patient", "firstFrame": 3558624, "frameCount": 10304, "text": "uh"},
+    {"speaker": "doctor", "firstFrame": 3575520, "frameCount": 44096, "text": "Can I, is it possible for me to have a look at your elbow now?"},
+    {"speaker": "patient", "firstFrame": 3625696, "frameCount": 11328, "text": "Yes, sure."},
+    {"speaker": "doctor", "firstFrame": 3668192, "frameCount": 400448, "text": "Okay, bear with me one second. Right, okay. And if you can just raise your elbow up a little bit, like that, a bit higher, so I can just see the underside. Okay, fantastic, all right. And then just bring it around to this side, essentially, I can see the other side. Okay, fantastic. All right. And if you can just touch the tip of the elbow with your fingers, is it hot compared to the surrounding skin, the adjacent skin?"},
+    {"speaker": "patient", "firstFrame": 4089371, "frameCount": 13854, "text": "It's a bit warm, yeah."},
+    {"speaker": "doctor", "firstFrame": 4103225, "frameCount": 147687, "text": "It's a bit warmer, okay. And is it very tender when you're pressing on that knob? If you give it a press, does it hurt you at all?"},
+    {"speaker": "patient", "firstFrame": 4275936, "frameCount": 144448, "text": "on the on the tip of the elbow it's it's okay just like next to it like where the the swelling is it's a bit yeah it feels a bit fluid"},
+    {"speaker": "doctor", "firstFrame": 4436192, "frameCount": 132672, "text": "Okay, all right. I noticed the skin was a bit dry on the tip of the elbow. Do you have dry skin anywhere else in the body?"},
+    {"speaker": "patient", "firstFrame": 4586208, "frameCount": 45120, "text": "No, not for you. I have more skin."},
+    {"speaker": "doctor", "firstFrame": 4634336, "frameCount": 38976, "text": "Do you suffer from eczema at all?"},
+    {"speaker": "patient", "firstFrame": 4688608, "frameCount": 6208, "text": "No."},
+    {"speaker": "doctor", "firstFrame": 4703022, "frameCount": 396274, "text": "Alright. Okay, so what I think we should do with regards to your elbow problem, okay, is I think it would be worthwhile. This seems like what we call the bursitis, okay? So that's an inflammation of one of the fluid sacs around the joint. What I think we should do is I think you should be on some anti-inflammatory medication."},
+    {"speaker": "patient", "firstFrame": 5109984, "frameCount": 7968, "text": "Okay."},
+    {"speaker": "doctor", "firstFrame": 5117952, "frameCount": 566560, "text": "the first instance and as well as that what I would like to do is to get some blood tests done to check for other types of causes of joint swelling okay so what we're going to do is we're going to arrange some blood test forms to be sent out to your house and there'll be instructions within that pack about where to go to get those blood tests done and that will involve you having some tests done to check for inflammatory markers, infection, rheumatological antibodies. So we'll do a full screen and also check for things like gout as well."},
+    {"speaker": "patient", "firstFrame": 5690592, "frameCount": 14912, "text": "Okay."},
+    {"speaker": "doctor", "firstFrame": 5722848, "frameCount": 1119808, "text": "The time frame for that will be the results will come back to us after about five, six days. It will take time for the forms to come out to you. And if you get the form to get the test done straight away, by the time that we're expecting a result back, one or two days after that, we're looking at maybe six days. And what I would suggest is we can arrange a follow-up appointment for you in one of our clinics, where we can have a look at your joint, feel it, we can review the blood tests, and we can get a gauge as to what's going on. Now, in terms of your joint right now, it doesn't look like, to me, that's something called septic arthritis. So we're worried sometimes that someone might have an acutely infected joint and your joint doesn't look like that. However, if the elbow was to become very red, very painful, and the redness was to spread or become more intense, then you need to get on the phone or have a video appointment with one of us as soon as possible, because that would be an emergency that would require more immediate assessment, more immediate treatment."},
+    {"speaker": "patient", "firstFrame": 6845152, "frameCount": 120960, "text": "Do you think it's something dangerous? Like something like, could I die from that? Or is it..."},
+    {"speaker": "doctor", "firstFrame": 6966112, "frameCount": 17599, "text": "No, I don't think..."},
+    {"speaker": "doctor", "firstFrame": 6966383, "frameCount": 60593, "text": "think this is anything dangerous. You don't need to worry."},
+    {"speaker": "doctor", "firstFrame": 7029984, "frameCount": 412736, "text": "okay what i'm doing is i'm just outlining the worst case scenario if things were to develop okay so this this is not the case right now right now it looks quite straightforward it's nothing sinister or life-threatening um what i'm doing is i'm just saying in case things worsen these are the things that we'll be looking out for and this is what we have to do but you don't have that now thankfully and i don't think you're going to have it but i'm just saying the what if scenario is that okay"},
+    {"speaker": "patient", "firstFrame": 7446752, "frameCount": 31296, "text": "Yeah, that sounds good. Thank you."},
+    {"speaker": "doctor", "firstFrame": 7483616, "frameCount": 41536, "text": "Alright, did you have any questions that you wanted to ask me?"},
+    {"speaker": "patient", "firstFrame": 7536864, "frameCount": 109632, "text": "um well just yeah i just wanted to know about this um yeah it feels a bit better now to know that"},
+    {"speaker": "doctor", "firstFrame": 7648480, "frameCount": 35904, "text": "Okay, all right."},
+    {"speaker": "patient", "firstFrame": 7687392, "frameCount": 21945, "text": "But yeah, no, that's it. Thank you."},
+    {"speaker": "doctor", "firstFrame": 7709337, "frameCount": 216199, "text": "Okay, so I would take ibuprofen regularly, okay? You can get that over-the-counter. That's 400 milligrams two times a day. And you should take that after food, not in an empty stomach. If you get any heartburn, stop taking it, okay?"},
+    {"speaker": "patient", "firstFrame": 7932640, "frameCount": 6208, "text": "Sure."},
+    {"speaker": "doctor", "firstFrame": 7944928, "frameCount": 324160, "text": "Alright, so what I want to do is I'll get the form sent out to you and we are going to arrange a follow-up appointment. Actually, the follow-up appointment doesn't have to be face-to-face. It's more convenient to do it over the phone. We can do that over the video. We can do that as well. That's your call. But you contact us after you've had the blood test done or we can review things then, okay?"},
+    {"speaker": "patient", "firstFrame": 8275168, "frameCount": 84032, "text": "OK, yeah, that sounds good. I'll do that. And if I see that it's getting worse, I'll probably ask for it."},
+    {"speaker": "doctor", "firstFrame": 8363744, "frameCount": 210496, "text": "physical appointment. Sure, sure that's good idea. Alright then, okay, take care then. So just leave that with me, I'll sort all those bits and pieces out and then we'll get them sent out to you and then we'll review you after the test."},
+    {"speaker": "patient", "firstFrame": 8578272, "frameCount": 21280, "text": "All right. All right."},
+    {"speaker": "doctor", "firstFrame": 8599552, "frameCount": 20256, "text": "all the best bye"},
+    {"speaker": "patient", "firstFrame": 8623840, "frameCount": 11840, "text": "Bye."}
+  ]
 }
