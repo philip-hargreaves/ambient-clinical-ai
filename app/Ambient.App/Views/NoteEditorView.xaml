@@ -103,6 +103,15 @@
                         <TextBlock Text="Export" />
                     </StackPanel>
                 </Button>
+                <!-- Disabled when the consultation is not being kept -->
+                <Button Command="{x:Bind ViewModel.ReflectCommand}"
+                        ToolTipService.ToolTip="An appraisal reflection on this consultation"
+                        Visibility="{x:Bind ViewModel.NoteViewing, Mode=OneWay}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <FontIcon FontSize="14" Glyph="&#xE70B;" />
+                        <TextBlock Text="{x:Bind ViewModel.ReflectLabel, Mode=OneWay}" />
+                    </StackPanel>
+                </Button>
             </StackPanel>
             <!-- Read-only until an explicit Edit; Save commits, Discard restores -->
             <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Spacing="8">

@@ -119,6 +119,83 @@ public sealed class FakeEngineClient(bool autoNotify = true) : IEngineClient
             return Task.FromResult(JsonSerializer.SerializeToElement(new { models }));
         }
 
+        if (method == "reflection/get")
+        {
+            return Task.FromResult(JsonSerializer.SerializeToElement(new
+            {
+                id = JsonDocument.Parse(Requests[^1].Params).RootElement.GetProperty("id").GetString(),
+                label = ReflectionLabel,
+                summary = ReflectionSummary is null ? null : new { text = ReflectionSummary, generatedAt = "2026-09-06T10:00:00Z", editedAt = (string?)null },
+                reflection = ReflectionAnswers is null ? null : new
+                {
+                    happened = ReflectionAnswers.Value.Happened,
+                    learned = ReflectionAnswers.Value.Learned,
+                    next = ReflectionAnswers.Value.Next,
+                    createdAt = "2026-09-06T10:05:00Z",
+                    editedAt = (string?)null,
+                },
+            }));
+        }
+
+        if (method == "reflection/summary")
+        {
+            var id = JsonDocument.Parse(Requests[^1].Params).RootElement.GetProperty("id").GetString();
+            if (SummaryFails)
+            {
+                RaiseNotification("reflection/summaryFailed",
+                    JsonSerializer.SerializeToElement(new { id, detail = "the model is not loaded" }));
+            }
+            else
+            {
+                RaiseNotification("reflection/summary",
+                    JsonSerializer.SerializeToElement(new { id, text = WrittenSummary }));
+            }
+
+            return Task.FromResult(JsonSerializer.SerializeToElement(new { }));
+        }
+
+        if (method == "reflection/list")
+        {
+            return Task.FromResult(JsonSerializer.SerializeToElement(new
+            {
+                reflections = Reflections.Select(r => new
+                {
+                    id = r.Id,
+                    startedAt = r.StartedAt,
+                    label = r.Label,
+                    happened = "",
+                    learned = r.Learned,
+                    next = "",
+                    summary = r.Summary,
+                    createdAt = r.StartedAt,
+                    editedAt = (string?)null,
+                    demo = DemoReflections.Contains(r.Id),
+                }).ToArray(),
+            }));
+        }
+
+        if (method == "demo/seed")
+        {
+            var added = SamplesSeeded ? 0 : 8;
+            SamplesSeeded = true;
+            return Task.FromResult(JsonSerializer.SerializeToElement(new { added }));
+        }
+
+        if (method == "session/deleteAll")
+        {
+            var removed = SamplesSeeded ? 8 + StoredSessions : StoredSessions;
+            SamplesSeeded = false;
+            StoredSessions = 0;
+            return Task.FromResult(JsonSerializer.SerializeToElement(new { removed }));
+        }
+
+        if (method == "demo/clear")
+        {
+            var removed = SamplesSeeded ? 8 : 0;
+            SamplesSeeded = false;
+            return Task.FromResult(JsonSerializer.SerializeToElement(new { removed }));
+        }
+
         if (method == "note/tier")
         {
             var tier = JsonDocument.Parse(Requests[^1].Params).RootElement
@@ -198,6 +275,32 @@ public sealed class FakeEngineClient(bool autoNotify = true) : IEngineClient
     public bool FirstUse { get; set; }
 
     public bool ModelsCompiled { get; set; } = true;
+
+    /// <summary>Served by reflection/get: the consultation's label.</summary>
+    public string ReflectionLabel { get; set; } = "Elbow swelling";
+
+    /// <summary>Served by reflection/get; null until a summary was written.</summary>
+    public string? ReflectionSummary { get; set; }
+
+    /// <summary>Served by reflection/get; null until the clinician wrote something.</summary>
+    public (string Happened, string Learned, string Next)? ReflectionAnswers { get; set; }
+
+    /// <summary>What reflection/summary produces, as the notification.</summary>
+    public string WrittenSummary { get; set; } = "A patient in their forties presented with a swollen elbow.";
+
+    public bool SummaryFails { get; set; }
+
+    /// <summary>Served by reflection/list.</summary>
+    public List<(string Id, string StartedAt, string Label, string Learned, string Summary)> Reflections { get; } = [];
+
+    /// <summary>Which of Reflections are seeded samples.</summary>
+    public HashSet<string> DemoReflections { get; } = [];
+
+    /// <summary>Whether demo/seed has run; demo/clear resets it.</summary>
+    public bool SamplesSeeded { get; set; }
+
+    /// <summary>Real consultations in the store, counted by session/deleteAll.</summary>
+    public int StoredSessions { get; set; }
 
     /// <summary>Served by engine/readiness; no wedged note process by default.</summary>
     public bool StrayNoteHost { get; set; }

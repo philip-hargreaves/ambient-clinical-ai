@@ -94,6 +94,21 @@ public class FixtureTest
     }
 
     [Fact]
+    public void DemoFixturesCarryTheCountsAndTheSampleFlag()
+    {
+        var seeded = LoadFixture("demo-seed.json").RootElement.GetProperty("result");
+        var cleared = LoadFixture("demo-clear.json").RootElement.GetProperty("result");
+        Assert.Equal(seeded.GetProperty("added").GetInt32(), cleared.GetProperty("removed").GetInt32());
+
+        var session = LoadFixture("session-list.json").RootElement
+            .GetProperty("result").GetProperty("sessions")[0];
+        Assert.False(session.GetProperty("demo").GetBoolean());
+        var entry = LoadFixture("reflection-list.json").RootElement
+            .GetProperty("result").GetProperty("reflections")[0];
+        Assert.False(entry.GetProperty("demo").GetBoolean());
+    }
+
+    [Fact]
     public void SessionNoteFixtureCarriesTheRecordFields()
     {
         var note = LoadFixture("session-note.json").RootElement.GetProperty("result");
@@ -114,6 +129,37 @@ public class FixtureTest
         var translation = patient.GetProperty("translation");
         Assert.Equal("pl", translation.GetProperty("language").GetString());
         Assert.Contains("łokcia", translation.GetProperty("text").GetString(), StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void ReflectionGetFixtureCarriesTheSummaryAndTheThreeAnswers()
+    {
+        var result = LoadFixture("reflection-get.json").RootElement.GetProperty("result");
+
+        Assert.False(string.IsNullOrEmpty(result.GetProperty("label").GetString()));
+        Assert.False(string.IsNullOrEmpty(result.GetProperty("summary").GetProperty("text").GetString()));
+        var reflection = result.GetProperty("reflection");
+        foreach (var key in new[] { "happened", "learned", "next" })
+        {
+            Assert.False(string.IsNullOrEmpty(reflection.GetProperty(key).GetString()), key);
+        }
+
+        Assert.True(DateTimeOffset.TryParse(reflection.GetProperty("createdAt").GetString(), out _));
+    }
+
+    [Fact]
+    public void ReflectionListAndUpdateFixturesAgreeOnTheAnswers()
+    {
+        var listed = LoadFixture("reflection-list.json").RootElement
+            .GetProperty("result").GetProperty("reflections")[0];
+        var update = LoadFixture("reflection-update.json").RootElement.GetProperty("params");
+
+        Assert.Equal(update.GetProperty("id").GetString(), listed.GetProperty("id").GetString());
+        Assert.Equal(update.GetProperty("learned").GetString(), listed.GetProperty("learned").GetString());
+        Assert.True(DateTimeOffset.TryParse(listed.GetProperty("startedAt").GetString(), out _));
+        var summary = LoadFixture("reflection-summary.json").RootElement;
+        Assert.Equal("reflection/summary", summary.GetProperty("method").GetString());
+        Assert.False(summary.TryGetProperty("id", out _), "a notification, not a request");
     }
 
     [Fact]

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="Ambient.App.Views.ReflectionEditorView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <StackPanel Spacing="14">
+
+        <!-- The title is the consultation's label; a journal card shows it in its header instead -->
+        <StackPanel Spacing="2" Visibility="{x:Bind ShowHeading}">
+            <TextBox
+                AutomationProperties.Name="Reflection title"
+                BorderThickness="0"
+                Background="Transparent"
+                FontSize="18"
+                FontWeight="SemiBold"
+                LostFocus="OnTitleCommitted"
+                Padding="0,4"
+                PlaceholderText="{x:Bind ViewModel.Month, Mode=OneWay}"
+                Text="{x:Bind ViewModel.Title, Mode=TwoWay}" />
+            <TextBlock Style="{StaticResource CaptionText}" Text="{x:Bind ViewModel.Month, Mode=OneWay}" />
+        </StackPanel>
+
+        <!-- The case study; the clinician may correct it -->
+        <Border Style="{StaticResource InnerCardSurface}" Padding="14,10,14,12">
+            <StackPanel Spacing="6">
+                <Grid>
+                    <TextBlock Style="{StaticResource MicroText}" VerticalAlignment="Center" Text="Anonymised case study" />
+                    <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Spacing="8">
+                        <ProgressRing
+                            Width="14"
+                            Height="14"
+                            IsActive="{x:Bind ViewModel.SummaryPending, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.SummaryPending, Mode=OneWay}" />
+                        <Button
+                            Command="{x:Bind ViewModel.RewriteSummaryCommand}"
+                            Style="{StaticResource TrayButton}"
+                            ToolTipService.ToolTip="Write the case study again from the clinical note">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <FontIcon FontSize="12" Glyph="&#xE72C;" />
+                                <TextBlock Style="{StaticResource CaptionText}" Text="Rewrite" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+                <TextBox
+                    AcceptsReturn="True"
+                    AutomationProperties.Name="Case study"
+                    BorderThickness="0"
+                    Background="Transparent"
+                    LostFocus="OnSummaryCommitted"
+                    PlaceholderText="Writing the case study"
+                    Text="{x:Bind ViewModel.Summary, Mode=TwoWay}"
+                    TextWrapping="Wrap" />
+                <TextBlock
+                    Style="{StaticResource CaptionText}"
+                    Text="{x:Bind ViewModel.SummaryProblem, Mode=OneWay}"
+                    Visibility="{x:Bind ViewModel.HasSummaryProblem, Mode=OneWay}" />
+                <TextBlock
+                    Style="{StaticResource CaptionText}"
+                    Foreground="{ThemeResource CautionBrush}"
+                    TextWrapping="Wrap"
+                    Text="{x:Bind ViewModel.Warning, Mode=OneWay}"
+                    Visibility="{x:Bind ViewModel.HasWarning, Mode=OneWay}" />
+            </StackPanel>
+        </Border>
+
+        <!-- The three answers are the clinician's alone -->
+        <StackPanel Spacing="6">
+            <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="What stood out?" />
+            <TextBox
+                MinHeight="64"
+                AcceptsReturn="True"
+                AutomationProperties.Name="What stood out"
+                LostFocus="OnAnswerCommitted"
+                PlaceholderText="What was difficult, went well or surprised you"
+                Text="{x:Bind ViewModel.Happened, Mode=TwoWay}"
+                TextWrapping="Wrap" />
+        </StackPanel>
+        <StackPanel Spacing="6">
+            <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="What did I learn?" />
+            <TextBox
+                MinHeight="64"
+                AcceptsReturn="True"
+                AutomationProperties.Name="What did I learn"
+                LostFocus="OnAnswerCommitted"
+                PlaceholderText="What this case taught you, or confirmed"
+                Text="{x:Bind ViewModel.Learned, Mode=TwoWay}"
+                TextWrapping="Wrap" />
+        </StackPanel>
+        <StackPanel Spacing="6">
+            <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="Would I do anything differently?" />
+            <TextBox
+                MinHeight="64"
+                AcceptsReturn="True"
+                AutomationProperties.Name="Would I do anything differently"
+                LostFocus="OnAnswerCommitted"
+                PlaceholderText="What you would change next time, or why you would keep the same approach"
+                Text="{x:Bind ViewModel.Next, Mode=TwoWay}"
+                TextWrapping="Wrap" />
+        </StackPanel>
+
+        <!-- Copy and Save as text; Remove only in a journal card -->
+        <Grid>
+            <HyperlinkButton
+                Padding="0"
+                VerticalAlignment="Center"
+                Command="{x:Bind RemoveCommand}"
+                Content="Remove from appraisals"
+                Visibility="{x:Bind HasRemove}" />
+            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Spacing="8">
+                <Button Click="OnCopy" ToolTipService.ToolTip="Copy this reflection as text">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <FontIcon FontSize="14" Glyph="&#xE8C8;" />
+                        <TextBlock Text="Copy" />
+                    </StackPanel>
+                </Button>
+                <Button Click="OnSave" ToolTipService.ToolTip="Save this reflection as a text file">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <FontIcon FontSize="14" Glyph="&#xE74E;" />
+                        <TextBlock Text="Save as text" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Grid>
+    </StackPanel>
+</UserControl>

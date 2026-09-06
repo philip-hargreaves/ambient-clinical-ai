@@ -70,6 +70,26 @@ public sealed partial class NoteViewModel : ObservableObject
 
     public Func<Task>? RegeneratePatientRequested { get; set; }
 
+    /// <summary>Opens the appraisal reflection for the consultation on screen.</summary>
+    public Func<Task>? ReflectRequested { get; set; }
+
+    /// <summary>False when the consultation will not be kept: a reflection needs its session.</summary>
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(ReflectCommand))]
+    public partial bool ReflectAvailable { get; set; } = true;
+
+    /// <summary>True once an appraisal entry exists; the button then reads Open.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ReflectLabel))]
+    public partial bool HasReflection { get; set; }
+
+    public string ReflectLabel => HasReflection ? "Open reflection" : "Create reflection";
+
+    [RelayCommand(CanExecute = nameof(CanReflect))]
+    private Task Reflect() => ReflectRequested!();
+
+    private bool CanReflect() => ReflectRequested is not null && ReflectAvailable && NoteDocumentReady;
+
     /// <summary>The staleness hint's action: rewrite the sheet from the edited note.</summary>
     [RelayCommand(CanExecute = nameof(CanRegeneratePatient))]
     private Task RegeneratePatient() => RegeneratePatientRequested!();
@@ -373,6 +393,7 @@ public sealed partial class NoteViewModel : ObservableObject
         OnPropertyChanged(nameof(NoteRefused));
         OnPropertyChanged(nameof(CanWriteAnyway));
         WriteAnywayCommand.NotifyCanExecuteChanged();
+        ReflectCommand.NotifyCanExecuteChanged();
         OnPropertyChanged(nameof(PatientStateCaption));
         OnPropertyChanged(nameof(NoteCaptionVisible));
         OnPropertyChanged(nameof(PatientCaptionVisible));

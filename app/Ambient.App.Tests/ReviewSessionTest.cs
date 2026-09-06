@@ -25,6 +25,30 @@ public class ReviewSessionTest
     }
 
     [Fact]
+    public async Task TheReflectButtonSaysWhetherItCreatesOrOpens()
+    {
+        var (session, _, note) = TestSession.Create();
+        var opened = 0;
+        session.OpenReflection = (_, _) =>
+        {
+            opened++;
+            return Task.CompletedTask;
+        };
+
+        await session.OpenStoredSessionAsync("abc");
+        Assert.Equal("Create reflection", note.ReflectLabel);
+
+        await note.ReflectCommand.ExecuteAsync(null);
+        Assert.Equal(1, opened);
+        Assert.Equal("Open reflection", note.ReflectLabel);  // the sheet made the entry
+
+        await session.OpenStoredSessionAsync("def", hasReflection: true);
+        Assert.Equal("Open reflection", note.ReflectLabel);
+        await session.OpenStoredSessionAsync("ghi");
+        Assert.Equal("Create reflection", note.ReflectLabel);
+    }
+
+    [Fact]
     public async Task SaveCommitsAndLeavesEditing()
     {
         var (session, _, note) = TestSession.Create();
