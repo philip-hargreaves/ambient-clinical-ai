@@ -113,6 +113,10 @@ public class SessionsViewModelTest
         Assert.Equal("9 min", row.Duration);
         Assert.True(row.Edited);
         Assert.StartsWith("Edited ", row.EditedLabel);
+        Assert.True(row.HasLabel);
+        Assert.Equal("Elbow swelling", row.Heading);
+        Assert.Equal($"{row.Started} · 9 min", row.Meta);
+        Assert.True(row.MetaVisible);
     }
 
     [Fact]
@@ -132,6 +136,8 @@ public class SessionsViewModelTest
                     sampleRate = 16000,
                     label = "",
                     editedAt = (string?)null,
+                    demo = true,
+                    hasReflection = true,
                 },
             },
         };
@@ -141,6 +147,11 @@ public class SessionsViewModelTest
         var row = Assert.Single(vm.Sessions);
         Assert.Equal(row.Started, row.Title);
         Assert.False(row.Edited);
+        Assert.True(row.Demo);
+        Assert.True(row.HasReflection);
+        Assert.False(row.HasLabel);
+        Assert.Equal($"{row.Started} · {row.Duration}", row.Heading);  // said once
+        Assert.False(row.MetaVisible);
     }
 
     [Fact]

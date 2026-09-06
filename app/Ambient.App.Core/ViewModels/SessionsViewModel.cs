@@ -7,9 +7,19 @@ using Ambient.Client;
 namespace Ambient.App.Core.ViewModels;
 
 public sealed record SessionRow(
-    string Id, string Title, string Started, string Duration, string EditedLabel)
+    string Id, string Title, string Started, string Duration, string EditedLabel,
+    string StartedAt = "", bool Demo = false, bool HasReflection = false)
 {
     public bool Edited => EditedLabel.Length > 0;
+
+    /// <summary>An unlabelled row shows the date once.</summary>
+    public bool HasLabel => Title != Started;
+
+    public string Heading => HasLabel ? Title : $"{Started} · {Duration}";
+
+    public string Meta => HasLabel ? $"{Started} · {Duration}" : "";
+
+    public bool MetaVisible => HasLabel || Edited;
 }
 
 /// <summary>
@@ -97,12 +107,19 @@ public sealed partial class SessionsViewModel : ObservableObject
                 var startedLabel = FormatStarted(started);
                 var audioSeconds = session.TryGetProperty("audioSeconds", out var a)
                     ? a.GetDouble() : 0;
+                var demo = session.TryGetProperty("demo", out var d)
+                    && d.ValueKind == System.Text.Json.JsonValueKind.True;
+                var hasReflection = session.TryGetProperty("hasReflection", out var h)
+                    && h.ValueKind == System.Text.Json.JsonValueKind.True;
                 Sessions.Add(new SessionRow(
                     session.GetProperty("id").GetString() ?? "",
                     label.Length > 0 ? label : startedLabel,
                     startedLabel,
                     FormatDuration(audioSeconds, started, ended),
-                    EditedStamp.Label(started, edited)));
+                    EditedStamp.Label(started, edited),
+                    started,
+                    demo,
+                    hasReflection));
             }
 
             EmptyBecauseOff = Sessions.Count == 0
@@ -122,7 +139,8 @@ public sealed partial class SessionsViewModel : ObservableObject
             return;
         }
 
-        DetailOpen = await _consultation.OpenStoredSessionAsync(row.Id, row.Started)
+        DetailOpen = await _consultation.OpenStoredSessionAsync(
+                row.Id, row.Started, row.StartedAt, row.HasReflection)
             .ConfigureAwait(true);
         if (DetailOpen)
         {
@@ -166,21 +184,28 @@ public sealed partial class SessionsViewModel : ObservableObject
     }
 
     [RelayCommand]
-    public async Task DeleteSelectedAsync()
+    public Task DeleteSelectedAsync() => DeleteAsync(Selected);
+
+    /// <summary>Deletes one row, closing its review first if open.</summary>
+    public async Task DeleteAsync(SessionRow? row)
     {
-        if (Selected is null)
+        if (row is null)
         {
             return;
         }
 
         try
         {
-            await _consultation.CloseReviewAsync().ConfigureAwait(true);
+            if (Selected?.Id == row.Id)
+            {
+                await _consultation.CloseReviewAsync().ConfigureAwait(true);
+                DetailOpen = false;
+            }
+
             _ = await _engine
-                .RequestAsync("session/delete", new { id = Selected.Id }, RequestTimeout)
+                .RequestAsync("session/delete", new { id = row.Id }, RequestTimeout)
                 .ConfigureAwait(true);
             _status.Append("Session deleted");
-            DetailOpen = false;
             await RefreshAsync().ConfigureAwait(true);
         }
         catch (Exception e) when (e is not OperationCanceledException)

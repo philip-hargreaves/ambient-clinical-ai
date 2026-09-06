@@ -26,9 +26,6 @@
             <Button Command="{x:Bind ViewModel.RefreshCommand}" ToolTipService.ToolTip="Refresh">
                 <FontIcon FontSize="14" Glyph="&#xE72C;" />
             </Button>
-            <Button Click="OnDeleteClick" ToolTipService.ToolTip="Delete this session">
-                <FontIcon FontSize="14" Glyph="&#xE74D;" />
-            </Button>
         </StackPanel>
 
         <ListView
@@ -38,112 +35,187 @@
             SelectionMode="Single">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="vm:SessionRow">
-                    <!-- The title owns the row's full width; the edited chip
-                         sits on the meta line so a long title never meets it -->
-                    <StackPanel Padding="0,8" Spacing="2">
-                        <TextBlock
-                            FontWeight="SemiBold"
-                            Text="{x:Bind Title}"
-                            TextTrimming="CharacterEllipsis" />
-                        <StackPanel Orientation="Horizontal" Spacing="8">
+                    <!-- Unlabelled: one line. Labelled: title, then date and length -->
+                    <Grid Padding="0,6" ColumnSpacing="8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Spacing="2">
                             <TextBlock
-                                VerticalAlignment="Center"
-                                Foreground="{ThemeResource FaintTextBrush}"
-                                Text="{x:Bind Started}" />
-                            <TextBlock
-                                VerticalAlignment="Center"
-                                Foreground="{ThemeResource FaintTextBrush}"
-                                Text="{x:Bind Duration}" />
-                            <Border
-                                Padding="6,1"
-                                VerticalAlignment="Center"
-                                Background="{ThemeResource CautionSoftBrush}"
-                                BorderBrush="{ThemeResource CautionBrush}"
-                                Style="{StaticResource ChipBorder}"
-                                Visibility="{x:Bind Edited}">
+                                FontWeight="SemiBold"
+                                Text="{x:Bind Heading}"
+                                TextTrimming="CharacterEllipsis" />
+                            <StackPanel Orientation="Horizontal" Spacing="8" Visibility="{x:Bind MetaVisible}">
                                 <TextBlock
-                                    Style="{StaticResource CaptionText}"
-                                    Foreground="{ThemeResource CautionBrush}"
-                                    Text="{x:Bind EditedLabel}" />
-                            </Border>
+                                    VerticalAlignment="Center"
+                                    Foreground="{ThemeResource FaintTextBrush}"
+                                    Text="{x:Bind Meta}"
+                                    Visibility="{x:Bind HasLabel}" />
+                                <Border
+                                    Padding="6,1"
+                                    VerticalAlignment="Center"
+                                    Background="{ThemeResource CautionSoftBrush}"
+                                    BorderBrush="{ThemeResource CautionBrush}"
+                                    Style="{StaticResource ChipBorder}"
+                                    Visibility="{x:Bind Edited}">
+                                    <TextBlock
+                                        Style="{StaticResource CaptionText}"
+                                        Foreground="{ThemeResource CautionBrush}"
+                                        Text="{x:Bind EditedLabel}" />
+                                </Border>
+                            </StackPanel>
                         </StackPanel>
-                    </StackPanel>
+                        <Button
+                            Grid.Column="1"
+                            VerticalAlignment="Center"
+                            Click="OnDeleteClick"
+                            Style="{StaticResource TrayButton}"
+                            ToolTipService.ToolTip="Delete this consultation">
+                            <FontIcon FontSize="13" Foreground="{ThemeResource FaintTextBrush}" Glyph="&#xE74D;" />
+                        </Button>
+                    </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
 
         <!-- The open consultation: the live view's own renderers in tabs -->
         <Grid
+            x:Name="DetailGrid"
             Grid.Row="1"
             Grid.Column="1"
-            RowSpacing="8"
+            RowSpacing="20"
+            SizeChanged="OnDetailSizeChanged"
             Visibility="{x:Bind ViewModel.DetailOpen, Mode=OneWay}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <StackPanel Orientation="Horizontal" Spacing="12">
-                <!-- The title is the label; typing here renames the session -->
-                <TextBox
-                    MinWidth="220"
-                    AutomationProperties.Name="Consultation label"
-                    FontWeight="SemiBold"
-                    LostFocus="OnTitleCommitted"
-                    PlaceholderText="Name this consultation"
-                    Text="{x:Bind ViewModel.DetailTitle, Mode=TwoWay}" />
-                <TextBlock
-                    VerticalAlignment="Center"
-                    Style="{StaticResource CaptionText}"
-                    Text="{x:Bind ViewModel.DetailMeta, Mode=OneWay}" />
-                <Border
-                    VerticalAlignment="Center"
-                    Background="{ThemeResource CautionSoftBrush}"
-                    BorderBrush="{ThemeResource CautionBrush}"
-                    Style="{StaticResource ChipBorder}"
-                    Visibility="{x:Bind ViewModel.Note.Edited, Mode=OneWay}">
-                    <TextBlock
-                        Style="{StaticResource CaptionText}"
-                        Foreground="{ThemeResource CautionBrush}"
-                        Text="{x:Bind ViewModel.Note.EditedStamp, Mode=OneWay}" />
-                </Border>
-            </StackPanel>
+            <!-- The title is the label, edited in place; the header shares the documents' column -->
+            <Grid
+                x:Name="DetailHeader"
+                MaxWidth="1480"
+                HorizontalAlignment="Stretch">
+                <StackPanel Spacing="0">
+                    <TextBox
+                        AutomationProperties.Name="Consultation label"
+                        BorderThickness="0"
+                        Background="Transparent"
+                        FontSize="20"
+                        FontWeight="SemiBold"
+                        LostFocus="OnTitleCommitted"
+                        Padding="0,2,0,0"
+                        PlaceholderText="Name this consultation"
+                        Text="{x:Bind ViewModel.DetailTitle, Mode=TwoWay}" />
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            Style="{StaticResource CaptionText}"
+                            Text="{x:Bind ViewModel.DetailMeta, Mode=OneWay}" />
+                        <Border
+                            VerticalAlignment="Center"
+                            Background="{ThemeResource CautionSoftBrush}"
+                            BorderBrush="{ThemeResource CautionBrush}"
+                            Style="{StaticResource ChipBorder}"
+                            Visibility="{x:Bind ViewModel.Note.Edited, Mode=OneWay}">
+                            <TextBlock
+                                Style="{StaticResource CaptionText}"
+                                Foreground="{ThemeResource CautionBrush}"
+                                Text="{x:Bind ViewModel.Note.EditedStamp, Mode=OneWay}" />
+                        </Border>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
 
-            <TabView
+            <!-- Wide: note and patient sheet beside the transcript; narrow: tabs. Views move in code -->
+            <Grid
+                x:Name="WideLayout"
                 Grid.Row="1"
-                CanDragTabs="False"
-                CanReorderTabs="False"
-                IsAddTabButtonVisible="False"
-                TabWidthMode="SizeToContent">
-                <TabView.TabItems>
-                    <!-- One document per tab, at a text measure: a wide pane
-                         must not mean long lines and dead space. The note is
-                         what a past consultation is opened for; the
-                         transcript is the reference, last -->
-                    <TabViewItem Header="Clinical note" IsClosable="False">
+                MaxWidth="1480"
+                Margin="0,0,0,16"
+                HorizontalAlignment="Center"
+                ColumnSpacing="20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" MaxWidth="760" />
+                    <ColumnDefinition Width="*" MaxWidth="700" />
+                </Grid.ColumnDefinitions>
+                <!-- The patient sheet folds; the note does not -->
+                <ScrollViewer HorizontalScrollMode="Disabled" VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="0,0,12,0" Spacing="6">
+                        <TextBlock Style="{StaticResource DocumentHeadingText}" Text="Clinical note" />
                         <ContentControl
-                            x:Name="NoteHost"
-                            MaxWidth="760"
+                            x:Name="NoteHostWide"
+                            HorizontalContentAlignment="Stretch"
+                            VerticalContentAlignment="Stretch" />
+                        <Button
+                            Margin="-9,18,0,-2"
+                            Padding="9,4"
                             HorizontalAlignment="Left"
-                            HorizontalContentAlignment="Stretch"
-                            VerticalContentAlignment="Stretch" />
-                    </TabViewItem>
-                    <TabViewItem Header="Patient information" IsClosable="False">
+                            Click="OnPatientFoldClick"
+                            Style="{StaticResource TrayButton}"
+                            ToolTipService.ToolTip="Show or hide the patient information">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <TextBlock Style="{StaticResource DocumentHeadingText}" Text="Patient information" />
+                                <FontIcon
+                                    x:Name="PatientFoldGlyph"
+                                    VerticalAlignment="Center"
+                                    FontSize="11"
+                                    Foreground="{ThemeResource FaintTextBrush}"
+                                    Glyph="&#xE70E;" />
+                            </StackPanel>
+                        </Button>
                         <ContentControl
-                            x:Name="PatientHost"
-                            MaxWidth="760"
-                            HorizontalAlignment="Left"
+                            x:Name="PatientHostWide"
                             HorizontalContentAlignment="Stretch"
                             VerticalContentAlignment="Stretch" />
-                    </TabViewItem>
-                    <TabViewItem Header="Transcript" IsClosable="False">
-                        <ContentControl
-                            x:Name="TranscriptHost"
-                            HorizontalContentAlignment="Stretch"
-                            VerticalContentAlignment="Stretch" />
-                    </TabViewItem>
-                </TabView.TabItems>
-            </TabView>
+                    </StackPanel>
+                </ScrollViewer>
+                <!-- Page-height card; the transcript scrolls inside -->
+                <Border
+                    Grid.Column="1"
+                    Padding="12,8,12,12"
+                    VerticalAlignment="Stretch"
+                    Style="{StaticResource InnerCardSurface}">
+                    <ContentControl
+                        x:Name="TranscriptHostWide"
+                        HorizontalContentAlignment="Stretch"
+                        VerticalContentAlignment="Stretch" />
+                </Border>
+            </Grid>
+
+            <Grid
+                x:Name="NarrowLayout"
+                Grid.Row="1"
+                MaxWidth="760"
+                HorizontalAlignment="Center">
+                <TabView
+                    CanDragTabs="False"
+                    CanReorderTabs="False"
+                    IsAddTabButtonVisible="False"
+                    TabWidthMode="SizeToContent">
+                    <TabView.TabItems>
+                        <TabViewItem Header="Clinical note" IsClosable="False">
+                            <ContentControl
+                                x:Name="NoteHost"
+                                HorizontalContentAlignment="Stretch"
+                                VerticalContentAlignment="Stretch" />
+                        </TabViewItem>
+                        <TabViewItem Header="Patient information" IsClosable="False">
+                            <ContentControl
+                                x:Name="PatientHost"
+                                HorizontalContentAlignment="Stretch"
+                                VerticalContentAlignment="Stretch" />
+                        </TabViewItem>
+                        <TabViewItem Header="Transcript" IsClosable="False">
+                            <ContentControl
+                                x:Name="TranscriptHost"
+                                HorizontalContentAlignment="Stretch"
+                                VerticalContentAlignment="Stretch" />
+                        </TabViewItem>
+                    </TabView.TabItems>
+                </TabView>
+            </Grid>
         </Grid>
 
         <StackPanel
