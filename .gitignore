@@ -50,5 +50,6 @@ desktop.ini
 
 # Bundled demo recordings, staged by tools/stage-demo-tracks.ps1 (root only;
 # source dirs may be named Demo)
-/demo/
+/demo/*
+!/demo/reflections/
 __pycache__/

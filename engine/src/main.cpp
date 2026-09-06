@@ -167,6 +167,14 @@ class WireEvents : public ambient::audio::ISessionEvents {
         server_.PushNotification("patient/failed", {{"detail", detail}});
     }
 
+    void OnSummaryReady(const std::string& session, const std::string& text) override {
+        server_.PushNotification("reflection/summary", {{"id", session}, {"text", text}});
+    }
+
+    void OnSummaryFailed(const std::string& session, const std::string& detail) override {
+        server_.PushNotification("reflection/summaryFailed", {{"id", session}, {"detail", detail}});
+    }
+
    private:
     static const char* ReasonName(ambient::audio::SourceEndReason reason) {
         return reason == ambient::audio::SourceEndReason::kDeviceLost ? "deviceLost" : "failed";
@@ -409,7 +417,8 @@ int main(int argc, char* argv[]) {
 
         ambient::ipc::RegisterMethods(server, controller, model_store, session_store, &metrics,
                                       &ov_runtime, translator.get(), translate_lane.get(),
-                                      first_use, &anchors, note_lane, stray_note_host);
+                                      first_use, &anchors, note_lane, stray_note_host,
+                                      models_root.parent_path() / "demo" / "reflections");
         server.ServeOneClient();
         controller.Stop();
         return 0;

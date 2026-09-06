@@ -6,9 +6,11 @@
 #include <optional>
 #include <stdexcept>
 
+#include "adapters/demo/sample_year.hpp"
 #include "adapters/host/power_throttling.hpp"
 #include "adapters/models/ov_runtime.hpp"
 #include "adapters/translate/translate_lane.hpp"
+#include "core/summary_scrub.hpp"
 #include "core/version.hpp"
 
 namespace ambient::ipc {
@@ -143,9 +145,34 @@ json HandleSessionList(ambient::store::ISessionStore& sessions) {
                         {"sampleRate", session.sample_rate},
                         {"label", session.label},
                         {"editedAt", NullWhenEmpty(session.edited_at)},
-                        {"audioSeconds", session.audio_seconds}});
+                        {"audioSeconds", session.audio_seconds},
+                        {"demo", session.demo},
+                        {"hasReflection", session.has_reflection}});
     }
     return json{{"sessions", std::move(list)}};
+}
+
+std::variant<json, Error> HandleDemoSeed(ambient::store::ISessionStore& sessions,
+                                         const std::filesystem::path& demo_dir) {
+    try {
+        // Already seeded is a no-op, not an error
+        if (ambient::demo::HasSamples(sessions)) {
+            return json{{"added", 0}};
+        }
+        const auto samples = ambient::demo::LoadSampleYear(demo_dir);
+        if (samples.empty()) {
+            return Error{kSessionError, "Session error",
+                         json("no sample content beside the engine")};
+        }
+        const auto now = std::chrono::floor<std::chrono::seconds>(std::chrono::system_clock::now());
+        return json{{"added", ambient::demo::SeedSampleYear(sessions, samples, now)}};
+    } catch (const std::exception& e) {
+        return Error{kSessionError, "Session error", json(e.what())};
+    }
+}
+
+json HandleDemoClear(ambient::store::ISessionStore& sessions) {
+    return json{{"removed", sessions.ClearDemo()}};
 }
 
 std::variant<json, Error> HandleSessionTranscript(ambient::store::ISessionStore& sessions,
@@ -220,6 +247,138 @@ std::variant<json, Error> HandleSessionDelete(ambient::store::ISessionStore& ses
     }
 }
 
+namespace {
+
+constexpr const char* kAnswers[] = {"happened", "learned", "next"};
+
+// The answers are one sealed JSON text; unparseable reads as empty
+json AnswersFrom(const std::string& text) {
+    json answers = json::object();
+    const json parsed = json::parse(text, nullptr, false);
+    for (const char* key : kAnswers) {
+        answers[key] = parsed.is_object() && parsed.contains(key) && parsed[key].is_string()
+                           ? parsed[key]
+                           : json("");
+    }
+    return answers;
+}
+
+}  // namespace
+
+std::variant<json, Error> HandleReflectionGet(ambient::store::ISessionStore& sessions,
+                                              const json& params) {
+    using ambient::store::DocumentKind;
+    const auto id = IdFrom(params);
+    if (std::holds_alternative<Error>(id)) return std::get<Error>(id);
+    try {
+        const auto& session = std::get<std::string>(id);
+        json result{{"id", session},
+                    {"label", sessions.ReadDocument(session, DocumentKind::kLabel).text},
+                    {"summary", nullptr},
+                    {"reflection", nullptr}};
+        // Scrubbed on read: stored text may predate the scrub or be hand-edited
+        const auto summary = sessions.ReadDocument(session, DocumentKind::kSummary);
+        if (!summary.text.empty()) {
+            result["summary"] = {{"text", ambient::core::ScrubSummary(summary.text)},
+                                 {"generatedAt", NullWhenEmpty(summary.generated_at)},
+                                 {"editedAt", NullWhenEmpty(summary.edited_at)}};
+        }
+        const auto reflection = sessions.ReadDocument(session, DocumentKind::kReflection);
+        if (!reflection.text.empty()) {
+            json entry = AnswersFrom(reflection.text);
+            entry["createdAt"] = NullWhenEmpty(reflection.generated_at);
+            entry["editedAt"] = NullWhenEmpty(reflection.edited_at);
+            result["reflection"] = std::move(entry);
+        }
+        return result;
+    } catch (const std::exception& e) {
+        return Error{kSessionError, "Session error", json(e.what())};
+    }
+}
+
+// Given answers replace stored ones; omitted ones stay. Only reflection/delete removes an entry
+std::variant<json, Error> HandleReflectionUpdate(ambient::store::ISessionStore& sessions,
+                                                 const json& params) {
+    using ambient::store::DocumentKind;
+    const auto id = IdFrom(params);
+    if (std::holds_alternative<Error>(id)) return std::get<Error>(id);
+    for (const char* key : kAnswers) {
+        if (params.contains(key) && !params[key].is_string()) {
+            return Error{kInvalidParams, "Invalid params",
+                         json(std::string(key) + " must be a string")};
+        }
+    }
+    if (params.contains("summary") && !params["summary"].is_string()) {
+        return Error{kInvalidParams, "Invalid params", json("summary must be a string")};
+    }
+    try {
+        const auto& session = std::get<std::string>(id);
+        if (params.contains("summary")) {
+            sessions.EditDocument(
+                session, DocumentKind::kSummary,
+                ambient::core::ScrubSummary(params["summary"].get<std::string>()));
+        }
+        const auto stored = sessions.ReadDocument(session, DocumentKind::kReflection);
+        json answers = AnswersFrom(stored.text);
+        for (const char* key : kAnswers) {
+            if (params.contains(key)) answers[key] = params[key];
+        }
+        if (stored.text.empty()) {
+            ambient::store::Document document;
+            document.text = answers.dump();
+            sessions.SaveDocument(session, DocumentKind::kReflection, document);
+        } else {
+            sessions.EditDocument(session, DocumentKind::kReflection, answers.dump());
+        }
+        return json::object();
+    } catch (const std::exception& e) {
+        return Error{kSessionError, "Session error", json(e.what())};
+    }
+}
+
+std::variant<json, Error> HandleReflectionDelete(ambient::store::ISessionStore& sessions,
+                                                 const json& params) {
+    using ambient::store::DocumentKind;
+    const auto id = IdFrom(params);
+    if (std::holds_alternative<Error>(id)) return std::get<Error>(id);
+    try {
+        sessions.DeleteDocument(std::get<std::string>(id), DocumentKind::kReflection);
+        sessions.DeleteDocument(std::get<std::string>(id), DocumentKind::kSummary);
+        return json::object();
+    } catch (const std::exception& e) {
+        return Error{kSessionError, "Session error", json(e.what())};
+    }
+}
+
+// Every session with an appraisal entry, newest first
+json HandleReflectionList(ambient::store::ISessionStore& sessions) {
+    using ambient::store::DocumentKind;
+    json list = json::array();
+    for (const auto& session : sessions.ListSessions()) {
+        if (!session.has_reflection) continue;
+        try {
+            const auto reflection = sessions.ReadDocument(session.id, DocumentKind::kReflection);
+            const auto summary = sessions.ReadDocument(session.id, DocumentKind::kSummary);
+            const json answers = AnswersFrom(reflection.text);
+            list.push_back({{"id", session.id},
+                            {"startedAt", session.started_at},
+                            {"label", session.label},
+                            {"happened", answers["happened"]},
+                            {"learned", answers["learned"]},
+                            {"next", answers["next"]},
+                            {"summary", ambient::core::ScrubSummary(summary.text)},
+                            {"createdAt", NullWhenEmpty(reflection.generated_at.empty()
+                                                            ? summary.generated_at
+                                                            : reflection.generated_at)},
+                            {"editedAt", NullWhenEmpty(reflection.edited_at)},
+                            {"demo", session.demo}});
+        } catch (const std::exception&) {
+            // A session mid-recording or missing its key is not listed
+        }
+    }
+    return json{{"reflections", std::move(list)}};
+}
+
 void RegisterMethods(PipeServer& server, ambient::audio::SessionController& controller,
                      const ambient::models::ModelStore& models,
                      ambient::store::ISessionStore& sessions, ambient::metrics::Registry* metrics,
@@ -227,7 +386,7 @@ void RegisterMethods(PipeServer& server, ambient::audio::SessionController& cont
                      ambient::translate::ITranslator* translator,
                      ambient::translate::TranslateLane* translate_lane, bool first_use,
                      ambient::diar::AnchorStore* anchors, ambient::note::INoteLane* note_lane,
-                     bool stray_note_host) {
+                     bool stray_note_host, const std::filesystem::path& demo_dir) {
     server.RegisterMethod("engine/hello", HandleHello);
     server.RegisterMethod("engine/echo", HandleEcho);
     const auto note_tier = [note_lane] {
@@ -404,6 +563,41 @@ void RegisterMethods(PipeServer& server, ambient::audio::SessionController& cont
     server.RegisterMethod("session/delete", [&sessions](const json& params) {
         return HandleSessionDelete(sessions, params);
     });
+    // One crypto-erase of everything stored; the shell confirms first
+    server.RegisterMethod(
+        "session/deleteAll", [&sessions, &controller](const json&) -> std::variant<json, Error> {
+            if (controller.Running()) {
+                return Error{kSessionError, "Session error", json("finish the consultation first")};
+            }
+            return json{{"removed", sessions.DeleteAll()}};
+        });
+    server.RegisterMethod("reflection/get", [&sessions](const json& params) {
+        return HandleReflectionGet(sessions, params);
+    });
+    server.RegisterMethod("reflection/update", [&sessions](const json& params) {
+        return HandleReflectionUpdate(sessions, params);
+    });
+    server.RegisterMethod("reflection/delete", [&sessions](const json& params) {
+        return HandleReflectionDelete(sessions, params);
+    });
+    server.RegisterMethod("reflection/list",
+                          [&sessions](const json&) { return HandleReflectionList(sessions); });
+    server.RegisterMethod("demo/seed", [&sessions, demo_dir](const json&) {
+        return HandleDemoSeed(sessions, demo_dir);
+    });
+    server.RegisterMethod("demo/clear",
+                          [&sessions](const json&) { return HandleDemoClear(sessions); });
+    // Written on the note lane; arrives as reflection/summary
+    server.RegisterMethod(
+        "reflection/summary", [&controller](const json& params) -> std::variant<json, Error> {
+            const auto id = IdFrom(params);
+            if (std::holds_alternative<Error>(id)) return std::get<Error>(id);
+            if (!controller.WriteSummary(std::get<std::string>(id))) {
+                return Error{kSessionError, "Session error",
+                             json("no stored note, or a document is already being written")};
+            }
+            return json::object();
+        });
     server.RegisterMethod(
         "session/start", [&controller](const json& params) -> std::variant<json, Error> {
             // An optional replay block plays a file through the same

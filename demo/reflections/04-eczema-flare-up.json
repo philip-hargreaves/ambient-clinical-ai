@@ -1,0 +1,462 @@
+{
+  "source": "day1_consultation02",
+  "attribution": "Recording from PriMock57 (Babylon Health), CC BY 4.0, transcribed by the app; notes and case study by the app's accuracy tier at standard settings",
+  "monthsBack": 8,
+  "day": 22,
+  "time": "16:05",
+  "label": "Eczema flare-up",
+  "note": "The patient, a 31-year-old male, presented with a four-day history of intensely itchy, sore, and cracked skin affecting the chest, hands, and arms. He reports no bleeding or discharge, and denies fever, cough, or breathing difficulties. Past medical history includes resolved asthma and previous eczema, for which he used topical creams. He has no regular medications, no known allergies, and smokes neither tobacco nor alcohol. Examination revealed dry, cracked skin with a rash appearing familiar to previous eczema presentations.\n\nThe working diagnosis is a flare-up of eczema. The plan is to prescribe stronger topical steroids and emollients for use in the bath and shower. He was advised to try stronger antihistamines, such as fexofenadine, to manage itchiness. He was instructed to keep a diary of potential triggers and return for review if symptoms do not improve within seven to ten days.",
+  "patient": "Your appointment today\nYou came to see us because your skin was very itchy and sore. The problem affected your chest, hands, and arms. You said the skin was cracked and red. You have no bleeding or discharge from the skin. You denied having a fever or a cough. You also denied having any breathing difficulties.\n\nYour diagnosis\nThe working diagnosis is a flare-up of eczema. Eczema is a condition that makes the skin dry and itchy. It often causes red patches on the body. This is a common skin problem. It can happen when the skin barrier is weak.\n\nYour treatment and next steps\nWe will prescribe stronger topical steroids for you. We will also prescribe emollients for use in the bath and shower. You should try stronger antihistamines like fexofenadine. This will help manage the itchiness. You must keep a diary of potential triggers. Please return for review if symptoms do not improve. This review should happen within seven to ten days.\n\nWhen to contact us\nReturn for review if symptoms do not improve within seven to ten days.",
+  "summary": "A patient in their thirties presented with intensely itchy, cracked skin on the chest, hands, and arms. Examination confirmed a rash consistent with previous eczema. A diagnosis of eczema flare-up was made, and treatment with stronger topical steroids, emollients, and antihistamines was prescribed.",
+  "audioSeconds": 555.858,
+  "turns": [
+    {
+      "speaker": "doctor",
+      "firstFrame": 34016,
+      "frameCount": 8768,
+      "text": "Hello?"
+    },
+    {
+      "speaker": "patient",
+      "firstFrame": 57568,
+      "frameCount": 28224,
+      "text": "Hello, can you hear me well?"
+    },
+    {
+      "speaker": "doctor",
+      "firstFrame": 87776,
+      "frameCount": 110656,
+      "text": "uh yes i think it's a bit better it's a bit it's a bit it's not very clear but let's continue anyway"
+    },
+    {
+      "speaker": "patient",
+      "firstFrame": 207584,
+      "frameCount": 5930,
+      "text": "OK."
+    },
+    {
+      "speaker": "doctor",
+      "firstFrame": 218848,
+      "frameCount": 31808,
+      "text": "Okay, let's start again. So how can I help you, sir?"
+    },
+    {
+      "speaker": "patient",
+      "firstFrame": 267488,
+      "frameCount": 131648,
+      "text": "Yes, so it's been a few days now. I have like a sore and a red skin. It's kind of, it's really itchy and it's like super annoying."
+    },
+    {
+      "speaker": "doctor",
+      "firstFrame": 401120,
+      "frameCount": 20032,
+      "text": "So I'd like to..."
+    },
+    {
+      "speaker": "patient",
+      "firstFrame": 422624,
+      "frameCount": 24778,
+      "text": "find something quick to solve it."
+    },
+    {
+      "speaker": "doctor",
+      "firstFrame": 447402,
+      "frameCount": 63574,
+      "text": "No problem, I'm happy to help. Whereabouts of your skin is it affected?"
+    },
+    {
+      "speaker": "patient",
+      "firstFrame": 523488,
+      "frameCount": 453082,
+      "text": "Mostly like my chest, my hands, my arms. Like really it's super annoying. Like it's itching a lot, like all the time. And I can't even sleep at night. Like I really need something quickly to solve it. Because even at work, like when I'm in a meeting and I have to like think about my work and focus, like actually focus on my work, it's really annoying because I can't actually think about what I have to say. I'm always like disturbed by this disease."
+    },
+    {
+      "speaker": "doctor",
+      "firstFrame": 976570,
+      "frameCount": 138854,
+      "text": "No, no, okay. I understand this is obviously affecting you and we'll try our very best to get it sorted out for you. Have you had anything like this before in the past?"
+    },
+    {
+      "speaker": "patient",
+      "firstFrame": 1138400,
+      "frameCount": 69696,
+      "text": "and so yes earlier i was like prescribed for my eczema"
+    },
+    {
+      "speaker": "doctor",
+      "firstFrame": 1212128,
+      "frameCount": 8109,
+      "text": "Okay."
+    },
+    {
+      "speaker": "patient",
+      "firstFrame": 1220237,
+      "frameCount": 133107,
+      "text": "and they gave me like some cream and something to when I was in the shower I had to put something."
+    },
+    {
+      "speaker": "doctor",
+      "firstFrame": 1353344,
+      "frameCount": 8576,
+      "text": "Okay."
+    },
+    {
+      "speaker": "patient",
+      "firstFrame": 1361920,
+      "frameCount": 19232,
+      "text": "But..."
+    },
+    {
+      "speaker": "doctor",
+      "firstFrame": 1388256,
+      "frameCount": 11328,
+      "text": "Did it help?"
+    },
+    {
+      "speaker": "patient",
+      "firstFrame": 1426656,
+      "frameCount": 264617,
+      "text": "and i mean at that time yes but the symptoms like these symptoms are like when the symptoms appeared again i tried those and it didn't work i've tried a few things like i bought like a steroid cream at the pharmacy last night but it apparently didn't help because it's still itching a lot today"
+    },
+    {
+      "speaker": "doctor",
+      "firstFrame": 1691273,
+      "frameCount": 12439,
+      "text": "Okay."
+    },
+    {
+      "speaker": "patient",
+      "firstFrame": 1709202,
+      "frameCount": 6519,
+      "text": "Yeah."
+    },
+    {
+      "speaker": "doctor",
+      "firstFrame": 1715721,
+      "frameCount": 27415,
+      "text": "Do you remember the name of the cream you bought?"
+    },
+    {
+      "speaker": "patient",
+      "firstFrame": 1758944,
+      "frameCount": 21280,
+      "text": "Steroid cream."
+    },
+    {
+      "speaker": "doctor",
+      "firstFrame": 1780224,
+      "frameCount": 119584,
+      "text": "Okay, steroid, okay. Would you say these symptoms are very similar to your eczema symptoms or different?"
+    },
+    {
+      "speaker": "patient",
+      "firstFrame": 1916640,
+      "frameCount": 501017,
+      "text": "um it's much more like itchy and my eczema was more like only in the arms and now it's also on the chest and in the and the on the hands as well okay yeah when like i like for instance hiking during the weekends and i am i can't really do it anymore because it's like very like like i wanted to that last weekend and it was super painful and i have to take like showers every day to be able to kind of ease this itching part which is very very annoying."
+    },
+    {
+      "speaker": "doctor",
+      "firstFrame": 2417657,
+      "frameCount": 180519,
+      "text": "no well okay that's okay so you mentioned the itchiness and you also mentioned it's been quite sore have you noticed any bleeding or discharge from your skin"
+    },
+    {
+      "speaker": "patient",
+      "firstFrame": 2615520,
+      "frameCount": 128576,
+      "text": "No. So my skin is a bit cracked in some parts, like kind of cracked, if you see what I mean. Okay. But yeah."
+    },
+    {
+      "speaker": "doctor",
+      "firstFrame": 2749152,
+      "frameCount": 387554,
+      "text": "You haven't seen any other pus or blood coming out of your skin? No. And you mentioned it all started three days ago. Four days ago. Four days ago. Are you aware of any triggers? Anything that you may have done that may have caused your symptoms to start? So, for example, have you changed your shower gel, any clothing? Have you been around anyone? No, I haven't."
+    },
+    {
+      "speaker": "patient",
+      "firstFrame": 3130186,
+      "frameCount": 311766,
+      "text": "it's actually like it's really annoying because i'm thinking about maybe i should change something because i haven't and i don't understand and i'm kind of afraid of asking people around me because it's kind of you know i don't feel really comfortable asking about these questions it's kind of intimate and so i'll share your head now"
+    },
+    {
+      "speaker": "doctor",
+      "firstFrame": 3412699,
+      "frameCount": 237637,
+      "text": "No, no, okay, that's okay. Fine, so just to re-summarise, for the last four days you've had very itchy skin, very sore skin all over your body, mainly your chest, and did you also mention your arms and legs as well?"
+    },
+    {
+      "speaker": "patient",
+      "firstFrame": 3676384,
+      "frameCount": 38658,
+      "text": "And no, just the chest hands and"
+    },
+    {
+      "speaker": "patient",
+      "firstFrame": 3715042,
+      "frameCount": 37182,
+      "text": "like inside the air bubbles."
+    },
+    {
+      "speaker": "doctor",
+      "firstFrame": 3753696,
+      "frameCount": 33344,
+      "text": "Okay, anything on your face at all?"
+    },
+    {
+      "speaker": "patient",
+      "firstFrame": 3813600,
+      "frameCount": 9829,
+      "text": "in their whatsapp."
+    },
+    {
+      "speaker": "doctor",
+      "firstFrame": 3823429,
+      "frameCount": 139739,
+      "text": "your face? On my face no. No okay and apart from this any other symptoms have you noticed for example have you noticed any temperature or fevers?"
+    },
+    {
+      "speaker": "patient",
+      "firstFrame": 3983584,
+      "frameCount": 25923,
+      "text": "No, just reaching."
+    },
+    {
+      "speaker": "doctor",
+      "firstFrame": 4009507,
+      "frameCount": 7606,
+      "text": "Itching."
+    },
+    {
+      "speaker": "patient",
+      "firstFrame": 4017113,
+      "frameCount": 8421,
+      "text": "Nothing else."
+    },
+    {
+      "speaker": "doctor",
+      "firstFrame": 4025534,
+      "frameCount": 119394,
+      "text": "okay so your bowels are working okay your chest is okay no cough no breathing difficulties"
+    },
+    {
+      "speaker": "patient",
+      "firstFrame": 4161760,
+      "frameCount": 12352,
+      "text": "notes"
+    },
+    {
+      "speaker": "doctor",
+      "firstFrame": 4182003,
+      "frameCount": 26413,
+      "text": "You're passing urine okay?"
+    },
+    {
+      "speaker": "patient",
+      "firstFrame": 4233952,
+      "frameCount": 17321,
+      "text": "I think so."
+    },
+    {
+      "speaker": "doctor",
+      "firstFrame": 4251273,
+      "frameCount": 127127,
+      "text": "Okay, alright. It's always good to know, so I mean, do you have any ideas as to what could be causing your symptoms?"
+    },
+    {
+      "speaker": "patient",
+      "firstFrame": 4406496,
+      "frameCount": 11840,
+      "text": "Anyways."
+    },
+    {
+      "speaker": "doctor",
+      "firstFrame": 4418336,
+      "frameCount": 44544,
+      "text": "Any ideas as to what could be causing your symptoms?"
+    },
+    {
+      "speaker": "patient",
+      "firstFrame": 4474592,
+      "frameCount": 154688,
+      "text": "and i so i had eczema before so maybe it's this but it seems like more like my eczema was only on the arm so i'm not sure i i really have"
+    },
+    {
+      "speaker": "doctor",
+      "firstFrame": 4630752,
+      "frameCount": 495168,
+      "text": "I did. Okay, so normally at this stage I like to examine you to see the rash itself and see exactly what type of rash it is but from what you've told me you mentioned it's you've got some dry skin and some cracked skin as well and it's been very itchy and so with your background of eczema, so there's a couple of questions I wanted to ask you Richard, my apologies, apart from the eczema do you have any other medical problems I should be aware of"
+    },
+    {
+      "speaker": "patient",
+      "firstFrame": 5133536,
+      "frameCount": 68160,
+      "text": "No, I just had asthma in the past, but not anymore."
+    },
+    {
+      "speaker": "doctor",
+      "firstFrame": 5203680,
+      "frameCount": 56384,
+      "text": "Not anymore, okay. And do you take any regular medications at the moment?"
+    },
+    {
+      "speaker": "patient",
+      "firstFrame": 5276896,
+      "frameCount": 20032,
+      "text": "No."
+    },
+    {
+      "speaker": "doctor",
+      "firstFrame": 5298912,
+      "frameCount": 39492,
+      "text": "No, okay. Do you have any allergies to anything?"
+    },
+    {
+      "speaker": "patient",
+      "firstFrame": 5338404,
+      "frameCount": 35836,
+      "text": "like"
+    },
+    {
+      "speaker": "doctor",
+      "firstFrame": 5386464,
+      "frameCount": 260160,
+      "text": "sorry hello hello yes oh can you hear me sorry i think it cracked do you have any allergies at all"
+    },
+    {
+      "speaker": "patient",
+      "firstFrame": 5651168,
+      "frameCount": 25664,
+      "text": "Oh, allergies. No."
+    },
+    {
+      "speaker": "doctor",
+      "firstFrame": 5683424,
+      "frameCount": 102976,
+      "text": "No, okay. And tell me about your situation at home. Who do you live with?"
+    },
+    {
+      "speaker": "patient",
+      "firstFrame": 5812448,
+      "frameCount": 174144,
+      "text": "So I live with a few flatmates. So you know I'm 31, I have a full-time job and so I'm living with a few people to save money."
+    },
+    {
+      "speaker": "doctor",
+      "firstFrame": 6004448,
+      "frameCount": 25152,
+      "text": "Okay, and what do you do for work?"
+    },
+    {
+      "speaker": "patient",
+      "firstFrame": 6046432,
+      "frameCount": 54848,
+      "text": "uh i work at a pharmaceutical company"
+    },
+    {
+      "speaker": "patient",
+      "firstFrame": 6102752,
+      "frameCount": 183427,
+      "text": "so it's been a few years now. It's kind of interesting, we're working, I'm a kind of project manager, I mean do you want to know more about it?"
+    },
+    {
+      "speaker": "doctor",
+      "firstFrame": 6286179,
+      "frameCount": 211901,
+      "text": "okay uh no no no that's absolutely that's absolutely fine um just a couple of questions i want to ask you which can sometimes affect your symptoms is do you smoke at all no no and do you drink much in a way of alcohol"
+    },
+    {
+      "speaker": "patient",
+      "firstFrame": 6515936,
+      "frameCount": 197184,
+      "text": "You know, once in a while, I like hanging out with people once in a while. So yeah, I'd say a few beers per week, something like this. Nothing crazy. I used to drink a lot more when I was younger, but it's been a while."
+    },
+    {
+      "speaker": "doctor",
+      "firstFrame": 6716640,
+      "frameCount": 640800,
+      "text": "Okay. I've got to say at this stage, I've got to say the sound quality is not great, but I will continue because we've come this far. So based on everything you mentioned, sir, I do wonder whether this is a flare-up of your eczema. The reason being that you said it's quite itchy. It's many affecting your chest and your back. And having looked at your skin, the rash does appear quite familiar. you mentioned you using steroid creams yesterday from the pharmacy I wonder whether giving you stronger prescription of a steroid may be beneficial which I'm"
+    },
+    {
+      "speaker": "doctor",
+      "firstFrame": 7357440,
+      "frameCount": 698144,
+      "text": "which I'm happy to prescribe to you today, as well as I'm gonna give you some emollients, which helps to moisturize the skin, which you'll have to use in the bath and shower. And it's definitely worth using that for the first seven to 10 days before we make a decision on whether it's working or not. It's also worth using antihistamines, which you can sometimes buy over the counter, things like loratidine or pyrrhotin, which can help the itchiness of your skin. And it's also worth keeping a diary of any triggers which are affecting your symptoms, anything you wear or anything you use in terms of shower gels or soap, because if that's causing your symptoms, then we need to have a discussion about that next time I see you."
+    },
+    {
+      "speaker": "patient",
+      "firstFrame": 8068832,
+      "frameCount": 81472,
+      "text": "okay just i have tried antithythamines uh lately but it didn't really help"
+    },
+    {
+      "speaker": "doctor",
+      "firstFrame": 8168672,
+      "frameCount": 23104,
+      "text": "Could you say that again, sorry?"
+    },
+    {
+      "speaker": "patient",
+      "firstFrame": 8200416,
+      "frameCount": 30755,
+      "text": "I have tried the antihistamines."
+    },
+    {
+      "speaker": "doctor",
+      "firstFrame": 8231171,
+      "frameCount": 10594,
+      "text": "Okay."
+    },
+    {
+      "speaker": "patient",
+      "firstFrame": 8241765,
+      "frameCount": 26811,
+      "text": "But it didn't really help."
+    },
+    {
+      "speaker": "doctor",
+      "firstFrame": 8270560,
+      "frameCount": 416320,
+      "text": "OK, so something for you to think about. You can get different types of antithamines. I can give you something a little bit stronger today as well, something like fixofenadine, which I can give to you today. It's definitely worth trying it. It's not going to do you any harm. But I say anything using the steroids and the emollients on a regular basis over the next week to 10 days should hopefully control your symptoms. But do come back and see me next week if things don't get better."
+    },
+    {
+      "speaker": "patient",
+      "firstFrame": 8702688,
+      "frameCount": 11840,
+      "text": "That sounds good."
+    },
+    {
+      "speaker": "doctor",
+      "firstFrame": 8704651,
+      "frameCount": 52885,
+      "text": "Okay, do you have any questions for me?"
+    },
+    {
+      "speaker": "patient",
+      "firstFrame": 8769032,
+      "frameCount": 22808,
+      "text": "And now that's it."
+    },
+    {
+      "speaker": "doctor",
+      "firstFrame": 8794336,
+      "frameCount": 67136,
+      "text": "okay well i wish you all the best thank you very much thank you have a good day"
+    },
+    {
+      "speaker": "patient",
+      "firstFrame": 8832736,
+      "frameCount": 60992,
+      "text": "Bye. Thank you, Victor. Bye."
+    }
+  ],
+  "answers": {
+    "happened": "The call quality was poor throughout and I said so, but pressed on. The patient had already tried a pharmacy steroid and an antihistamine and wanted something that worked quickly. The rash had spread beyond the sites of previous flares, which I noted but could not examine properly over that connection.",
+    "learned": "When the line is bad the examination is the part that suffers, and the examination was the part that mattered for a rash in new places. Asking what had already been tried saved prescribing the same thing again.",
+    "next": "Offer a video re-call or an in-person review when the connection is this poor, rather than treating on a partial view. I would also fix the review date at the end instead of leaving it as come back if not better."
+  },
+  "basis": {
+    "happened": "I've got to say this sound quality is not uh great. But I will continue because we've come this far",
+    "learned": "I bought a, a steroid cream at the pharmacy last night. But it apparently didn't help ... I have tried antihistamines, uh lately, but it didn't really help",
+    "next": "But do come back and see me next week, if things don't get better."
+  }
+}
