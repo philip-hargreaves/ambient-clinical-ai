@@ -21,7 +21,7 @@ def nice_chunks():
     manifest = read_json(NICE_MANIFEST)
     requested = {line.split("#")[0].strip().lower() for line in (NICE_JSON.parents[1] / "codes.txt").read_text(encoding="utf-8").splitlines()}
     requested.discard("")
-    fetch_dates, skipped = set(), 0
+    fetch_dates, skipped, duplicates, seen = set(), 0, 0, set()
     for path in sorted(NICE_JSON.glob("*.json")):
         doc = read_json(path)
         code = doc["code"]
@@ -34,6 +34,11 @@ def nice_chunks():
             for rec in chapter["recommendations"]:
                 if rec.get("kind") != "recommendation":
                     continue
+                # Some guidelines render a chapter twice (NG12, NG126, NG259); one chunk per id
+                if rec["id"] in seen:
+                    duplicates += 1
+                    continue
+                seen.add(rec["id"])
                 section = rec.get("section", "")
                 text = rec["text"].strip()
                 yield {
@@ -50,7 +55,7 @@ def nice_chunks():
                     "url": f"{doc['source_url']}/chapter/{chapter['slug']}#{rec['id']}",
                     "source": "nice",
                 }
-    log(f"fetch dates seen: {sorted(fetch_dates)}; stub or superseded files skipped: {skipped}")
+    log(f"fetch dates seen: {sorted(fetch_dates)}; stub or superseded files skipped: {skipped}; duplicate renderings skipped: {duplicates}")
 
 
 def pdf_text(pdf: Path, pdftotext: str) -> str:
