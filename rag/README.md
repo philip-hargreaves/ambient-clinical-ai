@@ -7,8 +7,9 @@ sources/nice/          fetched NICE corpus: manifest, html, json, pdfs, scripts,
 sources/st-georges/    client guideline folder and referral cases
 gold/                  labelled evaluation sets
 candidates/            embedder and reranker exports under trial
-results/               bake-off outputs
+results/               selection evaluation outputs
 corpora/<id>/          built corpora: manifest.json, corpus.db; junctioned beside the exe as corpora
+venv/                  harness environment, see tools/retrieval
 ```
 
 Rules
