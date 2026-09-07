@@ -7,7 +7,10 @@ Gold inputs (each optional; missing sets are reported and skipped):
   rag/gold/st-georges-cases/cases.jsonl       {qid, text, expected_ids, expected_codes}
   rag/gold/ucl-triplets/triplets.csv + mapping.jsonl
   rag/gold/primock-statements/statements.jsonl {qid, text, expected_ids, expected_codes, mode}
+  rag/gold/synthetic-statements/statements.jsonl {qid, text, expected_ids, expected_codes, mode, area, kind}
   rag/gold/negatives/negatives.jsonl           {qid, text, kind}
+
+The build refuses a synthetic statement sharing a 4-gram with a recommendation it expects and logs lexical overlap per set.
 """
 
 import argparse
@@ -91,6 +94,37 @@ def split_sentences(text: str) -> list[str]:
     return [p.strip() for p in parts if len(p.split()) >= 3]
 
 
+def tokens(text: str) -> list[str]:
+    return re.findall(r"[a-z0-9]+", text.lower())
+
+
+def ngrams(text: str, n: int = 4) -> set[tuple]:
+    t = tokens(text)
+    return {tuple(t[i:i + n]) for i in range(len(t) - n + 1)}
+
+
+def overlap_report(queries: list[dict], chunks: dict) -> list[str]:
+    """Log median and max token Jaccard per set; return synthetic rows sharing a 4-gram with an expected recommendation."""
+    per_set, offending = {}, []
+    for q in queries:
+        if not q["expected_ids"]:
+            continue
+        qt = set(tokens(q["text"]))
+        best = 0.0
+        for i in q["expected_ids"]:
+            ct = set(tokens(chunks[i]["text"]))
+            best = max(best, len(qt & ct) / len(qt | ct))
+            if q["set"] == "synthetic":
+                shared = ngrams(q["text"]) & ngrams(chunks[i]["text"])
+                if shared:
+                    offending.append(f"{q['qid']} shares with {i}: " + "; ".join(" ".join(g) for g in sorted(shared)))
+        per_set.setdefault(q["set"], []).append(best)
+    for name, vals in sorted(per_set.items()):
+        vals.sort()
+        log(f"overlap {name}: n={len(vals)} median jaccard {vals[len(vals) // 2]:.2f} max {vals[-1]:.2f}")
+    return offending
+
+
 def build():
     queries = []
 
@@ -129,6 +163,16 @@ def build():
     else:
         log("primock statements missing")
 
+    synthetic = GOLD / "synthetic-statements" / "statements.jsonl"
+    if synthetic.exists():
+        for r in read_jsonl(synthetic):
+            queries.append({"qid": r["qid"], "set": "synthetic", "text": r["text"], "mode": r.get("mode", "sentence"),
+                            "area": r.get("area", ""), "kind": r.get("kind", ""),
+                            "expected_ids": r["expected_ids"], "expected_codes": r.get("expected_codes", []),
+                            "negative": not r["expected_ids"]})
+    else:
+        log("synthetic statements missing")
+
     negatives = GOLD / "negatives" / "negatives.jsonl"
     if negatives.exists():
         for r in read_jsonl(negatives):
@@ -136,6 +180,14 @@ def build():
                             "kind": r.get("kind", ""), "expected_ids": [], "expected_codes": [], "negative": True})
     else:
         log("negatives missing")
+
+    chunks = {c["id"]: c for c in read_jsonl(latest_chunks())}
+    missing = [(q["qid"], i) for q in queries for i in q["expected_ids"] if i not in chunks]
+    if missing:
+        raise SystemExit(f"expected ids not in the corpus: {missing}")
+    offending = overlap_report(queries, chunks)
+    if offending:
+        raise SystemExit("synthetic statements share wording with their recommendation:\n  " + "\n  ".join(offending))
 
     out = RESULTS / "queries" / f"queries-{time.strftime('%Y%m%d')}.jsonl"
     n = write_jsonl(out, queries)

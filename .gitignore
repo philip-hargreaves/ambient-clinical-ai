@@ -63,3 +63,8 @@ __pycache__/
 /rag/gold/*
 !/rag/corpora/
 /rag/corpora/*
+
+# committed gold sets
+!/rag/gold/primock-statements/
+!/rag/gold/negatives/
+!/rag/gold/synthetic-statements/

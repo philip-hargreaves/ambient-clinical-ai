@@ -16,11 +16,12 @@ rag\venv\Scripts\python -m pip install -r tools\retrieval\requirements.txt
 ```
 python chunk.py nice                                   NICE JSON -> rag/results/chunks/nice-<fetchdate>.jsonl
 python gold.py map-ucl                                 draft mapping; hand-check, save as mapping.jsonl
-python gold.py build                                   -> rag/results/queries/queries-<date>.jsonl
+python gold.py build                                   -> rag/results/queries/queries-<date>.jsonl; refuses synthetic rows that echo their recommendation
 python export.py --role embedder                       fp16 and int8 IRs -> rag/candidates/<id>-<precision>
 python export.py --role reranker
 python embed.py <id> --precision int8 --reference      -> rag/results/emb/<id>-int8-text
 python evaluate.py <id> --precision int8 --rerankers gte-reranker-modernbert,minilm-l6 --hybrid off,on
+python review.py <run> primock|synthetic              -> rag/results/<set>-review.md, labels beside what the run retrieved
 python latency.py --embedders <ids> --rerankers <ids>
 python pdf_compare.py                                  31 client PDFs, pypdfium2 against pdftotext
 python vector_compare.py --emb rag/results/emb/<run>/docs.npy
@@ -34,10 +35,11 @@ Every run writes `config.json` beside its outputs under `rag/results/<stamp>-<na
 shortlist.json      candidates: id, hf, role, licence, architecture, pooling, dims, max_length, instructions, export task
 common.py           paths, jsonl io, run directories
 chunk.py            recommendation chunks from NICE JSON; heading chunks from PDF text
-gold.py             UCL mapping draft; unified query file from the four gold sets
+gold.py             UCL mapping draft; unified query file from the five gold sets; wording-overlap check
 export.py           optimum-cli export with provenance.json (revision, hashes)
 embed.py            document embeddings on CPU; faithfulness against sentence-transformers
 evaluate.py         recall@k, nDCG@10, MRR, P@1, entity match; threshold sweep on negatives; --v1-baseline
+review.py           review table for one gold set from a run's per_query.jsonl
 rerank_core.py      cross-encoder on ov.Core with explicit pairs; the default rerank backend
 latency.py          per sentence, per note, scan, rerank 30 and 50 pairs; RSS
 native_check.py     C++ proof against the Python pipelines and the reference model

@@ -1,0 +1,6 @@
+PriMock57: A Dataset Of Primary Care Mock Consultations
+Alex Papadopoulos Korfiatis, Francesco Moramarco, Radmila Sarac, Aleksandar Savkov
+Babylon Health, 2022. https://github.com/babylonhealth/primock57 (CC BY 4.0)
+
+Statement text is taken from clinical notes the app wrote from its own transcripts of the
+PriMock57 recordings (default note tier, standard detail, September 2026), lightly trimmed.
