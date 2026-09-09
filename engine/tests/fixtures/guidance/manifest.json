@@ -1,0 +1,7 @@
+{
+  "id": "fixture",
+  "name": "Fixture guidance corpus",
+  "licence": "invented; no source text",
+  "chunks": "corpus.jsonl",
+  "notes": "notes.jsonl"
+}

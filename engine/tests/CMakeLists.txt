@@ -25,6 +25,7 @@ add_executable(engine_tests
     core/diar_capture_test.cpp
     core/diar_regions_test.cpp
     core/endpointer_test.cpp
+    core/guidance_port_test.cpp
     core/level_meter_test.cpp
     core/metrics_test.cpp
     core/note_label_test.cpp
@@ -66,6 +67,7 @@ add_executable(engine_tests
 target_compile_definitions(engine_tests PRIVATE
     AMBIENT_CMAKE_VERSION="${ambient_VERSION}"
     AMBIENT_FIXTURE_DIR="${ambient_SOURCE_DIR}/schema/fixtures"
+    AMBIENT_GUIDANCE_FIXTURE_DIR="${ambient_SOURCE_DIR}/engine/tests/fixtures/guidance"
     AMBIENT_DEMO_DIR="${ambient_SOURCE_DIR}/demo/reflections"
     AMBIENT_CRASH_HELPER="$<TARGET_FILE:store_crash_helper>")
 
