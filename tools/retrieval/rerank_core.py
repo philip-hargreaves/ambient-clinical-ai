@@ -7,7 +7,7 @@ import numpy as np
 import openvino as ov
 from transformers import AutoTokenizer
 
-from common import DEVICE
+from common import DEVICE, plugin_properties
 
 
 class CoreReranker:
@@ -16,7 +16,7 @@ class CoreReranker:
         self.max_length = max_length
         self.batch = batch
         core = ov.Core()
-        self.model = core.compile_model(str(model_dir / "openvino_model.xml"), DEVICE)
+        self.model = core.compile_model(str(model_dir / "openvino_model.xml"), DEVICE, plugin_properties())
         self.inputs = [i.get_any_name() for i in self.model.inputs]
         self.output = self.model.output(0)
 

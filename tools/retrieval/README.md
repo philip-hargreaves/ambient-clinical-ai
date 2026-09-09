@@ -17,11 +17,17 @@ rag\venv\Scripts\python -m pip install -r tools\retrieval\requirements.txt
 python chunk.py nice                                   NICE JSON -> rag/results/chunks/nice-<fetchdate>.jsonl
 python gold.py map-ucl                                 draft mapping; hand-check, save as mapping.jsonl
 python gold.py build                                   -> rag/results/queries/queries-<date>.jsonl; refuses synthetic rows that echo their recommendation
+python gold.py build-notes                             -> rag/results/queries/notes-<date>.jsonl; whole notes per labelled PriMock consultation, four sources
+python gold.py build-transcripts                       -> rag/results/queries/transcripts-<date>.jsonl; transcript, doctor turns, note plus doctor turns
 python export.py --role embedder                       fp16 and int8 IRs -> rag/candidates/<id>-<precision>
 python export.py --role reranker
 python embed.py <id> --precision int8 --reference      -> rag/results/emb/<id>-int8-text
 python evaluate.py <id> --precision int8 --rerankers gte-reranker-modernbert,minilm-l6 --hybrid off,on
+python evaluate.py <id> --precision int8 --rerankers medcpt-cross --dump-union   also writes every query's 50 candidates with both scores
+python evaluate.py <id> --precision int8 --queries <file> --union rrf            note-level file; sub-query lists merged by rank vote (max|rrf|zmax)
 python review.py <run> primock|synthetic              -> rag/results/<set>-review.md, labels beside what the run retrieved
+python report.py embedders|rerankers|ordering <run>   -> rag/results/report-*.md; round tables with paired wins and bootstrap CIs
+python report.py second-stage|union-rules|sources ... -> paired tests on identical queries: second stage against cosine order, union rules, query sources
 python latency.py --embedders <ids> --rerankers <ids>
 python pdf_compare.py                                  31 client PDFs, pypdfium2 against pdftotext
 python vector_compare.py --emb rag/results/emb/<run>/docs.npy
@@ -36,10 +42,11 @@ shortlist.json      candidates: id, hf, role, licence, architecture, pooling, di
 common.py           paths, jsonl io, run directories
 chunk.py            recommendation chunks from NICE JSON; heading chunks from PDF text
 gold.py             UCL mapping draft; unified query file from the five gold sets; wording-overlap check
-export.py           optimum-cli export with provenance.json (revision, hashes)
+export.py           optimum-cli export with provenance.json (revision, hashes); an `onnx` field in the shortlist converts the repo's ONNX file instead
 embed.py            document embeddings on CPU; faithfulness against sentence-transformers
-evaluate.py         recall@k, nDCG@10, MRR, P@1, entity match; threshold sweep on negatives; --v1-baseline
+evaluate.py         success@k, recall@k, nDCG@10, MRR, p@1, entity match; threshold sweep on negatives; --v1-baseline; --dump-union
 review.py           review table for one gold set from a run's per_query.jsonl
+report.py           round tables and paired tests (bootstrap CI, sign test) from run outputs; see its docstring for the six reports
 rerank_core.py      cross-encoder on ov.Core with explicit pairs; the default rerank backend
 latency.py          per sentence, per note, scan, rerank 30 and 50 pairs; RSS
 native_check.py     C++ proof against the Python pipelines and the reference model
@@ -67,3 +74,4 @@ Compare the printed vectors with `embed.py` output; cosine 0.999 or better is th
 - Qwen3 rerankers get their instruct template from `evaluate.py`; the pipeline applies none.
 - GenAI `TextRerankPipeline` (2026.3.0 and 2026.3.1) crashes on batched pairs with queries over about 30 words; `--rerank-backend genai` is for parity checks only.
 - Gold files: `rag/gold/<set>/*.jsonl`, fields in `gold.py`.
+- Exports run optimum-cli with TEMP under `rag/candidates/.tmp`: quantisation writes an fp32 copy to TEMP first, and C: has no room for a large model. A failed export is removed and reported at the end; the rest continue.

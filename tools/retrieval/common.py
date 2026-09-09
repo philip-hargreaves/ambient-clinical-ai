@@ -18,6 +18,12 @@ NICE_MANIFEST = SOURCES / "nice" / "out" / "manifest.json"
 CLIENT_PDFS = SOURCES / "st-georges" / "folder"
 DEVICE = "CPU"
 
+
+def plugin_properties() -> dict:
+    # Several harness processes share the CPU; a per-process thread cap stops them starving each other
+    threads = os.environ.get("RETRIEVAL_THREADS")
+    return {"INFERENCE_NUM_THREADS": int(threads)} if threads else {}
+
 # Model downloads land beside the exports, not on C:
 os.environ.setdefault("HF_HOME", str(CANDIDATES / ".hf"))
 

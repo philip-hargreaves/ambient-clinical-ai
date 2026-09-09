@@ -1,7 +1,9 @@
-"""Gold sets: map the UCL statements onto corpus recommendations, then build one query file.
+"""Gold sets: map the UCL statements onto corpus recommendations, then build the query files.
 
-  python gold.py map-ucl        -> rag/gold/ucl-triplets/mapping-draft.jsonl (hand-check, save as mapping.jsonl)
-  python gold.py build          -> rag/results/queries/queries-<date>.jsonl
+  python gold.py map-ucl            -> rag/gold/ucl-triplets/mapping-draft.jsonl (hand-check, save as mapping.jsonl)
+  python gold.py build              -> rag/results/queries/queries-<date>.jsonl (statements, cases, negatives)
+  python gold.py build-notes        -> rag/results/queries/notes-<date>.jsonl (whole notes per labelled PriMock consultation, four sources)
+  python gold.py build-transcripts  -> rag/results/queries/transcripts-<date>.jsonl (transcript, doctor turns, note plus doctor turns)
 
 Gold inputs (each optional; missing sets are reported and skipped):
   rag/gold/st-georges-cases/cases.jsonl       {qid, text, expected_ids, expected_codes}
@@ -131,9 +133,10 @@ def build():
     cases = GOLD / "st-georges-cases" / "cases.jsonl"
     if cases.exists():
         for r in read_jsonl(cases):
+            # The PMR case cites no NICE recommendation: against this corpus it must retrieve nothing
             queries.append({"qid": r["qid"], "set": "st-georges", "text": r["text"], "mode": "note",
                             "expected_ids": r["expected_ids"], "expected_codes": r.get("expected_codes", []),
-                            "negative": False})
+                            "negative": not r["expected_ids"]})
     else:
         log("st-georges cases missing")
 
@@ -197,11 +200,113 @@ def build():
     log(f"{n} queries -> {out}; {sets}")
 
 
+VAULT = GOLD.parents[2] / "intelliscribe"  # the docs and data vault beside the repo
+NOTE_SOURCES = {
+    # whole notes for the PriMock consultations that carry statement labels; labels pooled per consultation
+    "notes-human": (VAULT / "data" / "primock57" / "notes", "json"),
+    "notes-4b": (VAULT / "bench" / "summarisation" / "notes" / "tier-constrained-standard", "md"),
+    "notes-9b": (VAULT / "bench" / "summarisation" / "notes" / "tier-default-standard", "md"),
+    "notes-35b": (VAULT / "bench" / "summarisation" / "notes" / "tier-accuracy-standard", "md"),
+}
+
+
+def build_notes():
+    import json
+    statements = read_jsonl(GOLD / "primock-statements" / "statements.jsonl")
+    by_consult = {}
+    for r in statements:
+        by_consult.setdefault(r["consult"], []).append(r)
+    chunks = {c["id"]: c for c in read_jsonl(latest_chunks())}
+    queries = []
+    for set_name, (folder, ext) in NOTE_SOURCES.items():
+        if not folder.exists():
+            log(f"{set_name}: {folder} missing, skipped")
+            continue
+        for consult, rows in sorted(by_consult.items()):
+            path = folder / f"{consult}.{ext}"
+            if not path.exists():
+                raise SystemExit(f"{set_name}: no note for {consult} at {path}")
+            text = json.loads(path.read_text(encoding="utf-8"))["note"] if ext == "json" else path.read_text(encoding="utf-8")
+            if len(text.split()) < 3:
+                log(f"{set_name}: {consult} note is empty, excluded")
+                continue
+            ids = sorted({i for r in rows for i in r["expected_ids"]})
+            codes = sorted({c for r in rows for c in r.get("expected_codes", [])})
+            queries.append({"qid": f"{set_name}-{consult}", "set": set_name, "consult": consult, "text": text.strip(),
+                            "mode": "note", "expected_ids": ids, "expected_codes": codes, "negative": not ids,
+                            "statements": [r["qid"] for r in rows]})
+    missing = [(q["qid"], i) for q in queries for i in q["expected_ids"] if i not in chunks]
+    if missing:
+        raise SystemExit(f"expected ids not in the corpus: {missing}")
+    out = RESULTS / "queries" / f"notes-{time.strftime('%Y%m%d')}.jsonl"
+    n = write_jsonl(out, queries)
+    sets = {}
+    for q in queries:
+        sets.setdefault(q["set"], [0, 0])[1 if q["negative"] else 0] += 1
+    log(f"{n} note queries -> {out}; per set [positives, negatives]: {sets}")
+    words = [len(q["text"].split()) for q in queries]
+    log(f"note length in words: min {min(words)}, median {sorted(words)[len(words) // 2]}, max {max(words)}")
+
+
+TRANSCRIPTS = VAULT / "data" / "primock57" / "transcripts"
+
+
+def read_textgrid(path) -> list[tuple[float, str]]:
+    """(start, text) per spoken interval; annotation tags such as <UNIN/> removed."""
+    out = []
+    for m in re.finditer(r'xmin = ([\d.]+)\s+xmax = [\d.]+\s+text = "((?:[^"]|"")*)"', path.read_text(encoding="utf-8", errors="replace")):
+        t = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", m.group(2).replace('""', '"'))).strip()
+        if t:
+            out.append((float(m.group(1)), t))
+    return out
+
+
+def build_transcripts():
+    """Transcript-derived queries for the labelled PriMock consultations: the full transcript, the doctor's
+    turns only, and the clinician's note with the doctor's sentences as extra sub-queries."""
+    import json
+    statements = read_jsonl(GOLD / "primock-statements" / "statements.jsonl")
+    by_consult = {}
+    for r in statements:
+        by_consult.setdefault(r["consult"], []).append(r)
+    chunks = {c["id"]: c for c in read_jsonl(latest_chunks())}
+    notes_dir = NOTE_SOURCES["notes-human"][0]
+    queries = []
+    for consult, rows in sorted(by_consult.items()):
+        turns = {}
+        for who in ("doctor", "patient"):
+            path = TRANSCRIPTS / f"{consult}_{who}.TextGrid"
+            if not path.exists():
+                raise SystemExit(f"no transcript at {path}")
+            turns[who] = read_textgrid(path)
+        full = [t for _, t in sorted(turns["doctor"] + turns["patient"])]
+        doctor = [t for _, t in sorted(turns["doctor"])]
+        note = json.loads((notes_dir / f"{consult}.json").read_text(encoding="utf-8"))["note"].strip()
+        ids = sorted({i for r in rows for i in r["expected_ids"]})
+        base = {"consult": consult, "mode": "note", "expected_ids": ids,
+                "expected_codes": sorted({c for r in rows for c in r.get("expected_codes", [])}), "negative": not ids}
+        queries.append({"qid": f"transcript-full-{consult}", "set": "transcript-full", "text": "\n".join(full), **base})
+        queries.append({"qid": f"transcript-doctor-{consult}", "set": "transcript-doctor", "text": "\n".join(doctor), **base})
+        queries.append({"qid": f"note-plus-doctor-{consult}", "set": "note-plus-doctor", "text": note,
+                        "extra_sentences": [s for t in doctor for s in split_sentences(t)], **base})
+    missing = [(q["qid"], i) for q in queries for i in q["expected_ids"] if i not in chunks]
+    if missing:
+        raise SystemExit(f"expected ids not in the corpus: {missing}")
+    out = RESULTS / "queries" / f"transcripts-{time.strftime('%Y%m%d')}.jsonl"
+    n = write_jsonl(out, queries)
+    for s in ("transcript-full", "transcript-doctor", "note-plus-doctor"):
+        qs = [q for q in queries if q["set"] == s]
+        words = sorted(len(q["text"].split()) + sum(len(x.split()) for x in q.get("extra_sentences", [])) for q in qs)
+        sents = sorted(len(split_sentences(q["text"])) + len(q.get("extra_sentences", [])) for q in qs)
+        log(f"{s}: {len(qs)} queries, words median {words[len(words) // 2]} max {words[-1]}, sub-queries median {sents[len(sents) // 2]} max {sents[-1]}")
+    log(f"{n} transcript queries -> {out}")
+
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("cmd", choices=["map-ucl", "build"])
+    ap.add_argument("cmd", choices=["map-ucl", "build", "build-notes", "build-transcripts"])
     args = ap.parse_args()
-    map_ucl() if args.cmd == "map-ucl" else build()
+    {"map-ucl": map_ucl, "build": build, "build-notes": build_notes, "build-transcripts": build_transcripts}[args.cmd]()
 
 
 if __name__ == "__main__":

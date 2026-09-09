@@ -63,7 +63,7 @@ def main():
         # Per-vector scale; unit-vector components are near 1/sqrt(d)
         d_scale = np.abs(mat).max(axis=1, keepdims=True) / 127.0
         mat_i8 = np.round(mat / d_scale).astype(np.int8)
-        mat_i32 = mat_i8.astype(np.int32)  # Cast once
+        mat_i32 = mat_i8.astype(np.int32)
         q_scale = np.abs(queries).max(axis=1, keepdims=True) / 127.0
         q_i8 = np.round(queries / q_scale).astype(np.int8)
         found = np.array([np.argsort(-((mat_i32 @ q.astype(np.int32)) * d_scale[:, 0]))[:args.k] for q in q_i8])

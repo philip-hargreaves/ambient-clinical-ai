@@ -125,7 +125,7 @@
     "document_instruction": "",
     "export_task": "feature-extraction",
     "enabled": false,
-    "note": "optional; architecture, pooling and dims read from the checkpoint before enabling"
+    "note": "4B-parameter Qwen3 with a projection head in modeling_zembed.py; the plain export drops the head and the size is outside the CPU budget"
   },
   {
     "id": "medcpt-query",
@@ -165,7 +165,9 @@
     "architecture": "ModernBertForSequenceClassification",
     "max_length": 512,
     "export_task": "text-classification",
-    "enabled": true
+    "enabled": true,
+    "onnx": "onnx/model.onnx",
+    "note": "optimum has no ModernBERT export; converted from the repo's onnx/model.onnx"
   },
   {
     "id": "bge-reranker-base",
@@ -238,7 +240,7 @@
     "max_length": 512,
     "export_task": "text-classification",
     "enabled": false,
-    "note": "Qwen2-based; not on the 2026.3 rerank list; enable only if it loads"
+    "note": "exports as Qwen2ForCausalLM; needs its own scoring template, not implemented"
   },
   {
     "id": "ettin-reranker-32m",
@@ -249,6 +251,6 @@
     "max_length": 512,
     "export_task": "text-classification",
     "enabled": false,
-    "note": "published IRs emit hidden states; needs a bespoke export with the classification head baked in"
+    "note": "gated repository (401 without a token); not exported"
   }
 ]

@@ -11,7 +11,7 @@ import time
 
 import numpy as np
 
-from common import DEVICE, RESULTS, candidate, candidate_dir, latest_chunks, log, read_jsonl, write_json
+from common import DEVICE, RESULTS, candidate, candidate_dir, latest_chunks, log, read_jsonl, write_json, plugin_properties
 
 POOLING = {"cls": "CLS", "mean": "MEAN", "last_token": "LAST_TOKEN"}
 
@@ -29,7 +29,7 @@ def make_pipeline(entry: dict, model_dir, max_length: int | None = None):
         config.embed_instruction = entry["document_instruction"]
     if entry.get("padding_side"):
         config.padding_side = entry["padding_side"]
-    return ov_genai.TextEmbeddingPipeline(str(model_dir), DEVICE, config)
+    return ov_genai.TextEmbeddingPipeline(str(model_dir), DEVICE, config, **plugin_properties())
 
 
 def embed_documents(pipe, texts: list[str], batch: int = 32) -> np.ndarray:
@@ -55,7 +55,8 @@ def over_length(model_dir, texts: list[str], max_length: int) -> int:
 def faithfulness(entry: dict, texts: list[str], ours: np.ndarray) -> dict:
     from sentence_transformers import SentenceTransformer
     ref = SentenceTransformer(entry["hf"], device="cpu")
-    ref_emb = ref.encode(texts, normalize_embeddings=True, convert_to_numpy=True).astype(np.float32)
+    prefixed = [entry.get("document_instruction", "") + t for t in texts]
+    ref_emb = ref.encode(prefixed, normalize_embeddings=True, convert_to_numpy=True).astype(np.float32)
     if ref_emb.shape[1] != ours.shape[1]:
         return {"error": f"dims differ: reference {ref_emb.shape[1]} vs ours {ours.shape[1]}"}
     cos = np.sum(ref_emb * ours, axis=1)
