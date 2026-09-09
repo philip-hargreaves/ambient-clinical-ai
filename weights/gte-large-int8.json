@@ -1,6 +1,6 @@
 {
   "id": "gte-large-int8",
-  "baseUrl": "https://github.com/philip-hargreaves/ambient-clinical-ai/releases/download/weights-v1",
+  "baseUrl": "https://github.com/philip-hargreaves/ambient/releases/download/weights-v1",
   "target": "models/gte-large-int8",
   "files": {
     "config.json": "b156fa4aec1ec51a759f37ae93837f5627acb770dc1c89f602c5b2720cc8e7be",

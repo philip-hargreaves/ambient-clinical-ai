@@ -1,6 +1,6 @@
 {
   "id": "qwen3.6-35b-a3b-int4",
-  "baseUrl": "https://github.com/philip-hargreaves/ambient-clinical-ai/releases/download/weights-v1",
+  "baseUrl": "https://github.com/philip-hargreaves/ambient/releases/download/weights-v1",
   "target": "models/qwen3.6-35b-a3b-int4",
   "files": {
     ".gitattributes": "34448b82c17d60fec9b65b1f093c115ddbaadc04beb1b0140b6bfed2e012a930",

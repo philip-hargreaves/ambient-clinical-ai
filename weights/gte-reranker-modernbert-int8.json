@@ -1,0 +1,66 @@
+{
+  "id": "gte-reranker-modernbert-int8",
+  "baseUrl": "https://github.com/philip-hargreaves/ambient/releases/download/weights-v1",
+  "target": "models/gte-reranker-modernbert-int8",
+  "files": {
+    "config.json": "c9316ff715158502dad782f35454eee18de984160618dc30afe7508feb46b7ce",
+    "openvino_model.bin": "2d64da1ee92dc4797e1afad714a7e20c37f619eb7c333f161191bb6503c9bc42",
+    "openvino_model.xml": "8327a0301dd55c88f32302f995a3235af3ed8252d3648b5b7ed8273c051d267c",
+    "provenance.json": "f7564c7784bdd3572df64adfe70e1bcb7738a375d9087603ebc3edb458fa91b6",
+    "special_tokens_map.json": "ea97ecdbcc73713039d8d64dbb05e3689495c96657fbd9a18f5bed381be81049",
+    "tokenizer.json": "2aea6ff4701d063e7e029b6be695a1659f2caaa2ae4fb0e8b18285818271becd",
+    "tokenizer_config.json": "626c86908d7c711f93b0feffd8657b782cc2727b391f9be190240e8cafb626d5"
+  },
+  "shards": {
+    "config.json": [
+      {
+        "name": "gte-reranker-modernbert-int8--config.json",
+        "size": 1333,
+        "sha256": "c9316ff715158502dad782f35454eee18de984160618dc30afe7508feb46b7ce"
+      }
+    ],
+    "openvino_model.bin": [
+      {
+        "name": "gte-reranker-modernbert-int8--openvino_model.bin",
+        "size": 150271179,
+        "sha256": "2d64da1ee92dc4797e1afad714a7e20c37f619eb7c333f161191bb6503c9bc42"
+      }
+    ],
+    "openvino_model.xml": [
+      {
+        "name": "gte-reranker-modernbert-int8--openvino_model.xml",
+        "size": 1498417,
+        "sha256": "8327a0301dd55c88f32302f995a3235af3ed8252d3648b5b7ed8273c051d267c"
+      }
+    ],
+    "provenance.json": [
+      {
+        "name": "gte-reranker-modernbert-int8--provenance.json",
+        "size": 1319,
+        "sha256": "f7564c7784bdd3572df64adfe70e1bcb7738a375d9087603ebc3edb458fa91b6"
+      }
+    ],
+    "special_tokens_map.json": [
+      {
+        "name": "gte-reranker-modernbert-int8--special_tokens_map.json",
+        "size": 694,
+        "sha256": "ea97ecdbcc73713039d8d64dbb05e3689495c96657fbd9a18f5bed381be81049"
+      }
+    ],
+    "tokenizer.json": [
+      {
+        "name": "gte-reranker-modernbert-int8--tokenizer.json",
+        "size": 3583499,
+        "sha256": "2aea6ff4701d063e7e029b6be695a1659f2caaa2ae4fb0e8b18285818271becd"
+      }
+    ],
+    "tokenizer_config.json": [
+      {
+        "name": "gte-reranker-modernbert-int8--tokenizer_config.json",
+        "size": 21031,
+        "sha256": "626c86908d7c711f93b0feffd8657b782cc2727b391f9be190240e8cafb626d5"
+      }
+    ]
+  },
+  "totalBytes": 155377472
+}
