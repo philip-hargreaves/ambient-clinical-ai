@@ -72,6 +72,16 @@
     <Exec Command='mklink /J "$(TargetDir)AppX\demo" "$(MSBuildProjectDirectory)\..\..\demo"' />
   </Target>
 
+  <!-- Built corpora, corpora\ beside the exe -->
+  <Target Name="LinkCorpora" AfterTargets="Build"
+          Condition="Exists('$(MSBuildProjectDirectory)\..\..\rag\corpora') And !Exists('$(TargetDir)corpora')">
+    <Exec Command='mklink /J "$(TargetDir)corpora" "$(MSBuildProjectDirectory)\..\..\rag\corpora"' />
+  </Target>
+  <Target Name="LinkCorporaAppX" AfterTargets="Build"
+          Condition="Exists('$(MSBuildProjectDirectory)\..\..\rag\corpora') And Exists('$(TargetDir)AppX') And !Exists('$(TargetDir)AppX\corpora')">
+    <Exec Command='mklink /J "$(TargetDir)AppX\corpora" "$(MSBuildProjectDirectory)\..\..\rag\corpora"' />
+  </Target>
+
   <ItemGroup>
     <Content Include="Assets\SplashScreen.scale-200.png" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />

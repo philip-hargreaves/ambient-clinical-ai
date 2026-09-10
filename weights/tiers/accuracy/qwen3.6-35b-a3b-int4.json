@@ -1,0 +1,327 @@
+{
+  "id": "qwen3.6-35b-a3b-int4",
+  "baseUrl": "https://github.com/philip-hargreaves/ambient/releases/download/weights-v1",
+  "target": "models/qwen3.6-35b-a3b-int4",
+  "files": {
+    ".gitattributes": "34448b82c17d60fec9b65b1f093c115ddbaadc04beb1b0140b6bfed2e012a930",
+    "chat_template.jinja": "c3f7038f278583e1c1e0a3796a2f885472a75f9265c2ce75fd261908babb9700",
+    "chat_template_original.jinja": "e84f32a23fdda27689f868aa4a1a5621f41133e51a48d7f3efcbea2839574259",
+    "config.json": "a859aceb5c6c8651c3d49238af21ed36ea6242f0d914f4a2b3f451eb0f1db961",
+    "generation_config.json": "07f857aba5260b2ea2513f80de8062d086661f00eada0a3794964e665ba680f5",
+    "openvino_config.json": "f2e55f59a648ac9a3206a18d8dc06c07bea41025dd13110f4a84b79775da19ad",
+    "openvino_detokenizer.bin": "48fc2c6a7a1056994982911eb9695826acef933c3d742364c56d16317a0b2a79",
+    "openvino_detokenizer.xml": "e4d8e778bc6b69bbab6deb09f466c8eac3b1c697a87840a5e53f9523153b97b5",
+    "openvino_language_model.bin": "44b8b72c7009a5a76d3430c910cdadc7829629707c326cd5ca6530329fa66a62",
+    "openvino_language_model.xml": "21fe4d57d6d016f5689248be01901b1107850ec4efebb31cdbb1262899e72919",
+    "openvino_text_embeddings_model.bin": "b9957db96d6aca2a8cb0e193cf970f801dbbea183cfd01bf04e649405d9b8b51",
+    "openvino_text_embeddings_model.xml": "8f7ff1b3017e49094e93f221371306368c712b98daa5348b3a2265bc3d159fe1",
+    "openvino_tokenizer.bin": "ea3fcce2251902efffbc774cbc8ffff69e981412347a1e510e430c6557a63701",
+    "openvino_tokenizer.xml": "9bc2c00bf9bdedbb72f261561d43da06142e7e0b364a76fbb5918fb6c2fd8e13",
+    "openvino_vision_embeddings_merger_model.bin": "a995b0d1c23a3247d580f74b491e82fc6fc023238d1248bf9fd1baa12d41b578",
+    "openvino_vision_embeddings_merger_model.xml": "7df29e7bdf3c8a565a9ca8886bb255b32ec32b2a29fa12539f58699c35d71043",
+    "openvino_vision_embeddings_model.bin": "631d92e19f219a37262cd25ff9fde218f3c1fe8d648b59881641bf6cbf31bb87",
+    "openvino_vision_embeddings_model.xml": "1c2550d7a817177d4fea5e6a92ed75d6078cc43a40b670e45c5963ba443daf91",
+    "openvino_vision_embeddings_pos_model.bin": "aa6c0b30472a88a431c8ac2a692214b0a4f2263b71105a1772181f30c56d194e",
+    "openvino_vision_embeddings_pos_model.xml": "2fa7739cfeed7ee54cff67ecb23a12f2282eabff94ce7c349a1b7b1910795ea9",
+    "preprocessor_config.json": "957eb01d1ea45341a92d543daec95857a7cbeff5803834bc0603b27ba7b41b3f",
+    "processor_config.json": "14932921ca485d458a04dafd8069fbb0a4505622a48208d19ed247115801385b",
+    "README.md": "f72f90d2508ec0cbc1e43ad1b7338543acf732891b56d9365b620c2e8dc8008b",
+    "tokenizer.json": "87a7830d63fcf43bf241c3c5242e96e62dd3fdc29224ca26fed8ea333db72de4",
+    "tokenizer_config.json": "e98f1901ac6f0adff67b1d540bfa0c36ac1a0cf59eb72ed78146ef89aafa1182"
+  },
+  "shards": {
+    ".gitattributes": [
+      {
+        "name": "qwen3.6-35b-a3b-int4--.gitattributes",
+        "size": 1570,
+        "sha256": "34448b82c17d60fec9b65b1f093c115ddbaadc04beb1b0140b6bfed2e012a930"
+      }
+    ],
+    "chat_template.jinja": [
+      {
+        "name": "qwen3.6-35b-a3b-int4--chat_template.jinja",
+        "size": 9131,
+        "sha256": "c3f7038f278583e1c1e0a3796a2f885472a75f9265c2ce75fd261908babb9700"
+      }
+    ],
+    "chat_template_original.jinja": [
+      {
+        "name": "qwen3.6-35b-a3b-int4--chat_template_original.jinja",
+        "size": 7764,
+        "sha256": "e84f32a23fdda27689f868aa4a1a5621f41133e51a48d7f3efcbea2839574259"
+      }
+    ],
+    "config.json": [
+      {
+        "name": "qwen3.6-35b-a3b-int4--config.json",
+        "size": 3187,
+        "sha256": "a859aceb5c6c8651c3d49238af21ed36ea6242f0d914f4a2b3f451eb0f1db961"
+      }
+    ],
+    "generation_config.json": [
+      {
+        "name": "qwen3.6-35b-a3b-int4--generation_config.json",
+        "size": 213,
+        "sha256": "07f857aba5260b2ea2513f80de8062d086661f00eada0a3794964e665ba680f5"
+      }
+    ],
+    "openvino_config.json": [
+      {
+        "name": "qwen3.6-35b-a3b-int4--openvino_config.json",
+        "size": 2601,
+        "sha256": "f2e55f59a648ac9a3206a18d8dc06c07bea41025dd13110f4a84b79775da19ad"
+      }
+    ],
+    "openvino_detokenizer.bin": [
+      {
+        "name": "qwen3.6-35b-a3b-int4--openvino_detokenizer.bin",
+        "size": 3828184,
+        "sha256": "48fc2c6a7a1056994982911eb9695826acef933c3d742364c56d16317a0b2a79"
+      }
+    ],
+    "openvino_detokenizer.xml": [
+      {
+        "name": "qwen3.6-35b-a3b-int4--openvino_detokenizer.xml",
+        "size": 15600,
+        "sha256": "e4d8e778bc6b69bbab6deb09f466c8eac3b1c697a87840a5e53f9523153b97b5"
+      }
+    ],
+    "openvino_language_model.bin": [
+      {
+        "name": "qwen3.6-35b-a3b-int4--openvino_language_model.bin.part01",
+        "size": 2040109465,
+        "sha256": "35135e7a0ffa22c727483336425cf3d3d187cba048af772721f3b1d24366b0bb"
+      },
+      {
+        "name": "qwen3.6-35b-a3b-int4--openvino_language_model.bin.part02",
+        "size": 2040109465,
+        "sha256": "ff904ec99122411bd8804b368cb9decd10c01fe772e0da4a2cf7091e23e195f0"
+      },
+      {
+        "name": "qwen3.6-35b-a3b-int4--openvino_language_model.bin.part03",
+        "size": 2040109465,
+        "sha256": "be247716cd465784e8bee57f6d4f69010afa5a05c8375d3afe01381922d4f259"
+      },
+      {
+        "name": "qwen3.6-35b-a3b-int4--openvino_language_model.bin.part04",
+        "size": 2040109465,
+        "sha256": "5e26892e42b9c2b8668425d64b77dc115e9ed74012e1d3177bf7d81377147ef2"
+      },
+      {
+        "name": "qwen3.6-35b-a3b-int4--openvino_language_model.bin.part05",
+        "size": 2040109465,
+        "sha256": "c524a3ca8d4cc9cf8e6735e9950724691dc773a3c43d1615d700e43dad415c60"
+      },
+      {
+        "name": "qwen3.6-35b-a3b-int4--openvino_language_model.bin.part06",
+        "size": 2040109465,
+        "sha256": "67a4ca958efa2f0806933bb0d999980d2cc7d4b0fc7ad1c49b7c839d266f9c8c"
+      },
+      {
+        "name": "qwen3.6-35b-a3b-int4--openvino_language_model.bin.part07",
+        "size": 2040109465,
+        "sha256": "2c39ce0597e0927a58bab12cf4fc404e5b00c50ae0f38024e56b9699018d379f"
+      },
+      {
+        "name": "qwen3.6-35b-a3b-int4--openvino_language_model.bin.part08",
+        "size": 2040109465,
+        "sha256": "1d5ca55ba60f7f30576e2ff26bd263130c360abd86b8a2a81a7d0e39c3971111"
+      },
+      {
+        "name": "qwen3.6-35b-a3b-int4--openvino_language_model.bin.part09",
+        "size": 2040109465,
+        "sha256": "cd9b43bc6f351f5fcd86cc4a1ed05ecec2d218927cbe92596dc4835787ad75eb"
+      },
+      {
+        "name": "qwen3.6-35b-a3b-int4--openvino_language_model.bin.part10",
+        "size": 285573089,
+        "sha256": "40d6cc8820b103bf38a05e3b83178008801020e6ac73a1cd3de704c55e935d6d"
+      }
+    ],
+    "openvino_language_model.xml": [
+      {
+        "name": "qwen3.6-35b-a3b-int4--openvino_language_model.xml",
+        "size": 8221673,
+        "sha256": "21fe4d57d6d016f5689248be01901b1107850ec4efebb31cdbb1262899e72919"
+      }
+    ],
+    "openvino_text_embeddings_model.bin": [
+      {
+        "name": "qwen3.6-35b-a3b-int4--openvino_text_embeddings_model.bin",
+        "size": 509056004,
+        "sha256": "b9957db96d6aca2a8cb0e193cf970f801dbbea183cfd01bf04e649405d9b8b51"
+      }
+    ],
+    "openvino_text_embeddings_model.xml": [
+      {
+        "name": "qwen3.6-35b-a3b-int4--openvino_text_embeddings_model.xml",
+        "size": 5933,
+        "sha256": "8f7ff1b3017e49094e93f221371306368c712b98daa5348b3a2265bc3d159fe1"
+      }
+    ],
+    "openvino_tokenizer.bin": [
+      {
+        "name": "qwen3.6-35b-a3b-int4--openvino_tokenizer.bin",
+        "size": 9631154,
+        "sha256": "ea3fcce2251902efffbc774cbc8ffff69e981412347a1e510e430c6557a63701"
+      }
+    ],
+    "openvino_tokenizer.xml": [
+      {
+        "name": "qwen3.6-35b-a3b-int4--openvino_tokenizer.xml",
+        "size": 32594,
+        "sha256": "9bc2c00bf9bdedbb72f261561d43da06142e7e0b364a76fbb5918fb6c2fd8e13"
+      }
+    ],
+    "openvino_vision_embeddings_merger_model.bin": [
+      {
+        "name": "qwen3.6-35b-a3b-int4--openvino_vision_embeddings_merger_model.bin",
+        "size": 443361892,
+        "sha256": "a995b0d1c23a3247d580f74b491e82fc6fc023238d1248bf9fd1baa12d41b578"
+      }
+    ],
+    "openvino_vision_embeddings_merger_model.xml": [
+      {
+        "name": "qwen3.6-35b-a3b-int4--openvino_vision_embeddings_merger_model.xml",
+        "size": 1322526,
+        "sha256": "7df29e7bdf3c8a565a9ca8886bb255b32ec32b2a29fa12539f58699c35d71043"
+      }
+    ],
+    "openvino_vision_embeddings_model.bin": [
+      {
+        "name": "qwen3.6-35b-a3b-int4--openvino_vision_embeddings_model.bin",
+        "size": 7082552,
+        "sha256": "631d92e19f219a37262cd25ff9fde218f3c1fe8d648b59881641bf6cbf31bb87"
+      }
+    ],
+    "openvino_vision_embeddings_model.xml": [
+      {
+        "name": "qwen3.6-35b-a3b-int4--openvino_vision_embeddings_model.xml",
+        "size": 5156,
+        "sha256": "1c2550d7a817177d4fea5e6a92ed75d6078cc43a40b670e45c5963ba443daf91"
+      }
+    ],
+    "openvino_vision_embeddings_pos_model.bin": [
+      {
+        "name": "qwen3.6-35b-a3b-int4--openvino_vision_embeddings_pos_model.bin",
+        "size": 5308420,
+        "sha256": "aa6c0b30472a88a431c8ac2a692214b0a4f2263b71105a1772181f30c56d194e"
+      }
+    ],
+    "openvino_vision_embeddings_pos_model.xml": [
+      {
+        "name": "qwen3.6-35b-a3b-int4--openvino_vision_embeddings_pos_model.xml",
+        "size": 3271,
+        "sha256": "2fa7739cfeed7ee54cff67ecb23a12f2282eabff94ce7c349a1b7b1910795ea9"
+      }
+    ],
+    "preprocessor_config.json": [
+      {
+        "name": "qwen3.6-35b-a3b-int4--preprocessor_config.json",
+        "size": 482,
+        "sha256": "957eb01d1ea45341a92d543daec95857a7cbeff5803834bc0603b27ba7b41b3f"
+      }
+    ],
+    "processor_config.json": [
+      {
+        "name": "qwen3.6-35b-a3b-int4--processor_config.json",
+        "size": 1300,
+        "sha256": "14932921ca485d458a04dafd8069fbb0a4505622a48208d19ed247115801385b"
+      }
+    ],
+    "README.md": [
+      {
+        "name": "qwen3.6-35b-a3b-int4--README.md",
+        "size": 7108,
+        "sha256": "f72f90d2508ec0cbc1e43ad1b7338543acf732891b56d9365b620c2e8dc8008b"
+      }
+    ],
+    "tokenizer.json": [
+      {
+        "name": "qwen3.6-35b-a3b-int4--tokenizer.json",
+        "size": 19989343,
+        "sha256": "87a7830d63fcf43bf241c3c5242e96e62dd3fdc29224ca26fed8ea333db72de4"
+      }
+    ],
+    "tokenizer_config.json": [
+      {
+        "name": "qwen3.6-35b-a3b-int4--tokenizer_config.json",
+        "size": 1139,
+        "sha256": "e98f1901ac6f0adff67b1d540bfa0c36ac1a0cf59eb72ed78146ef89aafa1182"
+      }
+    ]
+  },
+  "manifest": {
+    "manifestVersion": 1,
+    "id": "qwen3.6-35b-a3b-int4",
+    "name": "Qwen3.6 35B",
+    "task": "note",
+    "tier": "accuracy",
+    "licence": "Apache-2.0",
+    "runtime": {
+      "device": "GPU",
+      "pipeline": "vlm",
+      "properties": {
+        "ACTIVATIONS_SCALE_FACTOR": 32
+      }
+    },
+    "source": {
+      "path": "C:\\dev\\intelliscribe\\ml-models\\summariser\\qwen3.6-35b-a3b-int4-ov"
+    },
+    "files": {
+      ".gitattributes": "34448b82c17d60fec9b65b1f093c115ddbaadc04beb1b0140b6bfed2e012a930",
+      "chat_template_original.jinja": "e84f32a23fdda27689f868aa4a1a5621f41133e51a48d7f3efcbea2839574259",
+      "chat_template.jinja": "c3f7038f278583e1c1e0a3796a2f885472a75f9265c2ce75fd261908babb9700",
+      "config.json": "a859aceb5c6c8651c3d49238af21ed36ea6242f0d914f4a2b3f451eb0f1db961",
+      "generation_config.json": "07f857aba5260b2ea2513f80de8062d086661f00eada0a3794964e665ba680f5",
+      "openvino_config.json": "f2e55f59a648ac9a3206a18d8dc06c07bea41025dd13110f4a84b79775da19ad",
+      "openvino_detokenizer.bin": "48fc2c6a7a1056994982911eb9695826acef933c3d742364c56d16317a0b2a79",
+      "openvino_detokenizer.xml": "e4d8e778bc6b69bbab6deb09f466c8eac3b1c697a87840a5e53f9523153b97b5",
+      "openvino_language_model.bin": "44b8b72c7009a5a76d3430c910cdadc7829629707c326cd5ca6530329fa66a62",
+      "openvino_language_model.xml": "21fe4d57d6d016f5689248be01901b1107850ec4efebb31cdbb1262899e72919",
+      "openvino_text_embeddings_model.bin": "b9957db96d6aca2a8cb0e193cf970f801dbbea183cfd01bf04e649405d9b8b51",
+      "openvino_text_embeddings_model.xml": "8f7ff1b3017e49094e93f221371306368c712b98daa5348b3a2265bc3d159fe1",
+      "openvino_tokenizer.bin": "ea3fcce2251902efffbc774cbc8ffff69e981412347a1e510e430c6557a63701",
+      "openvino_tokenizer.xml": "9bc2c00bf9bdedbb72f261561d43da06142e7e0b364a76fbb5918fb6c2fd8e13",
+      "openvino_vision_embeddings_merger_model.bin": "a995b0d1c23a3247d580f74b491e82fc6fc023238d1248bf9fd1baa12d41b578",
+      "openvino_vision_embeddings_merger_model.xml": "7df29e7bdf3c8a565a9ca8886bb255b32ec32b2a29fa12539f58699c35d71043",
+      "openvino_vision_embeddings_model.bin": "631d92e19f219a37262cd25ff9fde218f3c1fe8d648b59881641bf6cbf31bb87",
+      "openvino_vision_embeddings_model.xml": "1c2550d7a817177d4fea5e6a92ed75d6078cc43a40b670e45c5963ba443daf91",
+      "openvino_vision_embeddings_pos_model.bin": "aa6c0b30472a88a431c8ac2a692214b0a4f2263b71105a1772181f30c56d194e",
+      "openvino_vision_embeddings_pos_model.xml": "2fa7739cfeed7ee54cff67ecb23a12f2282eabff94ce7c349a1b7b1910795ea9",
+      "preprocessor_config.json": "957eb01d1ea45341a92d543daec95857a7cbeff5803834bc0603b27ba7b41b3f",
+      "processor_config.json": "14932921ca485d458a04dafd8069fbb0a4505622a48208d19ed247115801385b",
+      "README.md": "f72f90d2508ec0cbc1e43ad1b7338543acf732891b56d9365b620c2e8dc8008b",
+      "tokenizer_config.json": "e98f1901ac6f0adff67b1d540bfa0c36ac1a0cf59eb72ed78146ef89aafa1182",
+      "tokenizer.json": "87a7830d63fcf43bf241c3c5242e96e62dd3fdc29224ca26fed8ea333db72de4"
+    },
+    "bytes": {
+      ".gitattributes": 1570,
+      "chat_template_original.jinja": 7764,
+      "chat_template.jinja": 9131,
+      "config.json": 3187,
+      "generation_config.json": 213,
+      "openvino_config.json": 2601,
+      "openvino_detokenizer.bin": 3828184,
+      "openvino_detokenizer.xml": 15600,
+      "openvino_language_model.bin": 18646558274,
+      "openvino_language_model.xml": 8221673,
+      "openvino_text_embeddings_model.bin": 509056004,
+      "openvino_text_embeddings_model.xml": 5933,
+      "openvino_tokenizer.bin": 9631154,
+      "openvino_tokenizer.xml": 32594,
+      "openvino_vision_embeddings_merger_model.bin": 443361892,
+      "openvino_vision_embeddings_merger_model.xml": 1322526,
+      "openvino_vision_embeddings_model.bin": 7082552,
+      "openvino_vision_embeddings_model.xml": 5156,
+      "openvino_vision_embeddings_pos_model.bin": 5308420,
+      "openvino_vision_embeddings_pos_model.xml": 3271,
+      "preprocessor_config.json": 482,
+      "processor_config.json": 1300,
+      "README.md": 7108,
+      "tokenizer_config.json": 1139,
+      "tokenizer.json": 19989343
+    }
+  },
+  "totalBytes": 19654457071
+}

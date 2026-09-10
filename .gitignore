@@ -53,3 +53,18 @@ desktop.ini
 /demo/*
 !/demo/reflections/
 __pycache__/
+
+# Guidance retrieval data
+/rag/*
+!/rag/README.md
+!/rag/sources/
+/rag/sources/*
+!/rag/gold/
+/rag/gold/*
+!/rag/corpora/
+/rag/corpora/*
+
+# committed gold sets
+!/rag/gold/primock-statements/
+!/rag/gold/negatives/
+!/rag/gold/synthetic-statements/

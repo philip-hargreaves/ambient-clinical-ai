@@ -1,0 +1,98 @@
+{
+  "id": "gte-large-int8",
+  "baseUrl": "https://github.com/philip-hargreaves/ambient/releases/download/weights-v1",
+  "target": "models/gte-large-int8",
+  "files": {
+    "config.json": "b156fa4aec1ec51a759f37ae93837f5627acb770dc1c89f602c5b2720cc8e7be",
+    "openvino_config.json": "37965839bbc2ca68cf19fe15fcef42868bfc57cc02a779b635fddd5648e95ed8",
+    "openvino_detokenizer.bin": "ba8a6127e4baf88e4a09972abab379257afabb43d238d6c2702ab77549822c08",
+    "openvino_detokenizer.xml": "89bbdec370a557da8ecbb2502b650c7ecb782246645d8ae907158c85ffbc7789",
+    "openvino_model.bin": "081f8da65f72ee02a41ef3cde6fa660e8ffd81ae1cd017104c4b924bfcada292",
+    "openvino_model.xml": "43fed9b045ecc7948f5a9083f0b5cba0d7d8eba38050ad99d5f56829f31c617d",
+    "openvino_tokenizer.bin": "e4cacab539e049b9768d4e2673eefdabeea07126a3a8d8c7f06af8bbaf59af25",
+    "openvino_tokenizer.xml": "a95042b90f2642df37bbec4d0c07ee5050a02552d97e2820162d74a17357a1f8",
+    "provenance.json": "00b9f0a929239465b1142180ccf081840c608863879a8cd6c819566c9fd99fb8",
+    "tokenizer.json": "da0e79933b9ed51798a3ae27893d3c5fa4a201126cef75586296df9b4d2c62a0",
+    "tokenizer_config.json": "8afbbbb0162eaf29e7a4a857c366b938ce427dcf37650888cd7ad8ba02a8ed45"
+  },
+  "shards": {
+    "config.json": [
+      {
+        "name": "gte-large-int8--config.json",
+        "size": 776,
+        "sha256": "b156fa4aec1ec51a759f37ae93837f5627acb770dc1c89f602c5b2720cc8e7be"
+      }
+    ],
+    "openvino_config.json": [
+      {
+        "name": "gte-large-int8--openvino_config.json",
+        "size": 513,
+        "sha256": "37965839bbc2ca68cf19fe15fcef42868bfc57cc02a779b635fddd5648e95ed8"
+      }
+    ],
+    "openvino_detokenizer.bin": [
+      {
+        "name": "gte-large-int8--openvino_detokenizer.bin",
+        "size": 458274,
+        "sha256": "ba8a6127e4baf88e4a09972abab379257afabb43d238d6c2702ab77549822c08"
+      }
+    ],
+    "openvino_detokenizer.xml": [
+      {
+        "name": "gte-large-int8--openvino_detokenizer.xml",
+        "size": 12624,
+        "sha256": "89bbdec370a557da8ecbb2502b650c7ecb782246645d8ae907158c85ffbc7789"
+      }
+    ],
+    "openvino_model.bin": [
+      {
+        "name": "gte-large-int8--openvino_model.bin",
+        "size": 335375413,
+        "sha256": "081f8da65f72ee02a41ef3cde6fa660e8ffd81ae1cd017104c4b924bfcada292"
+      }
+    ],
+    "openvino_model.xml": [
+      {
+        "name": "gte-large-int8--openvino_model.xml",
+        "size": 1315870,
+        "sha256": "43fed9b045ecc7948f5a9083f0b5cba0d7d8eba38050ad99d5f56829f31c617d"
+      }
+    ],
+    "openvino_tokenizer.bin": [
+      {
+        "name": "gte-large-int8--openvino_tokenizer.bin",
+        "size": 445553,
+        "sha256": "e4cacab539e049b9768d4e2673eefdabeea07126a3a8d8c7f06af8bbaf59af25"
+      }
+    ],
+    "openvino_tokenizer.xml": [
+      {
+        "name": "gte-large-int8--openvino_tokenizer.xml",
+        "size": 34574,
+        "sha256": "a95042b90f2642df37bbec4d0c07ee5050a02552d97e2820162d74a17357a1f8"
+      }
+    ],
+    "provenance.json": [
+      {
+        "name": "gte-large-int8--provenance.json",
+        "size": 1892,
+        "sha256": "00b9f0a929239465b1142180ccf081840c608863879a8cd6c819566c9fd99fb8"
+      }
+    ],
+    "tokenizer.json": [
+      {
+        "name": "gte-large-int8--tokenizer.json",
+        "size": 711661,
+        "sha256": "da0e79933b9ed51798a3ae27893d3c5fa4a201126cef75586296df9b4d2c62a0"
+      }
+    ],
+    "tokenizer_config.json": [
+      {
+        "name": "gte-large-int8--tokenizer_config.json",
+        "size": 602,
+        "sha256": "8afbbbb0162eaf29e7a4a857c366b938ce427dcf37650888cd7ad8ba02a8ed45"
+      }
+    ]
+  },
+  "totalBytes": 338357752
+}

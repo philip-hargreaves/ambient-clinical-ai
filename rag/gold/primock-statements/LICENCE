@@ -1,0 +1,6 @@
+The statements in this folder derive from the PriMock57 dataset (Babylon Health), released under
+the Creative Commons Attribution 4.0 International licence (CC BY 4.0):
+https://creativecommons.org/licenses/by/4.0/
+
+The labels (expected recommendation ids, codes, rationale) are this project's own work and are
+released under the same licence.
