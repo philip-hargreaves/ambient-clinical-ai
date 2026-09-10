@@ -16,7 +16,7 @@ namespace ambient::guidance {
 // ranked hits vote by rank (reciprocal rank fusion); the whole-note query may
 // carry more votes than one sentence; a floor on the best cosine refuses
 // out-of-scope input; a population guard drops recommendations the note rules
-// out. No second stage: none beat this order on the gold sets
+// out. No second stage: none measured better than this order
 inline constexpr double kRrfK = 60.0;
 inline constexpr double kDefaultFloor = 0.85;
 inline constexpr int kUnionSize = 50;

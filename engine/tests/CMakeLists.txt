@@ -51,6 +51,7 @@ add_executable(engine_tests
     adapters/fbank_test.cpp
     adapters/framing_test.cpp
     adapters/gpu_lease_test.cpp
+    adapters/guidance_chunker_test.cpp
     adapters/capture_devices_test.cpp
     adapters/handlers_test.cpp
     adapters/messages_test.cpp
@@ -87,8 +88,8 @@ add_dependencies(engine_tests fake_note_host)
 target_compile_definitions(engine_tests PRIVATE
     AMBIENT_FAKE_NOTE_HOST="$<TARGET_FILE:fake_note_host>")
 target_link_libraries(engine_tests PRIVATE
-    ambient_ipc ambient_audio ambient_diarisation ambient_models ambient_note ambient_storage
-    ambient_transcription ambient_warnings openvino::genai GTest::gtest_main)
+    ambient_ipc ambient_audio ambient_diarisation ambient_guidance ambient_models ambient_note
+    ambient_storage ambient_transcription ambient_warnings openvino::genai GTest::gtest_main)
 
 # Real-microphone tests live in their own binary under the microphone label,
 # so the ci presets can exclude what a runner without audio cannot execute

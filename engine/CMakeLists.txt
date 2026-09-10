@@ -116,6 +116,12 @@ target_link_libraries(ambient_translate
     PUBLIC ambient_core nlohmann_json::nlohmann_json
     PRIVATE ambient_models ambient_warnings openvino::genai)
 
+add_library(ambient_guidance STATIC
+    src/adapters/guidance/chunker.cpp)
+target_link_libraries(ambient_guidance
+    PUBLIC ambient_core nlohmann_json::nlohmann_json
+    PRIVATE ambient_warnings)
+
 add_library(ambient_vad STATIC
     src/adapters/vad/silero_vad.cpp)
 target_link_libraries(ambient_vad
