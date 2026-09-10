@@ -6,13 +6,21 @@
 
 namespace ambient::guidance {
 
-// A read-only guidance corpus the retriever can search
+// A guidance corpus the retriever found. The hash, embedder and build date go
+// into the sealed record of what a session was shown, so an audit can name the
+// text that produced it. A corpus that failed a load guard is listed with the
+// reason and searched by nothing
 struct Corpus {
     std::string id;
     std::string name;
     std::string licence;
+    std::string attribution;
+    std::string source;  // "nice", "text", "upload"
+    std::string embedder;
+    std::string sha256;
     int chunks = 0;
-    std::string indexed_at;  // ISO 8601; empty until indexed
+    std::string built_at;     // ISO 8601
+    std::string unavailable;  // empty when loaded; otherwise why not
 };
 
 // One recommendation the panel shows. trigger is the note sentence that found

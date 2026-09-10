@@ -116,11 +116,22 @@ target_link_libraries(ambient_translate
     PUBLIC ambient_core nlohmann_json::nlohmann_json
     PRIVATE ambient_models ambient_warnings openvino::genai)
 
+# The corpus schema is a SQL file, embedded like the session schema
+set(ambient_guidance_schema_dir ${CMAKE_CURRENT_SOURCE_DIR}/src/adapters/guidance/schema)
+file(READ ${ambient_guidance_schema_dir}/corpus.sql AMBIENT_CORPUS_SCHEMA_SQL)
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
+    ${ambient_guidance_schema_dir}/corpus.sql)
+configure_file(src/adapters/guidance/schema.hpp.in
+    ${CMAKE_CURRENT_BINARY_DIR}/generated/adapters/guidance/schema.hpp @ONLY)
+
 add_library(ambient_guidance STATIC
-    src/adapters/guidance/chunker.cpp)
+    src/adapters/guidance/chunker.cpp
+    src/adapters/guidance/corpus_builder.cpp
+    src/adapters/guidance/corpus_store.cpp)
+target_include_directories(ambient_guidance PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/generated)
 target_link_libraries(ambient_guidance
-    PUBLIC ambient_core nlohmann_json::nlohmann_json
-    PRIVATE ambient_warnings)
+    PUBLIC ambient_core ambient_storage nlohmann_json::nlohmann_json
+    PRIVATE ambient_models ambient_warnings)
 
 add_library(ambient_vad STATIC
     src/adapters/vad/silero_vad.cpp)

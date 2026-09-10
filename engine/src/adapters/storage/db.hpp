@@ -32,6 +32,8 @@ class Db {
         std::int64_t ColumnInt64(int index) const;
         std::string ColumnText(int index) const;
         std::vector<std::uint8_t> ColumnBlob(int index) const;
+        // Valid until the next Step or Reset; for large blobs read once
+        std::span<const std::uint8_t> ColumnBlobView(int index) const;
 
        private:
         friend class Db;
@@ -56,7 +58,12 @@ class Db {
         bool done_ = false;
     };
 
-    explicit Db(const std::filesystem::path& path);
+    // kSession: the clinical store's pragmas (WAL, synchronous FULL, foreign keys).
+    // kBuild: read-write, create, no pragmas; the caller sets the file's shape.
+    // kImmutableReadOnly: a finished file that nothing writes; no locking, no journal
+    enum class Mode { kSession, kBuild, kImmutableReadOnly };
+
+    explicit Db(const std::filesystem::path& path, Mode mode = Mode::kSession);
     Db(Db&& other) noexcept;
     Db& operator=(Db&& other) noexcept;
     ~Db();

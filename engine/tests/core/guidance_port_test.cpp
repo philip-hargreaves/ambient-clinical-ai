@@ -52,8 +52,14 @@ struct FakeGuidanceRetriever : IGuidanceRetriever {
     }
 
     std::vector<Corpus> Corpora() override {
-        return {{"fixture", "Fixture guidance corpus", "invented", static_cast<int>(corpus.size()),
-                 "2026-09-09"}};
+        Corpus fixture;
+        fixture.id = "fixture";
+        fixture.name = "Fixture guidance corpus";
+        fixture.licence = "invented";
+        fixture.source = "text";
+        fixture.chunks = static_cast<int>(corpus.size());
+        fixture.built_at = "2026-09-09";
+        return {fixture};
     }
 };
 

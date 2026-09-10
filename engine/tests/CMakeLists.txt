@@ -28,6 +28,7 @@ add_executable(engine_tests
     core/guidance_port_test.cpp
     core/guidance_query_test.cpp
     core/guidance_rank_test.cpp
+    core/guidance_scan_test.cpp
     core/level_meter_test.cpp
     core/metrics_test.cpp
     core/note_label_test.cpp
@@ -52,6 +53,7 @@ add_executable(engine_tests
     adapters/framing_test.cpp
     adapters/gpu_lease_test.cpp
     adapters/guidance_chunker_test.cpp
+    adapters/guidance_corpus_test.cpp
     adapters/capture_devices_test.cpp
     adapters/handlers_test.cpp
     adapters/messages_test.cpp
