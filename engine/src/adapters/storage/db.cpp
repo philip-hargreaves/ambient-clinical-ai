@@ -1,5 +1,6 @@
 #include "adapters/storage/db.hpp"
 
+#include <cctype>
 #include <stdexcept>
 #include <utility>
 
@@ -14,22 +15,61 @@ namespace {
                              (db != nullptr ? sqlite3_errmsg(db) : "out of memory"));
 }
 
+// file:///C:/dir/x.db with every character outside the unreserved set escaped
+std::string FileUri(const std::filesystem::path& path) {
+    const std::u8string utf8 = std::filesystem::absolute(path).u8string();
+    std::string uri = "file:///";
+    static constexpr char kHex[] = "0123456789ABCDEF";
+    for (char8_t c : utf8) {
+        const auto b = static_cast<unsigned char>(c);
+        if (b == '\\') {
+            uri.push_back('/');
+        } else if (std::isalnum(b) || b == '-' || b == '.' || b == '_' || b == '~' || b == '/' ||
+                   b == ':') {
+            uri.push_back(static_cast<char>(b));
+        } else {
+            uri.push_back('%');
+            uri.push_back(kHex[b >> 4]);
+            uri.push_back(kHex[b & 15]);
+        }
+    }
+    return uri;
+}
+
 }  // namespace
 
-Db::Db(const std::filesystem::path& path) {
-    const std::u8string utf8 = path.u8string();
-    if (sqlite3_open(reinterpret_cast<const char*>(utf8.c_str()), &db_) != SQLITE_OK) {
+Db::Db(const std::filesystem::path& path, Mode mode) {
+    std::string name;
+    int flags = 0;
+    switch (mode) {
+        case Mode::kSession:
+        case Mode::kBuild:
+            name = std::string(reinterpret_cast<const char*>(path.u8string().c_str()));
+            flags = SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE;
+            break;
+        case Mode::kImmutableReadOnly:
+            name = FileUri(path) + "?immutable=1";
+            flags = SQLITE_OPEN_READONLY | SQLITE_OPEN_URI | SQLITE_OPEN_NOMUTEX;
+            break;
+    }
+    if (sqlite3_open_v2(name.c_str(), &db_, flags, nullptr) != SQLITE_OK) {
         std::string message = "open " + path.string() + ": " +
                               (db_ != nullptr ? sqlite3_errmsg(db_) : "out of memory");
         sqlite3_close(db_);
         db_ = nullptr;
         throw std::runtime_error(message);
     }
-    // page_size only takes effect if it runs before the first table is created
-    Exec("PRAGMA page_size=8192");
-    Exec("PRAGMA journal_mode=WAL");
-    Exec("PRAGMA synchronous=FULL");
-    Exec("PRAGMA foreign_keys=ON");
+    if (mode == Mode::kSession) {
+        // page_size only takes effect if it runs before the first table is created
+        Exec("PRAGMA page_size=8192");
+        Exec("PRAGMA journal_mode=WAL");
+        Exec("PRAGMA synchronous=FULL");
+        Exec("PRAGMA foreign_keys=ON");
+    } else if (mode == Mode::kImmutableReadOnly) {
+        Exec("PRAGMA query_only=1");
+        Exec("PRAGMA mmap_size=134217728");
+        Exec("PRAGMA cache_size=-8192");
+    }
 }
 
 Db::Db(Db&& other) noexcept : db_(std::exchange(other.db_, nullptr)) {}
@@ -149,6 +189,13 @@ std::vector<std::uint8_t> Db::Stmt::ColumnBlob(int index) const {
     const int size = sqlite3_column_bytes(stmt_, index);
     return data != nullptr ? std::vector<std::uint8_t>(data, data + size)
                            : std::vector<std::uint8_t>();
+}
+
+std::span<const std::uint8_t> Db::Stmt::ColumnBlobView(int index) const {
+    const auto* data = static_cast<const std::uint8_t*>(sqlite3_column_blob(stmt_, index));
+    const int size = sqlite3_column_bytes(stmt_, index);
+    return data != nullptr ? std::span<const std::uint8_t>(data, static_cast<std::size_t>(size))
+                           : std::span<const std::uint8_t>();
 }
 
 Db::Transaction::Transaction(Db& db) : db_(db) {

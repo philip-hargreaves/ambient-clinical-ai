@@ -1,0 +1,12 @@
+#pragma once
+
+// Generated at configure time from src/adapters/guidance/schema/corpus.sql;
+// edit the .sql file, not this header
+
+namespace ambient::guidance {
+
+inline constexpr const char* kCorpusSchemaSql = R"sql(
+@AMBIENT_CORPUS_SCHEMA_SQL@
+)sql";
+
+}  // namespace ambient::guidance

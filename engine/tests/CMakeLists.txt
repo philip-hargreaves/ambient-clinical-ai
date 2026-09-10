@@ -25,6 +25,10 @@ add_executable(engine_tests
     core/diar_capture_test.cpp
     core/diar_regions_test.cpp
     core/endpointer_test.cpp
+    core/guidance_port_test.cpp
+    core/guidance_query_test.cpp
+    core/guidance_rank_test.cpp
+    core/guidance_scan_test.cpp
     core/level_meter_test.cpp
     core/metrics_test.cpp
     core/note_label_test.cpp
@@ -48,6 +52,8 @@ add_executable(engine_tests
     adapters/fbank_test.cpp
     adapters/framing_test.cpp
     adapters/gpu_lease_test.cpp
+    adapters/guidance_chunker_test.cpp
+    adapters/guidance_corpus_test.cpp
     adapters/capture_devices_test.cpp
     adapters/handlers_test.cpp
     adapters/messages_test.cpp
@@ -66,6 +72,7 @@ add_executable(engine_tests
 target_compile_definitions(engine_tests PRIVATE
     AMBIENT_CMAKE_VERSION="${ambient_VERSION}"
     AMBIENT_FIXTURE_DIR="${ambient_SOURCE_DIR}/schema/fixtures"
+    AMBIENT_GUIDANCE_FIXTURE_DIR="${ambient_SOURCE_DIR}/engine/tests/fixtures/guidance"
     AMBIENT_DEMO_DIR="${ambient_SOURCE_DIR}/demo/reflections"
     AMBIENT_CRASH_HELPER="$<TARGET_FILE:store_crash_helper>")
 
@@ -83,8 +90,8 @@ add_dependencies(engine_tests fake_note_host)
 target_compile_definitions(engine_tests PRIVATE
     AMBIENT_FAKE_NOTE_HOST="$<TARGET_FILE:fake_note_host>")
 target_link_libraries(engine_tests PRIVATE
-    ambient_ipc ambient_audio ambient_diarisation ambient_models ambient_note ambient_storage
-    ambient_transcription ambient_warnings openvino::genai GTest::gtest_main)
+    ambient_ipc ambient_audio ambient_diarisation ambient_guidance ambient_models ambient_note
+    ambient_storage ambient_transcription ambient_warnings openvino::genai GTest::gtest_main)
 
 # Real-microphone tests live in their own binary under the microphone label,
 # so the ci presets can exclude what a runner without audio cannot execute
