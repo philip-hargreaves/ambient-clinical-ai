@@ -286,6 +286,22 @@ TEST(ModelStore, RuntimePipelineAndPropertiesAreRead) {
     EXPECT_EQ(info.properties["KV_CACHE_PRECISION"], "u8");
 }
 
+TEST(ModelStore, TheEmbeddingPipelineIsAccepted) {
+    TempRoot root;
+    const auto dir = root.path / "gte-large-int8";
+    std::filesystem::create_directories(dir);
+    WriteFile(dir / "weights.bin", "hello");
+    WriteFile(dir / "manifest.json",
+              R"({"manifestVersion": 1, "id": "gte-large-int8", "task": "embedding",)"
+              R"( "tier": "default", "licence": "Apache-2.0",)"
+              R"( "runtime": {"device": "CPU", "pipeline": "embedding"},)"
+              R"( "files": {"weights.bin": ")" +
+                  std::string(kHelloHash) + R"("}})");
+
+    const ModelStore store(root.path);
+    EXPECT_EQ(store.Resolve("embedding", "default").pipeline, "embedding");
+}
+
 // A pipeline this build cannot construct, or a property it cannot pass, is
 // a corrupt manifest for this build: refused at scan, never best-effort
 TEST(ModelStore, AnUnknownPipelineOrANonScalarPropertyIsRefused) {

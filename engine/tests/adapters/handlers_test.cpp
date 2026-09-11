@@ -3,9 +3,11 @@
 #include <gtest/gtest.h>
 
 #include <chrono>
+#include <condition_variable>
 #include <filesystem>
 #include <fstream>
 #include <memory>
+#include <mutex>
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -598,6 +600,193 @@ TEST(Handlers, EchoRejectsAMissingOrNonStringPayload) {
         ASSERT_TRUE(std::holds_alternative<Error>(outcome)) << params.dump();
         EXPECT_EQ(std::get<Error>(outcome).code, kInvalidParams) << params.dump();
     }
+}
+
+// Answers every search with one result that names the note it was given
+struct EchoRetriever : ambient::guidance::IGuidanceRetriever {
+    std::mutex mutex;
+    std::vector<std::pair<std::string, int>> searches;
+    bool fail = false;
+
+    ambient::guidance::Results Search(const std::string& note, int limit) override {
+        {
+            const std::lock_guard<std::mutex> lock(mutex);
+            searches.emplace_back(note, limit);
+        }
+        if (fail) throw std::runtime_error("no embedding model staged");
+        ambient::guidance::Results results;
+        results.considered = 1;
+        ambient::guidance::Result one;
+        one.chunk_id = "fx100-1_1_1";
+        one.trigger = note;
+        results.shown.push_back(one);
+        return results;
+    }
+    std::vector<ambient::guidance::Corpus> Corpora() override {
+        return {};
+    }
+};
+
+// Notifications the lane sent, waitable
+struct Sent {
+    std::mutex mutex;
+    std::condition_variable changed;
+    std::vector<std::pair<std::string, json>> all;
+
+    Notify Sink() {
+        return [this](const std::string& method, json params) {
+            const std::lock_guard<std::mutex> lock(mutex);
+            all.emplace_back(method, std::move(params));
+            changed.notify_all();
+        };
+    }
+    bool WaitFor(std::size_t count) {
+        std::unique_lock<std::mutex> lock(mutex);
+        return changed.wait_for(lock, std::chrono::seconds(5), [&] { return all.size() >= count; });
+    }
+};
+
+TEST(Handlers, GuidanceReadyMatchesTheFixture) {
+    ambient::guidance::Results results;
+    results.considered = 40;
+    ambient::guidance::Result one;
+    one.corpus = "fixture";
+    one.chunk_id = "fx100-1_1_1";
+    one.guideline = "fx100";
+    one.title = "Fictional inflammatory joint disease: assessment and management";
+    one.section = "1.1 Referral";
+    one.text =
+        "Refer adults with persistent synovitis of undetermined cause to a specialist, and refer "
+        "urgently if the small joints of the hands or feet are affected.";
+    one.score = 0.8971234;
+    one.trigger = "Examination shows synovitis of several MCP joints.";
+    results.shown.push_back(one);
+
+    Sent sent;
+    auto request =
+        GuidanceSearchRequest("a1b2c3d4e5f60718293a4b5c6d7e8f90", "note", 3, sent.Sink());
+    request.on_ready(results);
+    const json fixture = LoadFixture("guidance-ready.json");
+    ASSERT_EQ(sent.all.size(), 1u);
+    EXPECT_EQ(fixture["method"], sent.all[0].first);
+    EXPECT_EQ(sent.all[0].second, fixture["params"]);
+}
+
+TEST(Handlers, GuidanceFailedMatchesTheFixture) {
+    Sent sent;
+    auto request =
+        GuidanceSearchRequest("a1b2c3d4e5f60718293a4b5c6d7e8f90", "note", 3, sent.Sink());
+    request.on_failed("guidance embedder gte-large-int8: tokenizer ignores max_length");
+    const json fixture = LoadFixture("guidance-failed.json");
+    ASSERT_EQ(sent.all.size(), 1u);
+    EXPECT_EQ(fixture["method"], sent.all[0].first);
+    EXPECT_EQ(sent.all[0].second, fixture["params"]);
+}
+
+TEST(Handlers, GuidanceCorporaMatchesTheFixture) {
+    ambient::guidance::Corpus loaded;
+    loaded.id = "fixture";
+    loaded.name = "Fixture guidance corpus";
+    loaded.licence = "invented";
+    loaded.attribution = "none";
+    loaded.source = "text";
+    loaded.embedder = "gte-large-int8";
+    loaded.sha256 = "e4f1be59be8647759ccd16d916ba9504b464f39a2799cb598ca5f0e4dc779a9f";
+    loaded.chunks = 40;
+    loaded.built_at = "2026-09-11T00:00:00Z";
+    ambient::guidance::Corpus refused;
+    refused.id = "nice-2026-08-25";
+    refused.unavailable = "corpus.db sha256 does not match the manifest";
+
+    const json fixture = LoadFixture("guidance-corpora.json");
+    EXPECT_EQ(GuidanceCorporaJson({loaded, refused}), fixture["result"]);
+}
+
+TEST(Handlers, GuidanceSearchRunsTheStoredNoteThroughTheLane) {
+    SessionStoreFixture fixture;
+    const auto id = fixture.store->Begin({16000, "", ""});
+    fixture.store->Finalise(id);
+    fixture.store->SaveDocument(
+        id, ambient::store::DocumentKind::kNote,
+        {.text = "Six weeks of synovitis in the small joints of both hands.",
+         .style = "prose",
+         .detail = "standard"});
+    EchoRetriever retriever;
+    ambient::guidance::GuidanceLane lane(retriever);
+    Sent sent;
+
+    const auto outcome = HandleGuidanceSearch(*fixture.store, lane, json{{"id", id}}, sent.Sink());
+    ASSERT_TRUE(std::holds_alternative<json>(outcome));
+    EXPECT_EQ(ResultOf(outcome), json::object());
+    ASSERT_TRUE(sent.WaitFor(1));
+    EXPECT_EQ(sent.all[0].first, "guidance/ready");
+    EXPECT_EQ(sent.all[0].second["id"], id);
+    EXPECT_EQ(sent.all[0].second["shown"][0]["trigger"],
+              "Six weeks of synovitis in the small joints of both hands.");
+    ASSERT_EQ(retriever.searches.size(), 1u);
+    EXPECT_EQ(retriever.searches[0].second, kGuidanceLimit);
+}
+
+TEST(Handlers, GuidanceSearchTakesFreeTextAndALimit) {
+    SessionStoreFixture fixture;
+    EchoRetriever retriever;
+    ambient::guidance::GuidanceLane lane(retriever);
+    Sent sent;
+
+    const auto outcome = HandleGuidanceSearch(
+        *fixture.store, lane, json{{"text", "Chest pain on exertion."}, {"limit", 5}}, sent.Sink());
+    ASSERT_TRUE(std::holds_alternative<json>(outcome));
+    ASSERT_TRUE(sent.WaitFor(1));
+    EXPECT_EQ(sent.all[0].first, "guidance/ready");
+    EXPECT_TRUE(sent.all[0].second["id"].is_null());
+    EXPECT_EQ(retriever.searches,
+              (std::vector<std::pair<std::string, int>>{{"Chest pain on exertion.", 5}}));
+}
+
+TEST(Handlers, GuidanceSearchRefusesBadParamsAndAMissingNote) {
+    SessionStoreFixture fixture;
+    const auto without_note = fixture.store->Begin({16000, "", ""});
+    fixture.store->Finalise(without_note);
+    EchoRetriever retriever;
+    ambient::guidance::GuidanceLane lane(retriever);
+    Sent sent;
+
+    struct Case {
+        json params;
+        int code;
+    };
+    const Case cases[] = {
+        {json::object(), kInvalidParams},
+        {json{{"text", 5}}, kInvalidParams},
+        {json{{"text", "Chest pain."}, {"limit", 0}}, kInvalidParams},
+        {json{{"text", "Chest pain."}, {"limit", 21}}, kInvalidParams},
+        {json{{"text", ""}}, kSessionError},
+        {json{{"id", "nope"}}, kSessionError},
+        {json{{"id", without_note}}, kSessionError},
+    };
+    for (const auto& c : cases) {
+        const auto outcome = HandleGuidanceSearch(*fixture.store, lane, c.params, sent.Sink());
+        ASSERT_TRUE(std::holds_alternative<Error>(outcome)) << c.params.dump();
+        EXPECT_EQ(std::get<Error>(outcome).code, c.code) << c.params.dump();
+    }
+    EXPECT_TRUE(retriever.searches.empty());
+    EXPECT_TRUE(sent.all.empty());
+}
+
+TEST(Handlers, GuidanceSearchReportsAFailedSearch) {
+    SessionStoreFixture fixture;
+    EchoRetriever retriever;
+    retriever.fail = true;
+    ambient::guidance::GuidanceLane lane(retriever);
+    Sent sent;
+
+    const auto outcome =
+        HandleGuidanceSearch(*fixture.store, lane, json{{"text", "Chest pain."}}, sent.Sink());
+    ASSERT_TRUE(std::holds_alternative<json>(outcome));
+    ASSERT_TRUE(sent.WaitFor(1));
+    EXPECT_EQ(sent.all[0].first, "guidance/failed");
+    EXPECT_EQ(sent.all[0].second["detail"], "no embedding model staged");
+    EXPECT_TRUE(sent.all[0].second["id"].is_null());
 }
 
 }  // namespace

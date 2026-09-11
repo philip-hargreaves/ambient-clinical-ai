@@ -45,7 +45,7 @@ add_library(ambient_ipc STATIC
     src/adapters/ipc/pipe_security.cpp
     src/adapters/ipc/pipe_server.cpp)
 target_link_libraries(ambient_ipc
-    PUBLIC ambient_core ambient_models nlohmann_json::nlohmann_json
+    PUBLIC ambient_core ambient_guidance ambient_models nlohmann_json::nlohmann_json
     PRIVATE ambient_warnings ambient_audio advapi32)
 
 FetchContent_Declare(
@@ -127,11 +127,15 @@ configure_file(src/adapters/guidance/schema.hpp.in
 add_library(ambient_guidance STATIC
     src/adapters/guidance/chunker.cpp
     src/adapters/guidance/corpus_builder.cpp
-    src/adapters/guidance/corpus_store.cpp)
+    src/adapters/guidance/corpus_store.cpp
+    src/adapters/guidance/embedder.cpp
+    src/adapters/guidance/guidance_lane.cpp
+    src/adapters/guidance/indexer.cpp
+    src/adapters/guidance/retriever.cpp)
 target_include_directories(ambient_guidance PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/generated)
 target_link_libraries(ambient_guidance
-    PUBLIC ambient_core ambient_storage nlohmann_json::nlohmann_json
-    PRIVATE ambient_models ambient_warnings)
+    PUBLIC ambient_core ambient_models ambient_storage nlohmann_json::nlohmann_json
+    PRIVATE ambient_warnings openvino::genai)
 
 add_library(ambient_vad STATIC
     src/adapters/vad/silero_vad.cpp)
@@ -195,8 +199,8 @@ target_link_libraries(ambient_audio
 
 add_executable(ambient_engine src/main.cpp)
 target_link_libraries(ambient_engine PRIVATE
-    ambient_ipc ambient_audio ambient_diarisation ambient_note ambient_storage ambient_transcription
-    ambient_translate ambient_vad ambient_warnings)
+    ambient_ipc ambient_audio ambient_diarisation ambient_guidance ambient_note ambient_storage
+    ambient_transcription ambient_translate ambient_vad ambient_warnings)
 ambient_deploy_openvino(ov_engine_runtime)
 add_dependencies(ambient_engine ov_engine_runtime)
 
@@ -206,5 +210,11 @@ target_link_libraries(ambient_note_host PRIVATE
     ambient_ipc ambient_models ambient_note ambient_warnings)
 add_dependencies(ambient_note_host ov_engine_runtime)
 add_dependencies(ambient_engine ambient_note_host)
+
+# Builds guidance corpora with the staged embedder; deployed beside the engine
+add_executable(ambient_index src/index_main.cpp)
+target_link_libraries(ambient_index PRIVATE ambient_guidance ambient_models ambient_warnings)
+add_dependencies(ambient_index ov_engine_runtime)
+add_dependencies(ambient_engine ambient_index)
 
 add_subdirectory(tests)

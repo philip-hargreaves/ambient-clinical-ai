@@ -59,6 +59,8 @@ class ISessionEvents {
     virtual void OnNotePartial(const std::string&) {}
     virtual void OnNoteReady(const std::string&) {}
     virtual void OnNoteFailed(const std::string&) {}
+    // The stored note with its session, for work that follows the note
+    virtual void OnNoteSaved(const std::string& /*session*/, const std::string& /*note*/) {}
     // No note, and why: too thin to write from (not overridable) or the model
     // says it was not a consultation (the clinician can insist)
     virtual void OnNoteRefused(const std::string&, bool) {}
@@ -1182,6 +1184,7 @@ class SessionController {
                     return;  // no note, no sheet, no label, and the print learns nothing
                 }
                 SaveNote(id, note, options);
+                events_.OnNoteSaved(id, note);
                 {
                     std::lock_guard<std::mutex> lock(mutex_);
                     refused_ = false;

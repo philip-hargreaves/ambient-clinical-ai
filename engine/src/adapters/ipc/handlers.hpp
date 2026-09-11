@@ -1,10 +1,12 @@
 #pragma once
 
 #include <filesystem>
+#include <functional>
 #include <variant>
 
 #include "adapters/audio/capture_devices.hpp"
 #include "adapters/diarisation/anchor_store.hpp"
+#include "adapters/guidance/guidance_lane.hpp"
 #include "adapters/ipc/messages.hpp"
 #include "adapters/ipc/pipe_server.hpp"
 #include "adapters/models/model_store.hpp"
@@ -73,6 +75,24 @@ std::variant<json, Error> HandleSessionDelete(ambient::store::ISessionStore& ses
 std::variant<json, Error> HandleDemoSeed(ambient::store::ISessionStore& sessions,
                                          const std::filesystem::path& demo_dir);
 json HandleDemoClear(ambient::store::ISessionStore& sessions);
+
+// Guidance: the panel shows the top three
+inline constexpr int kGuidanceLimit = 3;
+using Notify = std::function<void(const std::string& method, json params)>;
+json GuidanceResultsJson(const std::string& session, const ambient::guidance::Results& results);
+json GuidanceCorporaJson(const std::vector<ambient::guidance::Corpus>& corpora);
+// The lane request behind every search: results go out as guidance/ready, a
+// failure as guidance/failed, both naming the session (null for free text)
+ambient::guidance::SearchRequest GuidanceSearchRequest(const std::string& session, std::string note,
+                                                       int limit, Notify notify);
+// guidance/search: the stored note of session id, or free text, through the
+// lane. The reply is immediate; the results arrive as a notification
+std::variant<json, Error> HandleGuidanceSearch(ambient::store::ISessionStore& sessions,
+                                               ambient::guidance::GuidanceLane& lane,
+                                               const json& params, const Notify& notify);
+void RegisterGuidanceMethods(PipeServer& server, ambient::store::ISessionStore& sessions,
+                             ambient::guidance::IGuidanceRetriever& retriever,
+                             ambient::guidance::GuidanceLane& lane);
 
 // Every method the engine serves. first_use: model caches were cold at
 // launch, so the one-off compiles are running and readiness reports them.

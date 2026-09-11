@@ -1,5 +1,6 @@
 #include "adapters/ipc/handlers.hpp"
 
+#include <cmath>
 #include <cstdio>
 #include <memory>
 #include <openvino/core/version.hpp>
@@ -741,6 +742,102 @@ void RegisterMethods(PipeServer& server, ambient::audio::SessionController& cont
             server.QueueNotification("patient/ready", json::object());
         }
         return json{{"sessionId", controller.LastFinalised()}};
+    });
+}
+
+json GuidanceResultsJson(const std::string& session, const ambient::guidance::Results& results) {
+    json shown = json::array();
+    for (const auto& r : results.shown) {
+        shown.push_back({{"corpus", r.corpus},
+                         {"chunkId", r.chunk_id},
+                         {"guideline", r.guideline},
+                         {"title", r.title},
+                         {"section", r.section},
+                         {"text", r.text},
+                         {"score", std::round(r.score * 1000) / 1000},
+                         {"trigger", r.trigger}});
+    }
+    return json{{"id", NullWhenEmpty(session)},
+                {"shown", shown},
+                {"considered", results.considered},
+                {"abstained", results.abstained}};
+}
+
+json GuidanceCorporaJson(const std::vector<ambient::guidance::Corpus>& corpora) {
+    json list = json::array();
+    for (const auto& c : corpora) {
+        list.push_back({{"id", c.id},
+                        {"name", c.name},
+                        {"licence", c.licence},
+                        {"attribution", c.attribution},
+                        {"source", c.source},
+                        {"embedder", c.embedder},
+                        {"sha256", c.sha256},
+                        {"chunks", c.chunks},
+                        {"builtAt", NullWhenEmpty(c.built_at)},
+                        {"unavailable", NullWhenEmpty(c.unavailable)}});
+    }
+    return json{{"corpora", list}};
+}
+
+ambient::guidance::SearchRequest GuidanceSearchRequest(const std::string& session, std::string note,
+                                                       int limit, Notify notify) {
+    ambient::guidance::SearchRequest request;
+    request.note = std::move(note);
+    request.limit = limit;
+    request.on_ready = [session, notify](const ambient::guidance::Results& results) {
+        notify("guidance/ready", GuidanceResultsJson(session, results));
+    };
+    request.on_failed = [session, notify](const std::string& detail) {
+        notify("guidance/failed", json{{"id", NullWhenEmpty(session)}, {"detail", detail}});
+    };
+    return request;
+}
+
+std::variant<json, Error> HandleGuidanceSearch(ambient::store::ISessionStore& sessions,
+                                               ambient::guidance::GuidanceLane& lane,
+                                               const json& params, const Notify& notify) {
+    int limit = kGuidanceLimit;
+    if (params.contains("limit")) {
+        if (!params["limit"].is_number_integer() || params["limit"].get<int>() < 1 ||
+            params["limit"].get<int>() > 20) {
+            return Error{kInvalidParams, "Invalid params", json("limit must be 1-20")};
+        }
+        limit = params["limit"].get<int>();
+    }
+    std::string session;
+    std::string note;
+    if (params.contains("text")) {
+        if (!params["text"].is_string()) {
+            return Error{kInvalidParams, "Invalid params", json("text must be a string")};
+        }
+        note = params["text"].get<std::string>();
+    } else {
+        const auto id = IdFrom(params);
+        if (std::holds_alternative<Error>(id)) return std::get<Error>(id);
+        session = std::get<std::string>(id);
+        try {
+            note = sessions.ReadDocument(session, ambient::store::DocumentKind::kNote).text;
+        } catch (const std::exception& e) {
+            return Error{kSessionError, "Session error", json(e.what())};
+        }
+    }
+    if (note.empty()) return Error{kSessionError, "Session error", json("no note to search")};
+    lane.Run(GuidanceSearchRequest(session, std::move(note), limit, notify));
+    return json::object();
+}
+
+void RegisterGuidanceMethods(PipeServer& server, ambient::store::ISessionStore& sessions,
+                             ambient::guidance::IGuidanceRetriever& retriever,
+                             ambient::guidance::GuidanceLane& lane) {
+    server.RegisterMethod("guidance/search", [&server, &sessions, &lane](const json& params) {
+        return HandleGuidanceSearch(sessions, lane, params,
+                                    [&server](const std::string& method, json notification) {
+                                        server.PushNotification(method, std::move(notification));
+                                    });
+    });
+    server.RegisterMethod("guidance/corpora", [&retriever](const json&) {
+        return GuidanceCorporaJson(retriever.Corpora());
     });
 }
 
