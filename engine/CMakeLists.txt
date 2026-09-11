@@ -129,7 +129,9 @@ add_library(ambient_guidance STATIC
     src/adapters/guidance/corpus_builder.cpp
     src/adapters/guidance/corpus_store.cpp
     src/adapters/guidance/embedder.cpp
-    src/adapters/guidance/indexer.cpp)
+    src/adapters/guidance/guidance_lane.cpp
+    src/adapters/guidance/indexer.cpp
+    src/adapters/guidance/retriever.cpp)
 target_include_directories(ambient_guidance PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/generated)
 target_link_libraries(ambient_guidance
     PUBLIC ambient_core ambient_models ambient_storage nlohmann_json::nlohmann_json

@@ -1,11 +1,9 @@
 #include <gtest/gtest.h>
 
-#include <algorithm>
 #include <cmath>
 #include <cstdint>
 #include <filesystem>
 #include <fstream>
-#include <map>
 #include <nlohmann/json.hpp>
 #include <set>
 #include <string>
@@ -13,6 +11,7 @@
 
 #include "adapters/guidance/corpus_store.hpp"
 #include "adapters/guidance/indexer.hpp"
+#include "guidance_fixture.hpp"
 
 namespace ambient::guidance {
 namespace {
@@ -44,18 +43,7 @@ struct FakeEmbedder : IEmbedder {
     }
 };
 
-struct TempDir {
-    std::filesystem::path path;
-    explicit TempDir(const char* name)
-        : path(std::filesystem::temp_directory_path() / ("ambient-index-" + std::string(name))) {
-        std::filesystem::remove_all(path);
-        std::filesystem::create_directories(path);
-    }
-    ~TempDir() {
-        std::error_code ignored;
-        std::filesystem::remove_all(path, ignored);
-    }
-};
+using fixture::TempDir;
 
 void WriteText(const std::filesystem::path& path, const std::string& text) {
     std::filesystem::create_directories(path.parent_path());
@@ -66,22 +54,6 @@ std::string Paragraph(int words) {
     std::string out;
     for (int i = 0; i < words; ++i) out += (i ? " word" : "word");
     return out;
-}
-
-// The fixture corpus as one markdown file per guideline, each recommendation
-// numbered so the text chunker keeps them apart
-void WriteFixtureAsText(const std::filesystem::path& docs) {
-    std::ifstream in(std::filesystem::path(kFixtureDir) / "corpus.jsonl");
-    std::map<std::string, std::string> per_code;
-    for (std::string line; std::getline(in, line);) {
-        if (line.empty()) continue;
-        const auto row = nlohmann::json::parse(line);
-        const auto code = row.at("code").get<std::string>();
-        auto number = row.at("id").get<std::string>().substr(code.size() + 1);
-        std::replace(number.begin(), number.end(), '_', '.');
-        per_code[code] += number + " " + row.at("text").get<std::string>() + "\n\n";
-    }
-    for (const auto& [code, text] : per_code) WriteText(docs / (code + ".md"), text);
 }
 
 TEST(ReadCodes, LowerCasesAndDropsComments) {
@@ -150,7 +122,7 @@ TEST(ReadBuildSpec, ResolvesPathsBesideTheSpec) {
 
 TEST(IndexCorpus, BuildsACorpusTheStoreOpensWithTheEmbeddersIdentity) {
     TempDir dir("build");
-    WriteFixtureAsText(dir.path / "docs");
+    fixture::WriteMarkdown(kFixtureDir, dir.path / "docs");
     WriteText(
         dir.path / "build.json",
         R"({"id": "fixture-2026-09", "name": "Fixture", "licence": "invented", "attribution": "none",
