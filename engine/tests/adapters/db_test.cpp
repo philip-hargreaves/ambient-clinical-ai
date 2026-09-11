@@ -3,6 +3,7 @@
 #include <gtest/gtest.h>
 
 #include <filesystem>
+#include <fstream>
 #include <string>
 
 namespace ambient::store {
@@ -47,7 +48,6 @@ TEST(Db, RoundTripsEveryColumnType) {
     insert.BindText(2, "consultation");
     insert.BindBlob(3, blob);
     EXPECT_FALSE(insert.Step());
-    EXPECT_EQ(db.LastInsertRowId(), 42);
 
     Db::Stmt select = db.Prepare("SELECT id, name, data FROM t");
     ASSERT_TRUE(select.Step());
@@ -105,6 +105,13 @@ TEST(Db, BadSqlThrows) {
 TEST(Db, OpenInMissingDirectoryThrows) {
     const auto path = std::filesystem::temp_directory_path() / "ambient-db-no-such-dir" / "x.db";
     EXPECT_THROW(Db{path}, std::runtime_error);
+}
+
+TEST(Db, ANonDatabaseFileIsRefusedAndReleased) {
+    TempDb temp;
+    std::ofstream(temp.path, std::ios::binary) << std::string(200, 'x');
+    EXPECT_THROW(Db{temp.path}, std::runtime_error);
+    EXPECT_TRUE(std::filesystem::remove(temp.path)) << "the handle was closed on the throw";
 }
 
 }  // namespace

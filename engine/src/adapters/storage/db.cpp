@@ -55,20 +55,27 @@ Db::Db(const std::filesystem::path& path, Mode mode) {
     if (sqlite3_open_v2(name.c_str(), &db_, flags, nullptr) != SQLITE_OK) {
         std::string message = "open " + path.string() + ": " +
                               (db_ != nullptr ? sqlite3_errmsg(db_) : "out of memory");
-        sqlite3_close(db_);
+        sqlite3_close_v2(db_);
         db_ = nullptr;
         throw std::runtime_error(message);
     }
-    if (mode == Mode::kSession) {
-        // page_size only takes effect if it runs before the first table is created
-        Exec("PRAGMA page_size=8192");
-        Exec("PRAGMA journal_mode=WAL");
-        Exec("PRAGMA synchronous=FULL");
-        Exec("PRAGMA foreign_keys=ON");
-    } else if (mode == Mode::kImmutableReadOnly) {
-        Exec("PRAGMA query_only=1");
-        Exec("PRAGMA mmap_size=134217728");
-        Exec("PRAGMA cache_size=-8192");
+    // The destructor never runs if a pragma throws
+    try {
+        if (mode == Mode::kSession) {
+            // page_size only takes effect if it runs before the first table is created
+            Exec("PRAGMA page_size=8192");
+            Exec("PRAGMA journal_mode=WAL");
+            Exec("PRAGMA synchronous=FULL");
+            Exec("PRAGMA foreign_keys=ON");
+        } else if (mode == Mode::kImmutableReadOnly) {
+            Exec("PRAGMA query_only=1");
+            Exec("PRAGMA mmap_size=134217728");
+            Exec("PRAGMA cache_size=-8192");
+        }
+    } catch (...) {
+        sqlite3_close_v2(db_);
+        db_ = nullptr;
+        throw;
     }
 }
 
@@ -76,14 +83,14 @@ Db::Db(Db&& other) noexcept : db_(std::exchange(other.db_, nullptr)) {}
 
 Db& Db::operator=(Db&& other) noexcept {
     if (this != &other) {
-        sqlite3_close(db_);
+        sqlite3_close_v2(db_);
         db_ = std::exchange(other.db_, nullptr);
     }
     return *this;
 }
 
 Db::~Db() {
-    sqlite3_close(db_);
+    sqlite3_close_v2(db_);
 }
 
 void Db::Exec(const char* sql) {
@@ -102,8 +109,12 @@ std::int64_t Db::QueryInt64(const char* sql) {
     return stmt.ColumnInt64(0);
 }
 
-std::int64_t Db::LastInsertRowId() const {
-    return sqlite3_last_insert_rowid(db_);
+std::int64_t Db::ApplicationId() {
+    return QueryInt64("PRAGMA application_id");
+}
+
+void Db::SetApplicationId(std::int64_t id) {
+    Exec(("PRAGMA application_id=" + std::to_string(id)).c_str());
 }
 
 std::int64_t Db::UserVersion() {

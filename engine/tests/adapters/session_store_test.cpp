@@ -400,6 +400,7 @@ TEST(SessionStore, AVersionFourDatabaseGainsTheSampleFlag) {
     SqliteSessionStore migrated(root.path, kNever);
     Db db(root.DbPath());
     EXPECT_EQ(db.UserVersion(), 5);
+    EXPECT_EQ(db.ApplicationId(), 0x414D4243) << "a store from before the mark takes it";
     const auto listed = migrated.ListSessions();
     ASSERT_EQ(listed.size(), 1u);
     EXPECT_FALSE(listed[0].demo);
@@ -777,6 +778,7 @@ TEST(SessionStore, OneDatabaseStampedWithTheSchemaVersion) {
 
     Db db(root.DbPath());
     EXPECT_EQ(db.UserVersion(), 5);
+    EXPECT_EQ(db.ApplicationId(), 0x414D4243) << "AMBC";
     EXPECT_EQ(db.QueryInt64("PRAGMA auto_vacuum"), 2) << "incremental";
     EXPECT_EQ(db.QueryInt64("PRAGMA foreign_keys"), 1);
     Db::Stmt row = db.Prepare("SELECT id, sample_rate FROM sessions");
@@ -965,6 +967,50 @@ TEST(SessionStore, RefusesAStoreFromANewerBuild) {
     {
         Db db(root.DbPath());
         db.SetUserVersion(999);
+    }
+    EXPECT_THROW(SqliteSessionStore(root.path, kNever), std::runtime_error);
+}
+
+// A newer shape under an older number, as a crash between step and stamp left it
+TEST(SessionStore, AnInterruptedMigrationResumesCleanly) {
+    TempRoot root;
+    SessionId id;
+    {
+        SqliteSessionStore store(root.path, kNever);
+        id = store.Begin({16000, "", ""});
+        store.Finalise(id);
+        store.SaveDocument(id, DocumentKind::kNote,
+                           {.text = "the note", .style = "soap", .detail = "concise"});
+    }
+    {
+        // Current shape stamped 2: every step re-runs over columns it already has
+        Db db(root.DbPath());
+        db.SetUserVersion(2);
+    }
+
+    SqliteSessionStore migrated(root.path, kNever);
+    Db db(root.DbPath());
+    EXPECT_EQ(db.UserVersion(), 5);
+    EXPECT_EQ(migrated.ReadDocument(id, DocumentKind::kNote).text, "the note");
+    EXPECT_EQ(db.QueryInt64("PRAGMA foreign_keys"), 1);
+}
+
+TEST(SessionStore, AForeignFileIsRefused) {
+    TempRoot root;
+    std::filesystem::create_directories(root.path);
+    {
+        Db db(root.DbPath());
+        db.Exec("CREATE TABLE notes(text TEXT)");
+    }
+    EXPECT_THROW(SqliteSessionStore(root.path, kNever), std::runtime_error);
+    {
+        Db db(root.DbPath());
+        EXPECT_EQ(db.QueryInt64("SELECT count(*) FROM sqlite_master WHERE name = 'sessions'"), 0)
+            << "no schema was created into it";
+        // Another application's mark, whatever the version says
+        db.Exec("DROP TABLE notes");
+        db.SetApplicationId(0x11111111);
+        db.SetUserVersion(5);
     }
     EXPECT_THROW(SqliteSessionStore(root.path, kNever), std::runtime_error);
 }

@@ -17,6 +17,8 @@ namespace {
 // 1 was a catalog beside one file per session; 2 the single database;
 // 3 adds retain; 4 the summary and reflection kinds; 5 the demo flag
 constexpr std::int64_t kSchemaVersion = 5;
+// "AMBC": the header mark of a clinical store
+constexpr std::int64_t kApplicationId = 0x414D4243;
 
 struct KindSpec {
     const char* name;  // documents.kind
@@ -72,32 +74,52 @@ bool TableExists(Db& db, const char* table) {
     return exists.Step() && exists.ColumnInt64(0) != 0;
 }
 
+bool HasColumn(Db& db, const char* table, const char* column) {
+    Db::Stmt info = db.Prepare(("PRAGMA table_info(" + std::string(table) + ")").c_str());
+    while (info.Step()) {
+        if (info.ColumnText(1) == column) return true;
+    }
+    return false;
+}
+
 std::filesystem::path DatabasePath(const std::filesystem::path& root) {
     std::filesystem::create_directories(root);
     return root / "ambient.db";
 }
 
-// A file created by a newer build is refused, never best-effort read
+// Foreign and newer files are refused. Each step stamps its version inside its transaction;
+// the column additions are skipped where an older build's half-stamped file already has them
 Db OpenDatabase(const std::filesystem::path& root) {
     Db db(DatabasePath(root));
+    const std::int64_t application_id = db.ApplicationId();
     std::int64_t version = db.UserVersion();
+    if (application_id != 0 && application_id != kApplicationId) {
+        throw std::runtime_error("not an ambient store");
+    }
     if (version == 0) {
+        if (db.QueryInt64("SELECT count(*) FROM sqlite_master") != 0) {
+            throw std::runtime_error("not an ambient store");
+        }
         // Incremental vacuum is creation-time; the WAL switch already wrote the
         // header, so the empty file is rebuilt to take it
         db.Exec("PRAGMA auto_vacuum=INCREMENTAL");
         db.Exec("VACUUM");
         Db::Transaction txn(db);
         db.Exec(kSchemaSql);
-        txn.Commit();
+        db.SetApplicationId(kApplicationId);
         db.SetUserVersion(kSchemaVersion);
+        txn.Commit();
     } else if (version > kSchemaVersion) {
         throw std::runtime_error("store schema is newer than this build");
     } else {
+        if (application_id == 0 && !TableExists(db, "sessions")) {
+            throw std::runtime_error("not an ambient store");
+        }
         if (version == 2) {
             Db::Transaction txn(db);
-            db.Exec(kMigrate2To3Sql);
-            txn.Commit();
+            if (!HasColumn(db, "sessions", "retain")) db.Exec(kMigrate2To3Sql);
             db.SetUserVersion(3);
+            txn.Commit();
             version = 3;
         }
         if (version == 3) {
@@ -107,18 +129,20 @@ Db OpenDatabase(const std::filesystem::path& root) {
             {
                 Db::Transaction txn(db);
                 db.Exec(kMigrate3To4Sql);
+                db.SetUserVersion(4);
                 txn.Commit();
             }
             db.Exec("PRAGMA foreign_keys=ON");
-            db.SetUserVersion(4);
             version = 4;
         }
         if (version == 4) {
             Db::Transaction txn(db);
-            db.Exec(kMigrate4To5Sql);
-            txn.Commit();
+            if (!HasColumn(db, "sessions", "demo")) db.Exec(kMigrate4To5Sql);
             db.SetUserVersion(5);
+            txn.Commit();
         }
+        // Stores from before the mark take it once
+        if (application_id == 0) db.SetApplicationId(kApplicationId);
     }
     return db;
 }

@@ -71,9 +71,10 @@ class Db {
     void Exec(const char* sql);
     Stmt Prepare(const char* sql);
     std::int64_t QueryInt64(const char* sql);
-    std::int64_t LastInsertRowId() const;
 
-    // The schema version this file was created or last migrated at
+    // Header marks, both transactional: the writing application and the schema version
+    std::int64_t ApplicationId();
+    void SetApplicationId(std::int64_t id);
     std::int64_t UserVersion();
     void SetUserVersion(std::int64_t version);
 
