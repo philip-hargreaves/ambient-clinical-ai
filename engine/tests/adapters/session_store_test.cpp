@@ -55,6 +55,20 @@ ChunkCipher CipherOf(const TempRoot& root, const SessionId& id) {
     return ChunkCipher::FromWrapped(key.ColumnBlob(0));
 }
 
+// What every build before schema 6 wrote: the payload sealed at sequence 0
+void SealAtZero(const TempRoot& root, const SessionId& id, const char* kind, Domain domain,
+                const std::string& text) {
+    const std::vector<std::uint8_t> bytes(text.begin(), text.end());
+    const auto sealed = CipherOf(root, id).Seal(domain, id, 0, bytes);
+    Db db(root.DbPath());
+    Db::Stmt update =
+        db.Prepare("UPDATE documents SET payload = ? WHERE session_id = ? AND kind = ?");
+    update.BindBlob(1, sealed);
+    update.BindText(2, id);
+    update.BindText(3, kind);
+    update.Step();
+}
+
 std::vector<float> Ramp(std::size_t frames) {
     std::vector<float> audio(frames);
     for (std::size_t i = 0; i < frames; ++i) {
@@ -399,7 +413,7 @@ TEST(SessionStore, AVersionFourDatabaseGainsTheSampleFlag) {
 
     SqliteSessionStore migrated(root.path, kNever);
     Db db(root.DbPath());
-    EXPECT_EQ(db.UserVersion(), 5);
+    EXPECT_EQ(db.UserVersion(), 6);
     EXPECT_EQ(db.ApplicationId(), 0x414D4243) << "a store from before the mark takes it";
     const auto listed = migrated.ListSessions();
     ASSERT_EQ(listed.size(), 1u);
@@ -431,12 +445,14 @@ TEST(SessionStore, AVersionThreeDatabaseGainsTheNewDocumentKinds) {
             "DROP TABLE documents;"
             "ALTER TABLE documents_v3 RENAME TO documents;"
             "ALTER TABLE sessions DROP COLUMN demo");
+        SealAtZero(root, id, "note", Domain::kNote, "the note");
+        SealAtZero(root, id, "label", Domain::kLabel, "Elbow swelling");
         db.SetUserVersion(3);
     }
 
     SqliteSessionStore migrated(root.path, kNever);
     Db db(root.DbPath());
-    EXPECT_EQ(db.UserVersion(), 5);
+    EXPECT_EQ(db.UserVersion(), 6);
     const Document note = migrated.ReadDocument(id, DocumentKind::kNote);
     EXPECT_EQ(note.text, "the note");
     EXPECT_EQ(note.style, "soap") << "note_options survived the rebuild";
@@ -652,7 +668,7 @@ TEST(SessionStore, AVersionTwoDatabaseGainsTheRetentionFlag) {
 
     SqliteSessionStore migrated(root.path, kNever);
     Db db(root.DbPath());
-    EXPECT_EQ(db.UserVersion(), 5);
+    EXPECT_EQ(db.UserVersion(), 6);
     Db::Stmt row = db.Prepare("SELECT retain FROM sessions WHERE id = ?");
     row.BindText(1, id);
     ASSERT_TRUE(row.Step());
@@ -777,7 +793,7 @@ TEST(SessionStore, OneDatabaseStampedWithTheSchemaVersion) {
     EXPECT_FALSE(std::filesystem::exists(root.path / "main.db"));
 
     Db db(root.DbPath());
-    EXPECT_EQ(db.UserVersion(), 5);
+    EXPECT_EQ(db.UserVersion(), 6);
     EXPECT_EQ(db.ApplicationId(), 0x414D4243) << "AMBC";
     EXPECT_EQ(db.QueryInt64("PRAGMA auto_vacuum"), 2) << "incremental";
     EXPECT_EQ(db.QueryInt64("PRAGMA foreign_keys"), 1);
@@ -983,14 +999,14 @@ TEST(SessionStore, AnInterruptedMigrationResumesCleanly) {
                            {.text = "the note", .style = "soap", .detail = "concise"});
     }
     {
-        // Current shape stamped 2: every step re-runs over columns it already has
+        // Current shape stamped 4: both column steps re-run over columns it already has
         Db db(root.DbPath());
-        db.SetUserVersion(2);
+        db.SetUserVersion(4);
     }
 
     SqliteSessionStore migrated(root.path, kNever);
     Db db(root.DbPath());
-    EXPECT_EQ(db.UserVersion(), 5);
+    EXPECT_EQ(db.UserVersion(), 6);
     EXPECT_EQ(migrated.ReadDocument(id, DocumentKind::kNote).text, "the note");
     EXPECT_EQ(db.QueryInt64("PRAGMA foreign_keys"), 1);
 }
@@ -1013,6 +1029,86 @@ TEST(SessionStore, AForeignFileIsRefused) {
         db.SetUserVersion(5);
     }
     EXPECT_THROW(SqliteSessionStore(root.path, kNever), std::runtime_error);
+}
+
+TEST(SessionStore, RewritingADocumentNeverReusesANonce) {
+    TempRoot root;
+    SqliteSessionStore store(root.path, kNever);
+    const SessionId id = store.Begin({16000, "", ""});
+    store.Finalise(id);
+    const Document note{.text = "the note", .style = "prose", .detail = "standard"};
+
+    std::vector<std::vector<std::uint8_t>> payloads;
+    std::vector<std::int64_t> sequences;
+    auto record = [&] {
+        Db db(root.DbPath());
+        Db::Stmt row = db.Prepare("SELECT seq, payload FROM documents WHERE kind = 'note'");
+        ASSERT_TRUE(row.Step());
+        sequences.push_back(row.ColumnInt64(0));
+        payloads.push_back(row.ColumnBlob(1));
+        EXPECT_EQ(store.ReadDocument(id, DocumentKind::kNote).text, "the note");
+    };
+    store.SaveDocument(id, DocumentKind::kNote, note);
+    record();
+    store.EditDocument(id, DocumentKind::kNote, "the note");
+    record();
+    store.SaveDocument(id, DocumentKind::kNote, note);
+    record();
+
+    EXPECT_EQ(sequences, (std::vector<std::int64_t>{1, 2, 3}));
+    EXPECT_NE(payloads[0], payloads[1]) << "the same text, a different IV";
+    EXPECT_NE(payloads[1], payloads[2]);
+    EXPECT_NE(payloads[0], payloads[2]);
+}
+
+TEST(SessionStore, AVersionFiveDatabaseGainsTheSequenceColumn) {
+    TempRoot root;
+    SessionId id;
+    {
+        SqliteSessionStore store(root.path, kNever);
+        id = store.Begin({16000, "", ""});
+        store.Finalise(id);
+        store.SaveDocument(id, DocumentKind::kNote,
+                           {.text = "the note", .style = "soap", .detail = "concise"});
+    }
+    {
+        // Back to the version-5 shape: documents without seq, the six-kind check
+        Db db(root.DbPath());
+        db.Exec("PRAGMA foreign_keys=OFF");
+        db.Exec(
+            "CREATE TABLE documents_v5(session_id TEXT NOT NULL REFERENCES sessions (id)"
+            " ON DELETE CASCADE, kind TEXT NOT NULL CHECK (kind IN ('note', 'patient',"
+            " 'translation', 'label', 'summary', 'reflection')), language TEXT NOT NULL,"
+            " payload BLOB NOT NULL, generated_at TEXT, edited_at TEXT,"
+            " PRIMARY KEY (session_id, kind));"
+            "INSERT INTO documents_v5 SELECT session_id, kind, language, payload,"
+            " generated_at, edited_at FROM documents;"
+            "DROP TABLE documents;"
+            "ALTER TABLE documents_v5 RENAME TO documents");
+        SealAtZero(root, id, "note", Domain::kNote, "the note");
+        db.SetUserVersion(5);
+    }
+
+    SqliteSessionStore migrated(root.path, kNever);
+    Db db(root.DbPath());
+    EXPECT_EQ(db.UserVersion(), 6);
+    EXPECT_EQ(migrated.ReadDocument(id, DocumentKind::kNote).text, "the note")
+        << "existing rows open at sequence 0";
+    migrated.SaveDocument(id, DocumentKind::kNote,
+                          {.text = "rewritten", .style = "soap", .detail = "concise"});
+    EXPECT_EQ(db.QueryInt64("SELECT seq FROM documents WHERE kind = 'note'"), 1);
+    EXPECT_EQ(migrated.ReadDocument(id, DocumentKind::kNote).text, "rewritten");
+    EXPECT_EQ(db.QueryInt64("PRAGMA foreign_keys"), 1) << "keys back on after the rebuild";
+
+    // The kind check admits guidance and nothing else new
+    Db::Stmt guidance = db.Prepare(
+        "INSERT INTO documents(session_id, kind, language, payload) VALUES(?, ?, 'en', x'00')");
+    guidance.BindText(1, id);
+    guidance.BindText(2, "guidance");
+    EXPECT_NO_THROW(guidance.Step());
+    guidance.Reset();
+    guidance.BindText(2, "other");
+    EXPECT_THROW(guidance.Step(), std::runtime_error);
 }
 
 }  // namespace

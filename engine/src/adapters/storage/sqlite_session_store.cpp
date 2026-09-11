@@ -15,8 +15,9 @@ namespace ambient::store {
 namespace {
 
 // 1 was a catalog beside one file per session; 2 the single database;
-// 3 adds retain; 4 the summary and reflection kinds; 5 the demo flag
-constexpr std::int64_t kSchemaVersion = 5;
+// 3 adds retain; 4 the summary and reflection kinds; 5 the demo flag;
+// 6 the document sequence and the guidance kind
+constexpr std::int64_t kSchemaVersion = 6;
 // "AMBC": the header mark of a clinical store
 constexpr std::int64_t kApplicationId = 0x414D4243;
 
@@ -82,6 +83,12 @@ bool HasColumn(Db& db, const char* table, const char* column) {
     return false;
 }
 
+// A row per dangling reference, none when the rebuild kept every one
+void RequireForeignKeys(Db& db) {
+    Db::Stmt check = db.Prepare("PRAGMA foreign_key_check");
+    if (check.Step()) throw std::runtime_error("migration left a dangling reference");
+}
+
 std::filesystem::path DatabasePath(const std::filesystem::path& root) {
     std::filesystem::create_directories(root);
     return root / "ambient.db";
@@ -140,6 +147,20 @@ Db OpenDatabase(const std::filesystem::path& root) {
             if (!HasColumn(db, "sessions", "demo")) db.Exec(kMigrate4To5Sql);
             db.SetUserVersion(5);
             txn.Commit();
+            version = 5;
+        }
+        if (version == 5) {
+            db.Exec("PRAGMA foreign_keys=OFF");
+            {
+                Db::Transaction txn(db);
+                if (!HasColumn(db, "documents", "seq")) db.Exec(kMigrate5To6Sql);
+                RequireForeignKeys(db);
+                db.SetUserVersion(6);
+                txn.Commit();
+            }
+            db.Exec("PRAGMA foreign_keys=ON");
+            // Every earlier rewrite resealed under one IV; the copies sit in freed pages
+            db.Exec("VACUUM");
         }
         // Stores from before the mark take it once
         if (application_id == 0) db.SetApplicationId(kApplicationId);
@@ -345,7 +366,7 @@ std::vector<SessionSummary> SqliteSessionStore::ListSessions() {
         " (SELECT max(first_frame + frame_count) FROM turns t WHERE t.session_id = s.id),"
         " EXISTS(SELECT 1 FROM documents r WHERE r.session_id = s.id"
         "  AND r.kind IN ('reflection', 'summary')),"
-        " s.demo"
+        " s.demo, l.seq"
         " FROM sessions s"
         " LEFT JOIN session_keys k ON k.session_id = s.id"
         " LEFT JOIN documents l ON l.session_id = s.id AND l.kind = 'label'"
@@ -359,7 +380,9 @@ std::vector<SessionSummary> SqliteSessionStore::ListSessions() {
         const std::vector<std::uint8_t> sealed = select.ColumnBlob(6);
         if (!sealed.empty()) {
             const ChunkCipher cipher = ChunkCipher::FromWrapped(select.ColumnBlob(5));
-            const auto plain = cipher.Open(Domain::kLabel, summary.id, 0, sealed);
+            const auto plain =
+                cipher.Open(Domain::kLabel, summary.id,
+                            static_cast<std::uint64_t>(select.ColumnInt64(11)), sealed);
             summary.label.assign(plain.begin(), plain.end());
         }
         summary.edited_at = select.ColumnText(7);
@@ -443,20 +466,30 @@ void SqliteSessionStore::WriteDocument(const SessionId& id, DocumentKind kind,
                                        const Document& document) {
     const ChunkCipher cipher = CipherFor(id);
     const KindSpec spec = SpecFor(kind);
-    const std::vector<std::uint8_t> sealed =
-        cipher.Seal(spec.domain, id, 0, AsBytes(document.text));
 
     Db::Transaction txn(db_);
+    // The slot's next sequence: a rewrite never reseals under a used IV
+    std::int64_t seq = 1;
+    {
+        Db::Stmt previous =
+            db_.Prepare("SELECT seq FROM documents WHERE session_id = ? AND kind = ?");
+        previous.BindText(1, id);
+        previous.BindText(2, spec.name);
+        if (previous.Step()) seq = previous.ColumnInt64(0) + 1;
+    }
+    const std::vector<std::uint8_t> sealed =
+        cipher.Seal(spec.domain, id, static_cast<std::uint64_t>(seq), AsBytes(document.text));
     Db::Stmt replace = db_.Prepare(
         "INSERT OR REPLACE INTO documents"
-        "(session_id, kind, language, payload, generated_at, edited_at)"
-        " VALUES(?, ?, ?, ?, ?, ?)");
+        "(session_id, kind, seq, language, payload, generated_at, edited_at)"
+        " VALUES(?, ?, ?, ?, ?, ?, ?)");
     replace.BindText(1, id);
     replace.BindText(2, spec.name);
-    replace.BindText(3, document.language);
-    replace.BindBlob(4, sealed);
-    replace.BindTextOrNull(5, document.generated_at);
-    replace.BindTextOrNull(6, document.edited_at);
+    replace.BindInt64(3, seq);
+    replace.BindText(4, document.language);
+    replace.BindBlob(5, sealed);
+    replace.BindTextOrNull(6, document.generated_at);
+    replace.BindTextOrNull(7, document.edited_at);
     replace.Step();
     if (kind == DocumentKind::kNote) {
         Db::Stmt options = db_.Prepare(
@@ -506,13 +539,15 @@ Document SqliteSessionStore::ReadDocumentLocked(const SessionId& id, DocumentKin
     const KindSpec spec = SpecFor(kind);
     Document document;
     Db::Stmt select = db_.Prepare(
-        "SELECT d.language, d.payload, d.generated_at, d.edited_at, o.style, o.detail"
+        "SELECT d.language, d.payload, d.generated_at, d.edited_at, o.style, o.detail, d.seq"
         " FROM documents d LEFT JOIN note_options o ON o.session_id = d.session_id"
         " WHERE d.session_id = ? AND d.kind = ?");
     select.BindText(1, id);
     select.BindText(2, spec.name);
     if (select.Step()) {
-        const auto plain = cipher.Open(spec.domain, id, 0, select.ColumnBlob(1));
+        const auto plain =
+            cipher.Open(spec.domain, id, static_cast<std::uint64_t>(select.ColumnInt64(6)),
+                        select.ColumnBlob(1));
         document.text.assign(plain.begin(), plain.end());
         document.language = select.ColumnText(0);
         document.generated_at = select.ColumnText(2);
