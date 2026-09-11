@@ -176,6 +176,15 @@ struct RecordingEvents : ISessionEvents {
         note_done = true;
     }
 
+    std::string note_saved_session;
+    std::string note_saved_text;
+
+    void OnNoteSaved(const std::string& session, const std::string& text) override {
+        const std::lock_guard<std::mutex> lock(mutex);
+        note_saved_session = session;
+        note_saved_text = text;
+    }
+
     void OnNoteFailed(const std::string& detail) override {
         const std::lock_guard<std::mutex> lock(mutex);
         note_failed = detail;
@@ -749,6 +758,8 @@ TEST(SessionController, TheNoteFollowsTheSeal) {
     ASSERT_TRUE(events.WaitForNote());
     EXPECT_EQ(events.note_partials, (std::vector<std::string>{"the clinica", "the clinical note"}));
     EXPECT_EQ(events.note_ready, "the clinical note");
+    EXPECT_EQ(events.note_saved_text, "the clinical note");
+    EXPECT_EQ(events.note_saved_session, controller.LastFinalised());
     EXPECT_TRUE(events.note_failed.empty());
     EXPECT_EQ(store.note, "the clinical note");
     const auto calls = store.Calls();

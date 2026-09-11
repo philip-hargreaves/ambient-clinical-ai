@@ -1,0 +1,32 @@
+{
+    "jsonrpc": "2.0",
+    "id": 13,
+    "result": {
+        "corpora": [
+            {
+                "id": "fixture",
+                "name": "Fixture guidance corpus",
+                "licence": "invented",
+                "attribution": "none",
+                "source": "text",
+                "embedder": "gte-large-int8",
+                "sha256": "e4f1be59be8647759ccd16d916ba9504b464f39a2799cb598ca5f0e4dc779a9f",
+                "chunks": 40,
+                "builtAt": "2026-09-11T00:00:00Z",
+                "unavailable": null
+            },
+            {
+                "id": "nice-2026-08-25",
+                "name": "",
+                "licence": "",
+                "attribution": "",
+                "source": "",
+                "embedder": "",
+                "sha256": "",
+                "chunks": 0,
+                "builtAt": null,
+                "unavailable": "corpus.db sha256 does not match the manifest"
+            }
+        ]
+    }
+}

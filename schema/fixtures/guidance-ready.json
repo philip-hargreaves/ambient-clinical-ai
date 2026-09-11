@@ -1,0 +1,21 @@
+{
+    "jsonrpc": "2.0",
+    "method": "guidance/ready",
+    "params": {
+        "id": "a1b2c3d4e5f60718293a4b5c6d7e8f90",
+        "shown": [
+            {
+                "corpus": "fixture",
+                "chunkId": "fx100-1_1_1",
+                "guideline": "fx100",
+                "title": "Fictional inflammatory joint disease: assessment and management",
+                "section": "1.1 Referral",
+                "text": "Refer adults with persistent synovitis of undetermined cause to a specialist, and refer urgently if the small joints of the hands or feet are affected.",
+                "score": 0.897,
+                "trigger": "Examination shows synovitis of several MCP joints."
+            }
+        ],
+        "considered": 40,
+        "abstained": false
+    }
+}

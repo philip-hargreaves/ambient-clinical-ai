@@ -26,6 +26,9 @@
 #include "adapters/diarisation/anchor_store.hpp"
 #include "adapters/diarisation/deferred_diariser.hpp"
 #include "adapters/diarisation/speaker_diariser.hpp"
+#include "adapters/guidance/embedder.hpp"
+#include "adapters/guidance/guidance_lane.hpp"
+#include "adapters/guidance/retriever.hpp"
 #include "adapters/host/power_throttling.hpp"
 #include "adapters/host/process_scan.hpp"
 #include "adapters/ipc/handlers.hpp"
@@ -149,6 +152,20 @@ class WireEvents : public ambient::audio::ISessionEvents {
         translator_ = translator;
     }
 
+    // The note's guidance search starts as soon as the note is stored
+    void OnNoteSaved(const std::string& session, const std::string& note) override {
+        if (guidance_ == nullptr) return;
+        guidance_->Run(ambient::ipc::GuidanceSearchRequest(
+            session, note, ambient::ipc::kGuidanceLimit,
+            [this](const std::string& method, nlohmann::json params) {
+                server_.PushNotification(method, std::move(params));
+            }));
+    }
+
+    void SetGuidance(ambient::guidance::GuidanceLane* lane) {
+        guidance_ = lane;
+    }
+
     void OnNoteFailed(const std::string& detail) override {
         DropStream("note/partial");
         server_.PushNotification("note/failed", {{"detail", detail}});
@@ -190,6 +207,7 @@ class WireEvents : public ambient::audio::ISessionEvents {
 
     ambient::ipc::PipeServer& server_;
     ambient::translate::ITranslator* translator_ = nullptr;
+    ambient::guidance::GuidanceLane* guidance_ = nullptr;
     std::mutex throttle_mutex_;
     std::map<std::string, std::chrono::steady_clock::time_point> last_partial_;
     std::map<std::string, ambient::core::ThroughputMeter> meters_;
@@ -211,6 +229,7 @@ int main(int argc, char* argv[]) {
         // Flags first, then positional: pipe name, store root, models root, replay wav
         std::vector<std::string> args(argv + 1, argv + argc);
         const std::string asr_device = ambient::TakeFlag(args, "--asr-device");
+        const std::string corpora_override = ambient::TakeFlag(args, "--corpora");
         // AMBIENT_NOTE_PREFILL: whisper and the note host take turns on the GPU;
         // with whisper on the NPU there is nothing to share
         if (ambient::EnvFlag("AMBIENT_NOTE_PREFILL") && asr_device != "NPU") {
@@ -253,6 +272,10 @@ int main(int argc, char* argv[]) {
                 models_root = exe_dir.parent_path() / "models";
             }
         }
+        // Guidance corpora sit beside the models, each replaced as a directory
+        const std::filesystem::path corpora_root = corpora_override.empty()
+                                                       ? models_root.parent_path() / "corpora"
+                                                       : std::filesystem::path(corpora_override);
 
         ambient::ipc::PipeServer server(pipe_name);
         WireEvents events(server);
@@ -409,6 +432,16 @@ int main(int argc, char* argv[]) {
         } catch (const std::exception& e) {
             std::fprintf(stderr, "ambient-engine: no translation (%s)\n", e.what());
         }
+        // Guidance retrieval runs on the CPU in its own lane; the embedder loads
+        // in the background so the first note's search is warm
+        ambient::guidance::Retriever guidance_retriever(
+            [&model_store]() -> std::unique_ptr<ambient::guidance::IEmbedder> {
+                return ambient::guidance::Embedder::Load(model_store);
+            },
+            corpora_root);
+        ambient::guidance::GuidanceLane guidance_lane(guidance_retriever);
+        events.SetGuidance(&guidance_lane);
+        guidance_lane.Prepare();
         // 10 s, not 3: a Bluetooth microphone link waking measured 1.6-8.8 s
         // before first audio; wired mics answer in well under a second either way
         ambient::audio::SessionController controller(
@@ -419,6 +452,8 @@ int main(int argc, char* argv[]) {
                                       &ov_runtime, translator.get(), translate_lane.get(),
                                       first_use, &anchors, note_lane, stray_note_host,
                                       models_root.parent_path() / "demo" / "reflections");
+        ambient::ipc::RegisterGuidanceMethods(server, session_store, guidance_retriever,
+                                              guidance_lane);
         server.ServeOneClient();
         controller.Stop();
         return 0;

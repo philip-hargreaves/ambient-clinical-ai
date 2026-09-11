@@ -45,7 +45,7 @@ add_library(ambient_ipc STATIC
     src/adapters/ipc/pipe_security.cpp
     src/adapters/ipc/pipe_server.cpp)
 target_link_libraries(ambient_ipc
-    PUBLIC ambient_core ambient_models nlohmann_json::nlohmann_json
+    PUBLIC ambient_core ambient_guidance ambient_models nlohmann_json::nlohmann_json
     PRIVATE ambient_warnings ambient_audio advapi32)
 
 FetchContent_Declare(
@@ -199,8 +199,8 @@ target_link_libraries(ambient_audio
 
 add_executable(ambient_engine src/main.cpp)
 target_link_libraries(ambient_engine PRIVATE
-    ambient_ipc ambient_audio ambient_diarisation ambient_note ambient_storage ambient_transcription
-    ambient_translate ambient_vad ambient_warnings)
+    ambient_ipc ambient_audio ambient_diarisation ambient_guidance ambient_note ambient_storage
+    ambient_transcription ambient_translate ambient_vad ambient_warnings)
 ambient_deploy_openvino(ov_engine_runtime)
 add_dependencies(ambient_engine ov_engine_runtime)
 
