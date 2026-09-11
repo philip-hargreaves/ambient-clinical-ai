@@ -54,6 +54,7 @@ add_executable(engine_tests
     adapters/gpu_lease_test.cpp
     adapters/guidance_chunker_test.cpp
     adapters/guidance_corpus_test.cpp
+    adapters/guidance_indexer_test.cpp
     adapters/capture_devices_test.cpp
     adapters/handlers_test.cpp
     adapters/messages_test.cpp
@@ -115,6 +116,7 @@ add_executable(models_tests
     adapters/diariser_pipeline_test.cpp
     adapters/embedder_model_test.cpp
     adapters/fbank_parity_test.cpp
+    adapters/guidance_embedder_test.cpp
     adapters/note_writer_test.cpp
     adapters/seg_model_test.cpp
     adapters/silero_vad_test.cpp
@@ -124,10 +126,12 @@ add_executable(models_tests
     adapters/worker_note_writer_test.cpp)
 target_compile_definitions(models_tests PRIVATE
     AMBIENT_MODELS_DIR="${ambient_SOURCE_DIR}/models"
-    AMBIENT_DIAR_FIXTURE_DIR="${ambient_SOURCE_DIR}/engine/tests/fixtures/diarisation")
+    AMBIENT_DIAR_FIXTURE_DIR="${ambient_SOURCE_DIR}/engine/tests/fixtures/diarisation"
+    AMBIENT_GUIDANCE_FIXTURE_DIR="${ambient_SOURCE_DIR}/engine/tests/fixtures/guidance")
 target_link_libraries(models_tests PRIVATE
-    ambient_diarisation ambient_models ambient_note ambient_transcription ambient_translate ambient_vad
-    ambient_warnings nlohmann_json::nlohmann_json openvino::genai GTest::gtest_main)
+    ambient_diarisation ambient_guidance ambient_models ambient_note ambient_transcription
+    ambient_translate ambient_vad ambient_warnings nlohmann_json::nlohmann_json openvino::genai
+    GTest::gtest_main)
 
 # Dev evaluation tool for the research acceptance scorer; never shipped
 add_executable(diar_eval_runner tools/diar_eval_runner.cpp)

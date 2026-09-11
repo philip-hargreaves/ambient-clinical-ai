@@ -106,7 +106,7 @@ ModelInfo ParseManifest(const std::filesystem::path& dir) {
     }
     if (info.file_hashes.empty()) Broken(dir, "no files listed");
     // A pipeline this build cannot construct is a corrupt manifest for this build
-    if (info.pipeline != "llm" && info.pipeline != "vlm") {
+    if (info.pipeline != "llm" && info.pipeline != "vlm" && info.pipeline != "embedding") {
         Broken(dir, "unknown pipeline: " + info.pipeline);
     }
     if (!info.properties.is_object()) Broken(dir, "runtime.properties must be an object");

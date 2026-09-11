@@ -19,7 +19,7 @@ struct ModelInfo {
     std::string tier;           // default | accuracy | constrained
     std::string device;         // GPU | CPU | NPU
     std::string licence;        // SPDX id
-    std::string pipeline;       // llm | vlm: which GenAI pipeline loads it; llm when absent
+    std::string pipeline;       // llm | vlm | embedding: the GenAI pipeline; llm when absent
     nlohmann::json properties;  // OpenVINO properties passed verbatim at compile; {} when absent
     std::filesystem::path dir;
     std::map<std::string, std::string> file_hashes;    // filename -> sha256 hex: provenance
