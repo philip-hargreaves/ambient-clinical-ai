@@ -55,12 +55,8 @@ int main(int argc, char* argv[]) {
         store.Append(id, audio, 0);
         store.AppendTurn(
             id, {frame - audio.size(), audio.size(), "", "turn " + std::to_string(turn++)});
-        try {
-            std::printf("CHUNKS %lld\n",
-                        static_cast<long long>(reader.QueryInt64(count_sql.c_str())));
-            std::fflush(stdout);
-        } catch (...) {
-        }
+        std::printf("CHUNKS %lld\n", static_cast<long long>(reader.QueryInt64(count_sql.c_str())));
+        std::fflush(stdout);
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
 }

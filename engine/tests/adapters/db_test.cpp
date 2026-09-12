@@ -2,9 +2,11 @@
 
 #include <gtest/gtest.h>
 
+#include <chrono>
 #include <filesystem>
 #include <fstream>
 #include <string>
+#include <thread>
 
 namespace ambient::store {
 namespace {
@@ -112,6 +114,41 @@ TEST(Db, ANonDatabaseFileIsRefusedAndReleased) {
     std::ofstream(temp.path, std::ios::binary) << std::string(200, 'x');
     EXPECT_THROW(Db{temp.path}, std::runtime_error);
     EXPECT_TRUE(std::filesystem::remove(temp.path)) << "the handle was closed on the throw";
+}
+
+TEST(Db, ErrorsCarryACode) {
+    TempDb temp;
+    Db db(temp.path);
+    try {
+        db.Prepare("SELECT * FROM missing");
+        FAIL();
+    } catch (const StoreError& e) {
+        EXPECT_EQ(e.Code(), StoreCode::kSchema);
+    }
+    db.Exec("PRAGMA max_page_count=1");
+    try {
+        db.Exec("CREATE TABLE t(x INTEGER)");
+        db.Exec("CREATE TABLE u(x INTEGER)");
+        FAIL() << "the cap let the file grow";
+    } catch (const StoreError& e) {
+        EXPECT_EQ(e.Code(), StoreCode::kFull);
+    }
+}
+
+TEST(Db, ASecondConnectionWaitsRatherThanThrows) {
+    TempDb temp;
+    Db first(temp.path);
+    first.Exec("CREATE TABLE t(x INTEGER)");
+    Db second(temp.path);
+    first.Exec("BEGIN IMMEDIATE");
+    std::thread release([&] {
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+        first.Exec("COMMIT");
+    });
+    const auto started = std::chrono::steady_clock::now();
+    EXPECT_NO_THROW(second.Exec("INSERT INTO t VALUES(1)"));
+    EXPECT_GE(std::chrono::steady_clock::now() - started, std::chrono::milliseconds(150));
+    release.join();
 }
 
 }  // namespace

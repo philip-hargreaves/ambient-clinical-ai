@@ -4,6 +4,7 @@
 #include <chrono>
 #include <condition_variable>
 #include <cstdint>
+#include <cstdio>
 #include <functional>
 #include <future>
 #include <memory>
@@ -61,6 +62,9 @@ class ISessionEvents {
     virtual void OnNoteFailed(const std::string&) {}
     // The stored note with its session, for work that follows the note
     virtual void OnNoteSaved(const std::string& /*session*/, const std::string& /*note*/) {}
+
+    // The store could not write (disk full, I/O); recording continues
+    virtual void OnStorageFault(const std::string& /*detail*/) {}
     // No note, and why: too thin to write from (not overridable) or the model
     // says it was not a consultation (the clinician can insist)
     virtual void OnNoteRefused(const std::string&, bool) {}
@@ -119,7 +123,10 @@ class SessionController {
           metrics_(metrics),
           diar_advance_frames_(diar_advance_frames),
           settle_timeout_(settle_timeout),
-          min_note_words_(min_note_words) {}
+          min_note_words_(min_note_words) {
+        store_.SetFaultListener(
+            [this](const store::StoreError& fault) { events_.OnStorageFault(fault.what()); });
+    }
 
     ~SessionController() {
         Stop();
@@ -529,7 +536,8 @@ class SessionController {
                     controller.session_turns_.push_back(turn);
                 }
                 controller.events_.OnTurn(turn);
-            } catch (...) {  // NOLINT(bugprone-empty-catch)
+            } catch (const std::exception& e) {
+                controller.StoreFailed("turn", e);
             }
         }
     };
@@ -1049,7 +1057,8 @@ class SessionController {
                     store_.Abandon(id);
                     break;
             }
-        } catch (...) {  // NOLINT(bugprone-empty-catch)
+        } catch (const std::exception& e) {
+            StoreFailed("seal", e);
         }
         stage("stored");
         // The resumed-from session is superseded: everything it held flowed
@@ -1093,7 +1102,18 @@ class SessionController {
             document.style = options.style;
             document.detail = options.detail;
             store_.SaveDocument(id, store::DocumentKind::kNote, document);
-        } catch (...) {  // NOLINT(bugprone-empty-catch)
+        } catch (const std::exception& e) {
+            StoreFailed("note", e);
+        }
+    }
+
+    // Every store failure is logged; a full or failing disk is announced
+    void StoreFailed(const char* what, const std::exception& e) {
+        std::fprintf(stderr, "ambient-engine: store %s failed: %s\n", what, e.what());
+        const auto* fault = dynamic_cast<const store::StoreError*>(&e);
+        if (fault != nullptr &&
+            (fault->Code() == store::StoreCode::kFull || fault->Code() == store::StoreCode::kIo)) {
+            events_.OnStorageFault(e.what());
         }
     }
 
@@ -1111,7 +1131,8 @@ class SessionController {
             store::Document document;
             document.text = label;
             store_.SaveDocument(id, store::DocumentKind::kLabel, document);
-        } catch (...) {  // NOLINT(bugprone-empty-catch)
+        } catch (const std::exception& e) {
+            StoreFailed("label", e);
         }
     }
 
@@ -1120,7 +1141,8 @@ class SessionController {
             store::Document document;
             document.text = text;
             store_.SaveDocument(id, store::DocumentKind::kPatient, document);
-        } catch (...) {  // NOLINT(bugprone-empty-catch)
+        } catch (const std::exception& e) {
+            StoreFailed("patient sheet", e);
         }
     }
 

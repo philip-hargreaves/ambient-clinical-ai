@@ -6,6 +6,8 @@
 #include <string>
 #include <vector>
 
+#include "ports/store_error.hpp"
+
 struct sqlite3;
 struct sqlite3_stmt;
 
@@ -77,6 +79,9 @@ class Db {
     void SetApplicationId(std::int64_t id);
     std::int64_t UserVersion();
     void SetUserVersion(std::int64_t version);
+
+    // Folds the WAL into the file and truncates it; false when a reader held the log
+    bool CheckpointTruncate();
 
    private:
     sqlite3* db_ = nullptr;

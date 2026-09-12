@@ -20,6 +20,9 @@ namespace {
 constexpr std::int64_t kSchemaVersion = 6;
 // "AMBC": the header mark of a clinical store
 constexpr std::int64_t kApplicationId = 0x414D4243;
+// Audio held in memory while the disk refuses commits; older frames are dropped and counted
+constexpr std::chrono::seconds kPendingBound(30);
+constexpr std::int64_t kSqlitePageLimit = 1073741823;  // the default max_page_count
 
 struct KindSpec {
     const char* name;  // documents.kind
@@ -86,7 +89,7 @@ bool HasColumn(Db& db, const char* table, const char* column) {
 // A row per dangling reference, none when the rebuild kept every one
 void RequireForeignKeys(Db& db) {
     Db::Stmt check = db.Prepare("PRAGMA foreign_key_check");
-    if (check.Step()) throw std::runtime_error("migration left a dangling reference");
+    if (check.Step()) throw StoreError(StoreCode::kSchema, "migration left a dangling reference");
 }
 
 std::filesystem::path DatabasePath(const std::filesystem::path& root) {
@@ -101,11 +104,11 @@ Db OpenDatabase(const std::filesystem::path& root) {
     const std::int64_t application_id = db.ApplicationId();
     std::int64_t version = db.UserVersion();
     if (application_id != 0 && application_id != kApplicationId) {
-        throw std::runtime_error("not an ambient store");
+        throw StoreError(StoreCode::kSchema, "not an ambient store");
     }
     if (version == 0) {
         if (db.QueryInt64("SELECT count(*) FROM sqlite_master") != 0) {
-            throw std::runtime_error("not an ambient store");
+            throw StoreError(StoreCode::kSchema, "not an ambient store");
         }
         // Incremental vacuum is creation-time; the WAL switch already wrote the
         // header, so the empty file is rebuilt to take it
@@ -117,10 +120,10 @@ Db OpenDatabase(const std::filesystem::path& root) {
         db.SetUserVersion(kSchemaVersion);
         txn.Commit();
     } else if (version > kSchemaVersion) {
-        throw std::runtime_error("store schema is newer than this build");
+        throw StoreError(StoreCode::kSchema, "store schema is newer than this build");
     } else {
         if (application_id == 0 && !TableExists(db, "sessions")) {
-            throw std::runtime_error("not an ambient store");
+            throw StoreError(StoreCode::kSchema, "not an ambient store");
         }
         if (version == 2) {
             Db::Transaction txn(db);
@@ -184,15 +187,23 @@ SqliteSessionStore::~SqliteSessionStore() {
     }
     cv_.notify_all();
     writer_.join();
-    // Destruction is not finalisation; an open session stays recoverable
+    // Destruction is not finalisation; an open session stays recoverable with what it buffered
+    if (open_.has_value()) {
+        try {
+            CommitPending();
+        } catch (const StoreError& e) {
+            std::fprintf(stderr, "ambient-engine: store commit failed at close: %s\n", e.what());
+        }
+    }
 }
 
 SessionId SqliteSessionStore::Begin(const SessionMeta& meta) {
     std::lock_guard<std::mutex> lock(mutex_);
-    if (open_.has_value()) throw std::runtime_error("a session is already recording");
+    if (open_.has_value()) throw StoreError(StoreCode::kBusy, "a session is already recording");
 
     Open session;
     session.id = RandomId();
+    session.sample_rate = static_cast<std::uint64_t>(meta.sample_rate);
     session.cipher.emplace(ChunkCipher::Generate());
     const std::vector<std::uint8_t> wrapped = session.cipher->Wrapped();
 
@@ -209,22 +220,38 @@ SessionId SqliteSessionStore::Begin(const SessionMeta& meta) {
     insert.BindTextOrNull(5, meta.device_name);
     insert.BindInt64(6, meta.retain ? 1 : 0);
     insert.Step();
-    Db::Stmt key = db_.Prepare("INSERT INTO session_keys(session_id, wrapped) VALUES(?, ?)");
-    key.BindText(1, session.id);
-    key.BindBlob(2, wrapped);
-    key.Step();
+    InsertKey(session.id, wrapped);
     txn.Commit();
 
     open_.emplace(std::move(session));
+    {
+        std::lock_guard<std::mutex> pending_lock(pending_mutex_);
+        pending_ = {open_->id, {}, 0};
+    }
     return open_->id;
 }
 
 void SqliteSessionStore::Append(const SessionId& id, std::span<const float> frames,
                                 std::uint64_t lost_frames) {
-    std::lock_guard<std::mutex> lock(mutex_);
-    Open& session = RequireOpen(id);
-    session.pending_lost += lost_frames;
-    session.pending.insert(session.pending.end(), frames.begin(), frames.end());
+    std::lock_guard<std::mutex> lock(pending_mutex_);
+    if (pending_.id != id) {
+        throw StoreError(StoreCode::kNotFound, "no open session with id " + id);
+    }
+    pending_.lost += lost_frames;
+    pending_.frames.insert(pending_.frames.end(), frames.begin(), frames.end());
+}
+
+void SqliteSessionStore::TakePending(Open& session) {
+    std::lock_guard<std::mutex> lock(pending_mutex_);
+    session.held.insert(session.held.end(), pending_.frames.begin(), pending_.frames.end());
+    session.held_lost += pending_.lost;
+    pending_.frames.clear();
+    pending_.lost = 0;
+}
+
+void SqliteSessionStore::ClosePending() {
+    std::lock_guard<std::mutex> lock(pending_mutex_);
+    pending_ = {};
 }
 
 // Timing is queryable shape; speaker and text are content, so encrypted
@@ -276,7 +303,8 @@ void SqliteSessionStore::ReplaceTurns(const SessionId& id, std::span<const asr::
 void SqliteSessionStore::Finalise(const SessionId& id) {
     std::lock_guard<std::mutex> lock(mutex_);
     Open& session = RequireOpen(id);
-    const std::uint64_t lost = session.lost_committed + session.pending_lost;
+    TakePending(session);
+    const std::uint64_t lost = session.lost_committed + session.held_lost;
 
     Db::Transaction txn(db_);
     Db::Stmt erase = db_.Prepare("DELETE FROM chunks WHERE session_id = ?");
@@ -292,14 +320,16 @@ void SqliteSessionStore::Finalise(const SessionId& id) {
     db_.Exec("PRAGMA incremental_vacuum");
 
     open_.reset();
+    ClosePending();
 }
 
 void SqliteSessionStore::Abandon(const SessionId& id) {
     std::lock_guard<std::mutex> lock(mutex_);
-    Open& session = RequireOpen(id);
-    if (!session.pending.empty() || session.pending_lost != 0) CommitPending();
+    RequireOpen(id);
+    CommitPending();
     // No state change: recording is what marks it recoverable
     open_.reset();
+    ClosePending();
 }
 
 void SqliteSessionStore::Cancel(const SessionId& id) {
@@ -307,12 +337,13 @@ void SqliteSessionStore::Cancel(const SessionId& id) {
     RequireOpen(id);
     Erase(id);
     open_.reset();
+    ClosePending();
 }
 
 void SqliteSessionStore::Delete(const SessionId& id) {
     std::lock_guard<std::mutex> lock(mutex_);
     if (open_.has_value() && open_->id == id) {
-        throw std::runtime_error(id + " is still recording");
+        throw StoreError(StoreCode::kBusy, id + " is still recording");
     }
     Erase(id);
 }
@@ -322,20 +353,20 @@ void SqliteSessionStore::Delete(const SessionId& id) {
 void SqliteSessionStore::Erase(const SessionId& id) {
     Db::Stmt erase = db_.Prepare("DELETE FROM sessions WHERE id = ?");
     erase.BindText(1, id);
+    if (EraseWhere(erase) == 0) throw StoreError(StoreCode::kNotFound, "no session " + id);
+}
+
+std::size_t SqliteSessionStore::EraseWhere(Db::Stmt& erase) {
     erase.Step();
-    if (db_.QueryInt64("SELECT changes()") == 0) {
-        throw std::runtime_error("no session " + id);
-    }
-    db_.Exec("PRAGMA incremental_vacuum");
+    const auto removed = static_cast<std::size_t>(db_.QueryInt64("SELECT changes()"));
+    if (removed > 0) Checkpoint();
+    return removed;
 }
 
 void SqliteSessionStore::EraseUnretained() {
     std::lock_guard<std::mutex> lock(mutex_);
     Db::Stmt erase = db_.Prepare("DELETE FROM sessions WHERE retain = 0 AND state = 'finalised'");
-    erase.Step();
-    if (db_.QueryInt64("SELECT changes()") > 0) {
-        db_.Exec("PRAGMA incremental_vacuum");
-    }
+    EraseWhere(erase);
 }
 
 std::vector<RecoverableSession> SqliteSessionStore::ScanRecoverable() {
@@ -379,11 +410,14 @@ std::vector<SessionSummary> SqliteSessionStore::ListSessions() {
                                select.ColumnText(3), static_cast<int>(select.ColumnInt64(4))};
         const std::vector<std::uint8_t> sealed = select.ColumnBlob(6);
         if (!sealed.empty()) {
-            const ChunkCipher cipher = ChunkCipher::FromWrapped(select.ColumnBlob(5));
-            const auto plain =
-                cipher.Open(Domain::kLabel, summary.id,
-                            static_cast<std::uint64_t>(select.ColumnInt64(11)), sealed);
-            summary.label.assign(plain.begin(), plain.end());
+            try {
+                const ChunkCipher cipher = ChunkCipher::FromWrapped(select.ColumnBlob(5));
+                const auto plain =
+                    cipher.Open(Domain::kLabel, summary.id,
+                                static_cast<std::uint64_t>(select.ColumnInt64(11)), sealed);
+                summary.label.assign(plain.begin(), plain.end());
+            } catch (const StoreError&) {  // one unreadable label never hides the list
+            }
         }
         summary.edited_at = select.ColumnText(7);
         if (summary.sample_rate > 0) {
@@ -412,10 +446,7 @@ SessionId SqliteSessionStore::Seed(const SessionSeed& seed) {
     insert.BindText(3, seed.ended_at);
     insert.BindInt64(4, seed.sample_rate);
     insert.Step();
-    Db::Stmt key = db_.Prepare("INSERT INTO session_keys(session_id, wrapped) VALUES(?, ?)");
-    key.BindText(1, id);
-    key.BindBlob(2, cipher.Wrapped());
-    key.Step();
+    InsertKey(id, cipher.Wrapped());
     std::int64_t seq = 0;
     for (const asr::Turn& turn : seed.turns) {
         InsertTurn(id, seq, cipher, turn);
@@ -429,35 +460,37 @@ std::size_t SqliteSessionStore::DeleteAll() {
     std::lock_guard<std::mutex> lock(mutex_);
     Db::Stmt erase = db_.Prepare("DELETE FROM sessions WHERE id <> ?");
     erase.BindText(1, open_.has_value() ? open_->id : std::string());
-    erase.Step();
-    const auto removed = static_cast<std::size_t>(db_.QueryInt64("SELECT changes()"));
-    if (removed > 0) {
-        db_.Exec("PRAGMA incremental_vacuum");
-    }
-    return removed;
+    return EraseWhere(erase);
 }
 
 std::size_t SqliteSessionStore::ClearDemo() {
     std::lock_guard<std::mutex> lock(mutex_);
     Db::Stmt erase = db_.Prepare("DELETE FROM sessions WHERE demo = 1");
-    erase.Step();
-    const auto removed = static_cast<std::size_t>(db_.QueryInt64("SELECT changes()"));
-    if (removed > 0) {
-        db_.Exec("PRAGMA incremental_vacuum");
+    return EraseWhere(erase);
+}
+
+void SqliteSessionStore::RequireStored(const SessionId& id) {
+    if (open_.has_value() && open_->id == id) {
+        throw StoreError(StoreCode::kBusy, id + " is still recording");
     }
-    return removed;
+    Db::Stmt select = db_.Prepare("SELECT 1 FROM session_keys WHERE session_id = ?");
+    select.BindText(1, id);
+    if (!select.Step()) throw StoreError(StoreCode::kNotFound, "no session " + id);
 }
 
 ChunkCipher SqliteSessionStore::CipherFor(const SessionId& id) {
-    if (open_.has_value() && open_->id == id) {
-        throw std::runtime_error(id + " is still recording");
-    }
+    RequireStored(id);
     Db::Stmt select = db_.Prepare("SELECT wrapped FROM session_keys WHERE session_id = ?");
     select.BindText(1, id);
-    if (!select.Step()) {
-        throw std::runtime_error("no session " + id);
-    }
+    select.Step();
     return ChunkCipher::FromWrapped(select.ColumnBlob(0));
+}
+
+void SqliteSessionStore::InsertKey(const SessionId& id, std::span<const std::uint8_t> wrapped) {
+    Db::Stmt key = db_.Prepare("INSERT INTO session_keys(session_id, wrapped) VALUES(?, ?)");
+    key.BindText(1, id);
+    key.BindBlob(2, wrapped);
+    key.Step();
 }
 
 // Text is content, so sealed; the rest is shape. The options row follows
@@ -527,7 +560,7 @@ Document SqliteSessionStore::ReadDocument(const SessionId& id, DocumentKind kind
 
 void SqliteSessionStore::DeleteDocument(const SessionId& id, DocumentKind kind) {
     std::lock_guard<std::mutex> lock(mutex_);
-    (void)CipherFor(id);  // the same refusals as a read: recording, or no such session
+    RequireStored(id);
     Db::Stmt remove = db_.Prepare("DELETE FROM documents WHERE session_id = ? AND kind = ?");
     remove.BindText(1, id);
     remove.BindText(2, SpecFor(kind).name);
@@ -602,16 +635,18 @@ std::vector<float> SqliteSessionStore::ReadAudio(const SessionId& id) {
 
 SqliteSessionStore::Open& SqliteSessionStore::RequireOpen(const SessionId& id) {
     if (!open_.has_value() || open_->id != id) {
-        throw std::runtime_error("no open session with id " + id);
+        throw StoreError(StoreCode::kNotFound, "no open session with id " + id);
     }
     return *open_;
 }
 
-void SqliteSessionStore::CommitPending() {
+bool SqliteSessionStore::CommitPending() {
     Open& session = *open_;
-    const std::vector<std::uint8_t> sealed = session.cipher->Seal(
-        Domain::kAudio, session.id, static_cast<std::uint64_t>(session.next_seq),
-        AsBytes(session.pending));
+    TakePending(session);
+    if (session.held.empty() && session.held_lost == 0) return false;
+    const std::vector<std::uint8_t> sealed =
+        session.cipher->Seal(Domain::kAudio, session.id,
+                             static_cast<std::uint64_t>(session.next_seq), AsBytes(session.held));
 
     Db::Transaction txn(db_);
     Db::Stmt insert = db_.Prepare(
@@ -620,27 +655,71 @@ void SqliteSessionStore::CommitPending() {
     insert.BindText(1, session.id);
     insert.BindInt64(2, session.next_seq);
     insert.BindInt64(3, static_cast<std::int64_t>(session.frames_committed));
-    insert.BindInt64(4, static_cast<std::int64_t>(session.pending.size()));
-    insert.BindInt64(5, static_cast<std::int64_t>(session.pending_lost));
+    insert.BindInt64(4, static_cast<std::int64_t>(session.held.size()));
+    insert.BindInt64(5, static_cast<std::int64_t>(session.held_lost));
     insert.BindBlob(6, sealed);
     insert.Step();
     txn.Commit();
 
     session.next_seq += 1;
-    session.frames_committed += session.pending.size();
-    session.lost_committed += session.pending_lost;
-    session.pending.clear();
-    session.pending_lost = 0;
+    session.frames_committed += session.held.size();
+    session.lost_committed += session.held_lost;
+    session.held.clear();
+    session.held_lost = 0;
+    return true;
 }
 
+// A failed commit keeps its audio for the next tick; past kPendingBound the oldest frames are
+// dropped as lost and the stored timeline moves with them. The fault is announced once per episode
 void SqliteSessionStore::WriterLoop() {
     std::unique_lock<std::mutex> lock(mutex_);
     while (!stopping_) {
         cv_.wait_for(lock, commit_interval_, [this] { return stopping_; });
         if (stopping_) break;
-        if (open_.has_value() && (!open_->pending.empty() || open_->pending_lost != 0)) {
-            CommitPending();
+        if (!open_.has_value()) continue;
+        try {
+            if (CommitPending() && open_->faulted) {
+                open_->faulted = false;
+                std::fprintf(stderr, "ambient-engine: store commits again\n");
+            }
+        } catch (const StoreError& e) {
+            Open& session = *open_;
+            const std::uint64_t bound = kPendingBound.count() * session.sample_rate;
+            if (session.held.size() > bound) {
+                const auto dropped = session.held.size() - bound;
+                session.held.erase(session.held.begin(),
+                                   session.held.begin() + static_cast<std::ptrdiff_t>(dropped));
+                session.frames_committed += dropped;
+                session.held_lost += dropped;
+            }
+            if (!session.faulted) {
+                session.faulted = true;
+                std::fprintf(stderr, "ambient-engine: store commit failed: %s\n", e.what());
+                if (on_fault_) {
+                    const auto listener = on_fault_;
+                    lock.unlock();
+                    listener(e);
+                    lock.lock();
+                }
+            }
         }
+    }
+}
+
+void SqliteSessionStore::SetFaultListener(std::function<void(const StoreError&)> listener) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    on_fault_ = std::move(listener);
+}
+
+void SqliteSessionStore::SetMaxPageCount(std::int64_t pages) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    db_.Exec(
+        ("PRAGMA max_page_count=" + std::to_string(pages > 0 ? pages : kSqlitePageLimit)).c_str());
+}
+
+void SqliteSessionStore::Checkpoint() {
+    if (!db_.CheckpointTruncate()) {
+        std::fprintf(stderr, "ambient-engine: store log kept, a reader holds it\n");
     }
 }
 
@@ -674,7 +753,7 @@ void SqliteSessionStore::ImportPerSessionFiles(const std::filesystem::path& root
         const std::filesystem::path key_path = base.string() + ".key";
         try {
             if (!std::filesystem::exists(db_path) || !std::filesystem::exists(key_path)) {
-                throw std::runtime_error("session files missing");
+                throw StoreError(StoreCode::kIo, "session files missing");
             }
             Db::Transaction txn(db_);
             Db::Stmt insert = db_.Prepare(
@@ -689,11 +768,7 @@ void SqliteSessionStore::ImportPerSessionFiles(const std::filesystem::path& root
             insert.BindTextOrNull(7, row.device_name);
             insert.BindInt64(8, row.lost_frames);
             insert.Step();
-            Db::Stmt key =
-                db_.Prepare("INSERT INTO session_keys(session_id, wrapped) VALUES(?, ?)");
-            key.BindText(1, row.id);
-            key.BindBlob(2, ReadFileBytes(key_path));
-            key.Step();
+            InsertKey(row.id, ReadFileBytes(key_path));
             {
                 Db session(db_path);
                 // Audio crosses only for a session still to be recovered; a

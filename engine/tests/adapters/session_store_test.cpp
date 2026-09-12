@@ -1,11 +1,15 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <atomic>
 #include <chrono>
 #include <cstring>
 #include <filesystem>
 #include <fstream>
+#include <mutex>
 #include <nlohmann/json.hpp>
+#include <span>
+#include <string>
 #include <thread>
 #include <vector>
 
@@ -1109,6 +1113,140 @@ TEST(SessionStore, AVersionFiveDatabaseGainsTheSequenceColumn) {
     guidance.Reset();
     guidance.BindText(2, "other");
     EXPECT_THROW(guidance.Step(), std::runtime_error);
+}
+
+// A page cap at the file's current size: the next commit fails as a full disk would
+void FillTheDisk(SqliteSessionStore& store, const TempRoot& root) {
+    Db db(root.DbPath());
+    store.SetMaxPageCount(db.QueryInt64("PRAGMA page_count"));
+}
+
+std::vector<float> Joined(const std::vector<StoredChunk>& chunks) {
+    std::vector<float> joined;
+    for (const auto& chunk : chunks)
+        joined.insert(joined.end(), chunk.frames.begin(), chunk.frames.end());
+    return joined;
+}
+
+TEST(SessionStore, ADiskFullCommitDoesNotKillTheProcess) {
+    TempRoot root;
+    SqliteSessionStore store(root.path, 25ms);
+    std::mutex mutex;
+    std::vector<StoreCode> faults;
+    store.SetFaultListener([&](const StoreError& fault) {
+        std::lock_guard<std::mutex> lock(mutex);
+        faults.push_back(fault.Code());
+    });
+    const SessionId id = store.Begin({16000, "", ""});
+    const auto audio = Ramp(32000);
+    FillTheDisk(store, root);
+
+    store.Append(id, std::span(audio).first(16000), 0);
+    for (int i = 0; i < 200; ++i) {
+        std::this_thread::sleep_for(10ms);
+        std::lock_guard<std::mutex> lock(mutex);
+        if (!faults.empty()) break;
+    }
+    store.Append(id, std::span(audio).subspan(16000), 0);
+    std::this_thread::sleep_for(60ms);
+    {
+        std::lock_guard<std::mutex> lock(mutex);
+        ASSERT_EQ(faults.size(), 1u) << "announced once per episode";
+        EXPECT_EQ(faults[0], StoreCode::kFull);
+    }
+
+    store.SetMaxPageCount(0);
+    std::this_thread::sleep_for(100ms);
+    store.Abandon(id);
+    const auto chunks = DecryptSession(root, id);
+    ASSERT_FALSE(chunks.empty());
+    EXPECT_EQ(chunks[0].first_frame, 0);
+    EXPECT_EQ(chunks[0].lost_before, 0);
+    EXPECT_EQ(Joined(chunks), audio) << "held while the disk was full, stored once it was not";
+}
+
+TEST(SessionStore, DroppedPendingAudioKeepsTheTimeline) {
+    TempRoot root;
+    SqliteSessionStore store(root.path, 25ms);
+    const SessionId id = store.Begin({16000, "", ""});
+    FillTheDisk(store, root);
+
+    const auto audio = Ramp(16000 * 31);  // one second over the bound
+    store.Append(id, audio, 0);
+    std::this_thread::sleep_for(150ms);  // a failing tick trims the oldest second
+    store.SetMaxPageCount(0);
+    std::this_thread::sleep_for(150ms);
+    store.Abandon(id);
+
+    // The chunk carries the dropped second: its start moves and the loss before it is counted,
+    // so the stored timeline stays aligned with the turns
+    const auto chunks = DecryptSession(root, id);
+    ASSERT_FALSE(chunks.empty());
+    EXPECT_EQ(chunks[0].first_frame, 16000) << "the timeline skips the dropped second";
+    EXPECT_EQ(chunks[0].lost_before, 16000);
+    EXPECT_EQ(Joined(chunks), std::vector<float>(audio.begin() + 16000, audio.end()));
+}
+
+bool FileHolds(const std::filesystem::path& path, const std::vector<std::uint8_t>& needle) {
+    std::ifstream in(path, std::ios::binary);
+    const std::vector<std::uint8_t> bytes((std::istreambuf_iterator<char>(in)),
+                                          std::istreambuf_iterator<char>());
+    return std::search(bytes.begin(), bytes.end(), needle.begin(), needle.end()) != bytes.end();
+}
+
+TEST(SessionStore, ErasedKeysLeaveNoRemnantInTheFileOrWal) {
+    TempRoot root;
+    SqliteSessionStore store(root.path, kNever);
+    const SessionId id = store.Begin({16000, "", ""});
+    store.Finalise(id);
+    std::vector<std::uint8_t> wrapped;
+    {
+        Db db(root.DbPath());
+        Db::Stmt key = db.Prepare("SELECT wrapped FROM session_keys WHERE session_id = ?");
+        key.BindText(1, id);
+        ASSERT_TRUE(key.Step());
+        wrapped = key.ColumnBlob(0);
+    }
+    ASSERT_GT(wrapped.size(), 96u);
+    // Past the header every DPAPI blob shares
+    const std::vector<std::uint8_t> needle(wrapped.begin() + 32, wrapped.begin() + 96);
+    const auto wal = root.path / "ambient.db-wal";
+    ASSERT_TRUE(FileHolds(root.DbPath(), needle) || FileHolds(wal, needle));
+
+    store.Delete(id);
+    EXPECT_FALSE(FileHolds(root.DbPath(), needle));
+    EXPECT_FALSE(FileHolds(wal, needle));
+}
+
+// Listing unwraps one key per labelled session, so a long list holds the database lock;
+// the capture thread's append must not queue behind it
+TEST(SessionStore, AppendNeverWaitsOnTheDatabase) {
+    TempRoot root;
+    SqliteSessionStore store(root.path, kNever);
+    for (int i = 0; i < 300; ++i) {
+        const SessionId seeded =
+            store.Seed({"2026-01-01T00:00:00Z", "2026-01-01T00:10:00Z", 16000, {}});
+        store.SaveDocument(seeded, DocumentKind::kLabel, {.text = "Elbow swelling"});
+    }
+    const SessionId id = store.Begin({16000, "", ""});
+    std::atomic<bool> listing{true};
+    std::thread lister([&] {
+        while (listing) (void)store.ListSessions();
+    });
+
+    const auto frame = Ramp(160);
+    std::chrono::steady_clock::duration worst{0};
+    for (int i = 0; i < 200; ++i) {
+        const auto started = std::chrono::steady_clock::now();
+        store.Append(id, frame, 0);
+        worst = std::max(worst, std::chrono::steady_clock::now() - started);
+        std::this_thread::sleep_for(1ms);
+    }
+    listing = false;
+    lister.join();
+    EXPECT_LT(worst, 10ms) << "an append waited on the store";
+    store.Abandon(id);
+    EXPECT_EQ(Joined(DecryptSession(root, id)).size(), 200u * 160u);
 }
 
 }  // namespace

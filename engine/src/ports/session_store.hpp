@@ -1,10 +1,12 @@
 #pragma once
 
 #include <cstdint>
+#include <functional>
 #include <span>
 #include <string>
 #include <vector>
 
+#include "ports/store_error.hpp"
 #include "ports/transcriber.hpp"
 
 namespace ambient::store {
@@ -114,6 +116,10 @@ class ISessionStore {
 
     // Crypto-erases every stored session; one still recording is left. Returns the count
     virtual std::size_t DeleteAll() = 0;
+
+    // Called off the caller's thread when an audio commit fails; the store
+    // keeps recording and retries
+    virtual void SetFaultListener(std::function<void(const StoreError&)>) {}
 };
 
 }  // namespace ambient::store
