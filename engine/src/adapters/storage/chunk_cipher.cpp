@@ -4,6 +4,8 @@
 #include <stdexcept>
 #include <string>
 
+#include "ports/store_error.hpp"
+
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 // clang-format off
@@ -22,8 +24,8 @@ constexpr std::size_t kTagBytes = 16;
 
 void Check(NTSTATUS status, const char* what) {
     if (status < 0) {
-        throw std::runtime_error(std::string(what) + " failed, NTSTATUS " +
-                                 std::to_string(static_cast<long>(status)));
+        throw StoreError(StoreCode::kOther, std::string(what) + " failed, NTSTATUS " +
+                                                std::to_string(static_cast<long>(status)));
     }
 }
 
@@ -42,7 +44,7 @@ struct ChunkCipher::Impl {
     std::uint8_t key_bytes[kKeyBytes] = {};
 
     explicit Impl(std::span<const std::uint8_t> key_material) {
-        if (key_material.size() != kKeyBytes) throw std::runtime_error("bad key length");
+        if (key_material.size() != kKeyBytes) throw StoreError(StoreCode::kOther, "bad key length");
         std::memcpy(key_bytes, key_material.data(), kKeyBytes);
         Check(BCryptOpenAlgorithmProvider(&alg, BCRYPT_AES_ALGORITHM, nullptr, 0),
               "BCryptOpenAlgorithmProvider");
@@ -83,7 +85,7 @@ ChunkCipher ChunkCipher::FromWrapped(std::span<const std::uint8_t> wrapped) {
     DATA_BLOB out{};
     if (!CryptUnprotectData(&in, nullptr, nullptr, nullptr, nullptr, CRYPTPROTECT_UI_FORBIDDEN,
                             &out)) {
-        throw std::runtime_error("CryptUnprotectData failed");
+        throw StoreError(StoreCode::kAuth, "CryptUnprotectData failed");
     }
     std::unique_ptr<Impl> impl;
     try {
@@ -103,7 +105,7 @@ std::vector<std::uint8_t> ChunkCipher::Wrapped() const {
     DATA_BLOB out{};
     if (!CryptProtectData(&in, L"ambient session key", nullptr, nullptr, nullptr,
                           CRYPTPROTECT_UI_FORBIDDEN, &out)) {
-        throw std::runtime_error("CryptProtectData failed");
+        throw StoreError(StoreCode::kAuth, "CryptProtectData failed");
     }
     std::vector<std::uint8_t> wrapped(out.pbData, out.pbData + out.cbData);
     LocalFree(out.pbData);
@@ -142,7 +144,8 @@ std::vector<std::uint8_t> ChunkCipher::Seal(Domain domain, std::string_view sess
 std::vector<std::uint8_t> ChunkCipher::Open(Domain domain, std::string_view session_id,
                                             std::uint64_t seq,
                                             std::span<const std::uint8_t> sealed) const {
-    if (sealed.size() < kTagBytes) throw std::runtime_error("chunk failed authentication");
+    if (sealed.size() < kTagBytes)
+        throw StoreError(StoreCode::kAuth, "chunk failed authentication");
     const std::size_t plain_size = sealed.size() - kTagBytes;
 
     std::uint8_t iv[kIvBytes] = {static_cast<std::uint8_t>(domain)};
@@ -167,7 +170,7 @@ std::vector<std::uint8_t> ChunkCipher::Open(Domain domain, std::string_view sess
                                           static_cast<ULONG>(plain_size), &info, nullptr, 0,
                                           plain_size > 0 ? plain.data() : nullptr,
                                           static_cast<ULONG>(plain_size), &written, 0);
-    if (status < 0) throw std::runtime_error("chunk failed authentication");
+    if (status < 0) throw StoreError(StoreCode::kAuth, "chunk failed authentication");
     return plain;
 }
 

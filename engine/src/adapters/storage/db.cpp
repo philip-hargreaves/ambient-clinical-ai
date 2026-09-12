@@ -10,9 +10,35 @@ namespace ambient::store {
 
 namespace {
 
+StoreCode CodeOf(int result) {
+    switch (result & 0xff) {
+        case SQLITE_BUSY:
+        case SQLITE_LOCKED:
+            return StoreCode::kBusy;
+        case SQLITE_FULL:
+            return StoreCode::kFull;
+        case SQLITE_IOERR:
+        case SQLITE_CANTOPEN:
+        case SQLITE_READONLY:
+        case SQLITE_CORRUPT:
+        case SQLITE_NOTADB:
+        case SQLITE_PERM:
+            return StoreCode::kIo;
+        case SQLITE_ERROR:
+        case SQLITE_CONSTRAINT:
+        case SQLITE_SCHEMA:
+        case SQLITE_MISMATCH:
+        case SQLITE_RANGE:
+            return StoreCode::kSchema;
+        default:
+            return StoreCode::kOther;
+    }
+}
+
 [[noreturn]] void Throw(const char* what, sqlite3* db) {
-    throw std::runtime_error(std::string(what) + ": " +
-                             (db != nullptr ? sqlite3_errmsg(db) : "out of memory"));
+    if (db == nullptr) throw StoreError(StoreCode::kOther, std::string(what) + ": out of memory");
+    throw StoreError(CodeOf(sqlite3_extended_errcode(db)),
+                     std::string(what) + ": " + sqlite3_errmsg(db));
 }
 
 // file:///C:/dir/x.db with every character outside the unreserved set escaped
@@ -53,22 +79,36 @@ Db::Db(const std::filesystem::path& path, Mode mode) {
             break;
     }
     if (sqlite3_open_v2(name.c_str(), &db_, flags, nullptr) != SQLITE_OK) {
+        const StoreCode code =
+            db_ != nullptr ? CodeOf(sqlite3_extended_errcode(db_)) : StoreCode::kOther;
         std::string message = "open " + path.string() + ": " +
                               (db_ != nullptr ? sqlite3_errmsg(db_) : "out of memory");
-        sqlite3_close(db_);
+        sqlite3_close_v2(db_);
         db_ = nullptr;
-        throw std::runtime_error(message);
+        throw StoreError(code, message);
     }
-    if (mode == Mode::kSession) {
-        // page_size only takes effect if it runs before the first table is created
-        Exec("PRAGMA page_size=8192");
-        Exec("PRAGMA journal_mode=WAL");
-        Exec("PRAGMA synchronous=FULL");
-        Exec("PRAGMA foreign_keys=ON");
-    } else if (mode == Mode::kImmutableReadOnly) {
-        Exec("PRAGMA query_only=1");
-        Exec("PRAGMA mmap_size=134217728");
-        Exec("PRAGMA cache_size=-8192");
+    // The destructor never runs if a pragma throws
+    try {
+        if (mode != Mode::kImmutableReadOnly) sqlite3_busy_timeout(db_, 5000);
+        if (mode == Mode::kSession) {
+            // page_size only takes effect if it runs before the first table is created
+            Exec("PRAGMA page_size=8192");
+            Exec("PRAGMA journal_mode=WAL");
+            Exec("PRAGMA synchronous=FULL");
+            Exec("PRAGMA foreign_keys=ON");
+            // Freed cells are zeroed (whole freed pages leave the file at the vacuum); the log is
+            // truncated rather than kept at its high-water mark
+            Exec("PRAGMA secure_delete=FAST");
+            Exec("PRAGMA journal_size_limit=4194304");
+        } else if (mode == Mode::kImmutableReadOnly) {
+            Exec("PRAGMA query_only=1");
+            Exec("PRAGMA mmap_size=134217728");
+            Exec("PRAGMA cache_size=-8192");
+        }
+    } catch (...) {
+        sqlite3_close_v2(db_);
+        db_ = nullptr;
+        throw;
     }
 }
 
@@ -76,14 +116,14 @@ Db::Db(Db&& other) noexcept : db_(std::exchange(other.db_, nullptr)) {}
 
 Db& Db::operator=(Db&& other) noexcept {
     if (this != &other) {
-        sqlite3_close(db_);
+        sqlite3_close_v2(db_);
         db_ = std::exchange(other.db_, nullptr);
     }
     return *this;
 }
 
 Db::~Db() {
-    sqlite3_close(db_);
+    sqlite3_close_v2(db_);
 }
 
 void Db::Exec(const char* sql) {
@@ -98,12 +138,21 @@ Db::Stmt Db::Prepare(const char* sql) {
 
 std::int64_t Db::QueryInt64(const char* sql) {
     Stmt stmt = Prepare(sql);
-    if (!stmt.Step()) throw std::runtime_error(std::string(sql) + ": no row");
+    if (!stmt.Step()) throw StoreError(StoreCode::kSchema, std::string(sql) + ": no row");
     return stmt.ColumnInt64(0);
 }
 
-std::int64_t Db::LastInsertRowId() const {
-    return sqlite3_last_insert_rowid(db_);
+bool Db::CheckpointTruncate() {
+    Stmt checkpoint = Prepare("PRAGMA wal_checkpoint(TRUNCATE)");
+    return checkpoint.Step() && checkpoint.ColumnInt64(0) == 0;
+}
+
+std::int64_t Db::ApplicationId() {
+    return QueryInt64("PRAGMA application_id");
+}
+
+void Db::SetApplicationId(std::int64_t id) {
+    Exec(("PRAGMA application_id=" + std::to_string(id)).c_str());
 }
 
 std::int64_t Db::UserVersion() {

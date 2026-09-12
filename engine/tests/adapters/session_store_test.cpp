@@ -1,11 +1,15 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <atomic>
 #include <chrono>
 #include <cstring>
 #include <filesystem>
 #include <fstream>
+#include <mutex>
 #include <nlohmann/json.hpp>
+#include <span>
+#include <string>
 #include <thread>
 #include <vector>
 
@@ -53,6 +57,20 @@ ChunkCipher CipherOf(const TempRoot& root, const SessionId& id) {
     key.BindText(1, id);
     if (!key.Step()) throw std::runtime_error("no key row for " + id);
     return ChunkCipher::FromWrapped(key.ColumnBlob(0));
+}
+
+// What every build before schema 6 wrote: the payload sealed at sequence 0
+void SealAtZero(const TempRoot& root, const SessionId& id, const char* kind, Domain domain,
+                const std::string& text) {
+    const std::vector<std::uint8_t> bytes(text.begin(), text.end());
+    const auto sealed = CipherOf(root, id).Seal(domain, id, 0, bytes);
+    Db db(root.DbPath());
+    Db::Stmt update =
+        db.Prepare("UPDATE documents SET payload = ? WHERE session_id = ? AND kind = ?");
+    update.BindBlob(1, sealed);
+    update.BindText(2, id);
+    update.BindText(3, kind);
+    update.Step();
 }
 
 std::vector<float> Ramp(std::size_t frames) {
@@ -399,7 +417,8 @@ TEST(SessionStore, AVersionFourDatabaseGainsTheSampleFlag) {
 
     SqliteSessionStore migrated(root.path, kNever);
     Db db(root.DbPath());
-    EXPECT_EQ(db.UserVersion(), 5);
+    EXPECT_EQ(db.UserVersion(), 6);
+    EXPECT_EQ(db.ApplicationId(), 0x414D4243) << "a store from before the mark takes it";
     const auto listed = migrated.ListSessions();
     ASSERT_EQ(listed.size(), 1u);
     EXPECT_FALSE(listed[0].demo);
@@ -430,12 +449,14 @@ TEST(SessionStore, AVersionThreeDatabaseGainsTheNewDocumentKinds) {
             "DROP TABLE documents;"
             "ALTER TABLE documents_v3 RENAME TO documents;"
             "ALTER TABLE sessions DROP COLUMN demo");
+        SealAtZero(root, id, "note", Domain::kNote, "the note");
+        SealAtZero(root, id, "label", Domain::kLabel, "Elbow swelling");
         db.SetUserVersion(3);
     }
 
     SqliteSessionStore migrated(root.path, kNever);
     Db db(root.DbPath());
-    EXPECT_EQ(db.UserVersion(), 5);
+    EXPECT_EQ(db.UserVersion(), 6);
     const Document note = migrated.ReadDocument(id, DocumentKind::kNote);
     EXPECT_EQ(note.text, "the note");
     EXPECT_EQ(note.style, "soap") << "note_options survived the rebuild";
@@ -651,7 +672,7 @@ TEST(SessionStore, AVersionTwoDatabaseGainsTheRetentionFlag) {
 
     SqliteSessionStore migrated(root.path, kNever);
     Db db(root.DbPath());
-    EXPECT_EQ(db.UserVersion(), 5);
+    EXPECT_EQ(db.UserVersion(), 6);
     Db::Stmt row = db.Prepare("SELECT retain FROM sessions WHERE id = ?");
     row.BindText(1, id);
     ASSERT_TRUE(row.Step());
@@ -776,7 +797,8 @@ TEST(SessionStore, OneDatabaseStampedWithTheSchemaVersion) {
     EXPECT_FALSE(std::filesystem::exists(root.path / "main.db"));
 
     Db db(root.DbPath());
-    EXPECT_EQ(db.UserVersion(), 5);
+    EXPECT_EQ(db.UserVersion(), 6);
+    EXPECT_EQ(db.ApplicationId(), 0x414D4243) << "AMBC";
     EXPECT_EQ(db.QueryInt64("PRAGMA auto_vacuum"), 2) << "incremental";
     EXPECT_EQ(db.QueryInt64("PRAGMA foreign_keys"), 1);
     Db::Stmt row = db.Prepare("SELECT id, sample_rate FROM sessions");
@@ -967,6 +989,264 @@ TEST(SessionStore, RefusesAStoreFromANewerBuild) {
         db.SetUserVersion(999);
     }
     EXPECT_THROW(SqliteSessionStore(root.path, kNever), std::runtime_error);
+}
+
+// A newer shape under an older number, as a crash between step and stamp left it
+TEST(SessionStore, AnInterruptedMigrationResumesCleanly) {
+    TempRoot root;
+    SessionId id;
+    {
+        SqliteSessionStore store(root.path, kNever);
+        id = store.Begin({16000, "", ""});
+        store.Finalise(id);
+        store.SaveDocument(id, DocumentKind::kNote,
+                           {.text = "the note", .style = "soap", .detail = "concise"});
+    }
+    {
+        // Current shape stamped 4: both column steps re-run over columns it already has
+        Db db(root.DbPath());
+        db.SetUserVersion(4);
+    }
+
+    SqliteSessionStore migrated(root.path, kNever);
+    Db db(root.DbPath());
+    EXPECT_EQ(db.UserVersion(), 6);
+    EXPECT_EQ(migrated.ReadDocument(id, DocumentKind::kNote).text, "the note");
+    EXPECT_EQ(db.QueryInt64("PRAGMA foreign_keys"), 1);
+}
+
+TEST(SessionStore, AForeignFileIsRefused) {
+    TempRoot root;
+    std::filesystem::create_directories(root.path);
+    {
+        Db db(root.DbPath());
+        db.Exec("CREATE TABLE notes(text TEXT)");
+    }
+    EXPECT_THROW(SqliteSessionStore(root.path, kNever), std::runtime_error);
+    {
+        Db db(root.DbPath());
+        EXPECT_EQ(db.QueryInt64("SELECT count(*) FROM sqlite_master WHERE name = 'sessions'"), 0)
+            << "no schema was created into it";
+        // Another application's mark, whatever the version says
+        db.Exec("DROP TABLE notes");
+        db.SetApplicationId(0x11111111);
+        db.SetUserVersion(5);
+    }
+    EXPECT_THROW(SqliteSessionStore(root.path, kNever), std::runtime_error);
+}
+
+TEST(SessionStore, RewritingADocumentNeverReusesANonce) {
+    TempRoot root;
+    SqliteSessionStore store(root.path, kNever);
+    const SessionId id = store.Begin({16000, "", ""});
+    store.Finalise(id);
+    const Document note{.text = "the note", .style = "prose", .detail = "standard"};
+
+    std::vector<std::vector<std::uint8_t>> payloads;
+    std::vector<std::int64_t> sequences;
+    auto record = [&] {
+        Db db(root.DbPath());
+        Db::Stmt row = db.Prepare("SELECT seq, payload FROM documents WHERE kind = 'note'");
+        ASSERT_TRUE(row.Step());
+        sequences.push_back(row.ColumnInt64(0));
+        payloads.push_back(row.ColumnBlob(1));
+        EXPECT_EQ(store.ReadDocument(id, DocumentKind::kNote).text, "the note");
+    };
+    store.SaveDocument(id, DocumentKind::kNote, note);
+    record();
+    store.EditDocument(id, DocumentKind::kNote, "the note");
+    record();
+    store.SaveDocument(id, DocumentKind::kNote, note);
+    record();
+
+    EXPECT_EQ(sequences, (std::vector<std::int64_t>{1, 2, 3}));
+    EXPECT_NE(payloads[0], payloads[1]) << "the same text, a different IV";
+    EXPECT_NE(payloads[1], payloads[2]);
+    EXPECT_NE(payloads[0], payloads[2]);
+}
+
+TEST(SessionStore, AVersionFiveDatabaseGainsTheSequenceColumn) {
+    TempRoot root;
+    SessionId id;
+    {
+        SqliteSessionStore store(root.path, kNever);
+        id = store.Begin({16000, "", ""});
+        store.Finalise(id);
+        store.SaveDocument(id, DocumentKind::kNote,
+                           {.text = "the note", .style = "soap", .detail = "concise"});
+    }
+    {
+        // Back to the version-5 shape: documents without seq, the six-kind check
+        Db db(root.DbPath());
+        db.Exec("PRAGMA foreign_keys=OFF");
+        db.Exec(
+            "CREATE TABLE documents_v5(session_id TEXT NOT NULL REFERENCES sessions (id)"
+            " ON DELETE CASCADE, kind TEXT NOT NULL CHECK (kind IN ('note', 'patient',"
+            " 'translation', 'label', 'summary', 'reflection')), language TEXT NOT NULL,"
+            " payload BLOB NOT NULL, generated_at TEXT, edited_at TEXT,"
+            " PRIMARY KEY (session_id, kind));"
+            "INSERT INTO documents_v5 SELECT session_id, kind, language, payload,"
+            " generated_at, edited_at FROM documents;"
+            "DROP TABLE documents;"
+            "ALTER TABLE documents_v5 RENAME TO documents");
+        SealAtZero(root, id, "note", Domain::kNote, "the note");
+        db.SetUserVersion(5);
+    }
+
+    SqliteSessionStore migrated(root.path, kNever);
+    Db db(root.DbPath());
+    EXPECT_EQ(db.UserVersion(), 6);
+    EXPECT_EQ(migrated.ReadDocument(id, DocumentKind::kNote).text, "the note")
+        << "existing rows open at sequence 0";
+    migrated.SaveDocument(id, DocumentKind::kNote,
+                          {.text = "rewritten", .style = "soap", .detail = "concise"});
+    EXPECT_EQ(db.QueryInt64("SELECT seq FROM documents WHERE kind = 'note'"), 1);
+    EXPECT_EQ(migrated.ReadDocument(id, DocumentKind::kNote).text, "rewritten");
+    EXPECT_EQ(db.QueryInt64("PRAGMA foreign_keys"), 1) << "keys back on after the rebuild";
+
+    // The kind check admits guidance and nothing else new
+    Db::Stmt guidance = db.Prepare(
+        "INSERT INTO documents(session_id, kind, language, payload) VALUES(?, ?, 'en', x'00')");
+    guidance.BindText(1, id);
+    guidance.BindText(2, "guidance");
+    EXPECT_NO_THROW(guidance.Step());
+    guidance.Reset();
+    guidance.BindText(2, "other");
+    EXPECT_THROW(guidance.Step(), std::runtime_error);
+}
+
+// A page cap at the file's current size: the next commit fails as a full disk would
+void FillTheDisk(SqliteSessionStore& store, const TempRoot& root) {
+    Db db(root.DbPath());
+    store.SetMaxPageCount(db.QueryInt64("PRAGMA page_count"));
+}
+
+std::vector<float> Joined(const std::vector<StoredChunk>& chunks) {
+    std::vector<float> joined;
+    for (const auto& chunk : chunks)
+        joined.insert(joined.end(), chunk.frames.begin(), chunk.frames.end());
+    return joined;
+}
+
+TEST(SessionStore, ADiskFullCommitDoesNotKillTheProcess) {
+    TempRoot root;
+    SqliteSessionStore store(root.path, 25ms);
+    std::mutex mutex;
+    std::vector<StoreCode> faults;
+    store.SetFaultListener([&](const StoreError& fault) {
+        std::lock_guard<std::mutex> lock(mutex);
+        faults.push_back(fault.Code());
+    });
+    const SessionId id = store.Begin({16000, "", ""});
+    const auto audio = Ramp(32000);
+    FillTheDisk(store, root);
+
+    store.Append(id, std::span(audio).first(16000), 0);
+    for (int i = 0; i < 200; ++i) {
+        std::this_thread::sleep_for(10ms);
+        std::lock_guard<std::mutex> lock(mutex);
+        if (!faults.empty()) break;
+    }
+    store.Append(id, std::span(audio).subspan(16000), 0);
+    std::this_thread::sleep_for(60ms);
+    {
+        std::lock_guard<std::mutex> lock(mutex);
+        ASSERT_EQ(faults.size(), 1u) << "announced once per episode";
+        EXPECT_EQ(faults[0], StoreCode::kFull);
+    }
+
+    store.SetMaxPageCount(0);
+    std::this_thread::sleep_for(100ms);
+    store.Abandon(id);
+    const auto chunks = DecryptSession(root, id);
+    ASSERT_FALSE(chunks.empty());
+    EXPECT_EQ(chunks[0].first_frame, 0);
+    EXPECT_EQ(chunks[0].lost_before, 0);
+    EXPECT_EQ(Joined(chunks), audio) << "held while the disk was full, stored once it was not";
+}
+
+TEST(SessionStore, DroppedPendingAudioKeepsTheTimeline) {
+    TempRoot root;
+    SqliteSessionStore store(root.path, 25ms);
+    const SessionId id = store.Begin({16000, "", ""});
+    FillTheDisk(store, root);
+
+    const auto audio = Ramp(16000 * 31);  // one second over the bound
+    store.Append(id, audio, 0);
+    std::this_thread::sleep_for(150ms);  // a failing tick trims the oldest second
+    store.SetMaxPageCount(0);
+    std::this_thread::sleep_for(150ms);
+    store.Abandon(id);
+
+    // The chunk carries the dropped second: its start moves and the loss before it is counted,
+    // so the stored timeline stays aligned with the turns
+    const auto chunks = DecryptSession(root, id);
+    ASSERT_FALSE(chunks.empty());
+    EXPECT_EQ(chunks[0].first_frame, 16000) << "the timeline skips the dropped second";
+    EXPECT_EQ(chunks[0].lost_before, 16000);
+    EXPECT_EQ(Joined(chunks), std::vector<float>(audio.begin() + 16000, audio.end()));
+}
+
+bool FileHolds(const std::filesystem::path& path, const std::vector<std::uint8_t>& needle) {
+    std::ifstream in(path, std::ios::binary);
+    const std::vector<std::uint8_t> bytes((std::istreambuf_iterator<char>(in)),
+                                          std::istreambuf_iterator<char>());
+    return std::search(bytes.begin(), bytes.end(), needle.begin(), needle.end()) != bytes.end();
+}
+
+TEST(SessionStore, ErasedKeysLeaveNoRemnantInTheFileOrWal) {
+    TempRoot root;
+    SqliteSessionStore store(root.path, kNever);
+    const SessionId id = store.Begin({16000, "", ""});
+    store.Finalise(id);
+    std::vector<std::uint8_t> wrapped;
+    {
+        Db db(root.DbPath());
+        Db::Stmt key = db.Prepare("SELECT wrapped FROM session_keys WHERE session_id = ?");
+        key.BindText(1, id);
+        ASSERT_TRUE(key.Step());
+        wrapped = key.ColumnBlob(0);
+    }
+    ASSERT_GT(wrapped.size(), 96u);
+    // Past the header every DPAPI blob shares
+    const std::vector<std::uint8_t> needle(wrapped.begin() + 32, wrapped.begin() + 96);
+    const auto wal = root.path / "ambient.db-wal";
+    ASSERT_TRUE(FileHolds(root.DbPath(), needle) || FileHolds(wal, needle));
+
+    store.Delete(id);
+    EXPECT_FALSE(FileHolds(root.DbPath(), needle));
+    EXPECT_FALSE(FileHolds(wal, needle));
+}
+
+// Listing unwraps one key per labelled session, so a long list holds the database lock;
+// the capture thread's append must not queue behind it
+TEST(SessionStore, AppendNeverWaitsOnTheDatabase) {
+    TempRoot root;
+    SqliteSessionStore store(root.path, kNever);
+    for (int i = 0; i < 300; ++i) {
+        const SessionId seeded =
+            store.Seed({"2026-01-01T00:00:00Z", "2026-01-01T00:10:00Z", 16000, {}});
+        store.SaveDocument(seeded, DocumentKind::kLabel, {.text = "Elbow swelling"});
+    }
+    const SessionId id = store.Begin({16000, "", ""});
+    std::atomic<bool> listing{true};
+    std::thread lister([&] {
+        while (listing) (void)store.ListSessions();
+    });
+
+    const auto frame = Ramp(160);
+    std::chrono::steady_clock::duration worst{0};
+    for (int i = 0; i < 200; ++i) {
+        const auto started = std::chrono::steady_clock::now();
+        store.Append(id, frame, 0);
+        worst = std::max(worst, std::chrono::steady_clock::now() - started);
+        std::this_thread::sleep_for(1ms);
+    }
+    listing = false;
+    lister.join();
+    EXPECT_LT(worst, 10ms) << "an append waited on the store";
+    store.Abandon(id);
+    EXPECT_EQ(Joined(DecryptSession(root, id)).size(), 200u * 160u);
 }
 
 }  // namespace

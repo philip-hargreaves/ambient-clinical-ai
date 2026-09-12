@@ -53,9 +53,10 @@ CREATE TABLE documents (
     session_id   TEXT    NOT NULL REFERENCES sessions (id) ON DELETE CASCADE,
     kind         TEXT    NOT NULL
                  CHECK (kind IN ('note', 'patient', 'translation', 'label',
-                                 'summary', 'reflection')),
+                                 'summary', 'reflection', 'guidance')),
+    seq          INTEGER NOT NULL DEFAULT 0,      -- nonce sequence of this payload; a rewrite adds one
     language     TEXT    NOT NULL,                -- BCP 47
-    payload      BLOB    NOT NULL,                -- sealed text, domain 2..7 by kind
+    payload      BLOB    NOT NULL,                -- sealed text, domain 2..8 by kind
     generated_at TEXT,                            -- when the model wrote it
     edited_at    TEXT,                            -- NULL until a person changed it
     PRIMARY KEY (session_id, kind)
